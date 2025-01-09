@@ -14,6 +14,7 @@
 </div>
 
 
+
 <div class="note hidden">
     <div class="note-header">
         <span class="note-title">Заголовок</span>
@@ -24,15 +25,21 @@
     </div>
 </div>
 
+
+
+
 <div class="modal hidden">
     <div class="modal-content">
-        <h2>Новая заметка</h2>
-        <input type="text" placeholder="Заголовок" class="modal-input">
-        <input type="text" placeholder="Подзаголовок" class="modal-input">
-        <textarea placeholder="Содержание заметки" class="modal-textarea"></textarea>
-        <div class="modal-buttons">
-            <button class="modal-cancel">Отмена</button>
-            <button class="modal-save">Сохранить</button>
-        </div>
+        <form method="post">
+            <h2>Новая заметка</h2>
+            <input type="text" name="Title" value="@Model.ViewModel.Title" asp-for="@Model.ViewModel.Title" placeholder="Заголовок" class="modal-input">
+            <input type="text" name="Subtitle" value="@Model.ViewModel.Subtitle" asp-for="@Model.ViewModel.Title" placeholder="Подзаголовок" class="modal-input">
+            <textarea name="Content" value="@Model.ViewModel.Content" asp-for="@Model.ViewModel.Title" placeholder="Содержание заметки" class="modal-textarea"></textarea>
+            <div class="modal-buttons">
+                <button class="modal-cancel">Отмена</button>
+                <button type="submit" class="modal-save">Сохранить</button>
+            </div>
+            
+        </form>
     </div>
 </div>
