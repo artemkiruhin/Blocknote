@@ -6,7 +6,7 @@ public class UserEntity
     public string Username { get; set; }
     public string PasswordHash { get; set; }
     public DateTime RegisteredAt { get; set; }
-
+    public virtual ICollection<NoteEntity> Notes { get; set; } = new List<NoteEntity>();
     public static UserEntity Create(string username, string passwordHash)
     {
         return new()
