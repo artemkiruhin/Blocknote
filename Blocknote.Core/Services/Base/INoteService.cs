@@ -9,4 +9,6 @@ public interface INoteService
     Task<bool> CreateAsync(string title, string? subtitle, string? content, Guid userId);
     Task<bool> EditAsync(Guid userId, Guid noteId, string? title, string? subtitle, string? content);
     Task<bool> DeleteUser(Guid userId, Guid noteId);
+    Task<IEnumerable<NoteDto>> GetAllAsync();
+    Task<IEnumerable<NoteDto>> GetAllAsync(Guid userId);
 }

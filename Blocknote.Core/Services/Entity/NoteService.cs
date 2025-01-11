@@ -14,6 +14,32 @@ public class NoteService : INoteService
         _repository = repository;
     }
 
+    public async Task<IEnumerable<NoteDto>> GetAllAsync()
+    {
+        var notes = await _repository.GetAllAsync();
+        return notes.Select(x => new NoteDto()
+        {
+            Title = x.Title,
+            Content = x.Content,
+            CreatedAt = x.CreatedAt,
+            UpdatedAt = x.UpdatedAt,
+            Subtitle = x.Subtitle
+        });
+    }
+    
+    public async Task<IEnumerable<NoteDto>> GetAllAsync(Guid userId)
+    {
+        var notes = await _repository.GetByUserIdAsync(userId);
+        return notes.Select(x => new NoteDto()
+        {
+            Title = x.Title,
+            Content = x.Content,
+            CreatedAt = x.CreatedAt,
+            UpdatedAt = x.UpdatedAt,
+            Subtitle = x.Subtitle
+        });
+    }
+
     public async Task<NoteDto?> GetInfoAsync(Guid userId, Guid noteId)
     {
         try
