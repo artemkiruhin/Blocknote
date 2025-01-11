@@ -28,6 +28,7 @@ public class Register : PageModel
         try
         {
             var result = await _service.Register(ViewModel.Username, _hasher.Compute(ViewModel.Password));
+            ViewModel = new();
             return result ? RedirectToPage("Login") : RedirectToPage("Register");
         }
         catch
