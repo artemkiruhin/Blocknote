@@ -1,9 +1,10 @@
 ﻿@page
-@model Blocknote.RazorFrontend.Pages.Login
+@model Blocknote.RazorFrontend.Pages.Register
 
 @{
     Layout = null;
 }
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,24 +16,30 @@
 <body>
 <div class="auth-container">
     <div class="auth-tabs">
-        <a asp-page="Login" class="auth-tab active">Вход</a>
-        <a asp-page="Register" class="auth-tab">Регистрация</a>
+        <a asp-page="Login" class="auth-tab">Вход</a>
+        <a asp-page="Register" class="auth-tab active">Регистрация</a>
     </div>
-        
+
     <form class="auth-form" method="post">
         <div class="form-group">
             <input type="text" value="@Model.ViewModel.Username" asp-for="ViewModel.Username" class="form-input" id="user" placeholder=" ">
             <label class="form-label" for="email">Имя пользователя</label>
             <div class="error-message"></div>
         </div>
-            
+
         <div class="form-group">
             <input type="password" value="@Model.ViewModel.Password" asp-for="ViewModel.Password" class="form-input" id="password" placeholder=" ">
             <label class="form-label" for="password">Пароль</label>
             <div class="error-message"></div>
         </div>
-            
-        <button type="submit" class="submit-btn">Войти</button>
+
+        <div class="form-group">
+            <input type="password" value="@Model.ViewModel.ConfirmPassword" asp-for="ViewModel.ConfirmPassword" class="form-input" id="confirm-password" placeholder=" ">
+            <label class="form-label" for="password">Подтвердите пароль</label>
+            <div class="error-message"></div>
+        </div>
+
+        <button type="submit" class="submit-btn">Зарегистрироваться</button>
     </form>
 </div>
 </body>
