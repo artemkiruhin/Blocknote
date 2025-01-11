@@ -1,9 +1,11 @@
 ﻿using Blocknote.RazorFrontend.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Blocknote.RazorFrontend.Pages;
 
+[Authorize]
 public class Index : PageModel
 {
 

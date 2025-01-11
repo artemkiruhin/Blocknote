@@ -74,4 +74,32 @@ public class JwtService : IJwtService
         }
     }
 
+    public Guid GetUserId(string token)
+    {
+        try
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = new SymmetricSecurityKey(_encodedKey);
+
+            var validationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidIssuer = _issuer,
+                ValidateAudience = true,
+                ValidAudience = _audience,
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = key,
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.Zero 
+            };
+            
+            var claims = tokenHandler.ValidateToken(token, validationParameters, out _);
+            var value = claims.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value;
+            return value != null ? Guid.Parse(value) : Guid.Empty;
+        }
+        catch (Exception e)
+        {
+            return Guid.Empty;
+        }
+    }
 }

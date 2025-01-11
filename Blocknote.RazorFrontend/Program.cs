@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Cryptography;
 using System.Text;
 using Blocknote.Core.Database;
@@ -7,12 +8,58 @@ using Blocknote.Core.Services.Base;
 using Blocknote.Core.Services.Entity;
 using Blocknote.Core.Services.Hasher;
 using Blocknote.Core.Services.Jwt;
+using Microsoft.AspNetCore.Authentication.BearerToken;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
 builder.Services.AddRazorPages();
+
+builder.Services.AddRouting(options => options.LowercaseUrls = true);
+
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = BearerTokenDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = BearerTokenDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var cookie = context.Request.Cookies["jwt"];
+                if (!string.IsNullOrEmpty(cookie)) context.Token = cookie;
+                return Task.CompletedTask;
+            },
+            OnTokenValidated = context =>
+            {
+                var claims = context.Principal?.Claims;
+                var userIdClaim = claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub);
+                if (Guid.TryParse(userIdClaim?.Value, out var userId)) context.HttpContext.Items["UserId"] = userId;
+                return Task.CompletedTask;
+            },
+            OnChallenge = context =>
+            {
+                if (!context.HttpContext.User.Identity?.IsAuthenticated ?? true) context.Response.Redirect("/login");
+                return Task.CompletedTask;
+            }
+        };
+
+        options.TokenValidationParameters = new TokenValidationParameters()
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = configuration["jwt:issuer"],
+            ValidAudience = configuration["jwt:audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["jwt:key"]))
+        };
+    });
 
 builder.Services.AddDbContext<AppDbContext>(optionsBuilder =>
 {
@@ -52,6 +99,7 @@ app.UseHttpsRedirection();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
