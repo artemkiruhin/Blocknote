@@ -88,7 +88,7 @@ public class NoteService : INoteService
     {
         try
         {
-            var note = NoteEntity.Create(title, title, subtitle, userId);
+            var note = NoteEntity.Create(title, subtitle, content, userId);
             return await _repository.AddAsync(note);
         }
         catch (Exception e)

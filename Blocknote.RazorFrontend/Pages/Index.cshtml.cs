@@ -1,19 +1,21 @@
-﻿using Blocknote.Core.Services.Base;
+﻿using Blocknote.Core.Models.Entities;
+using Blocknote.Core.Services.Base;
 using Blocknote.Core.Services.Jwt;
 using Blocknote.RazorFrontend.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Blocknote.RazorFrontend.Pages;
 
-[Authorize]
 public class Index : PageModel
 {
     private readonly INoteService _noteService;
     private readonly IJwtService _jwtService;
 
     [BindProperty] public List<NoteViewModel> Notes { get; set; } = new();
+    [BindProperty] public NoteViewModel AddViewModel { get; set; } = new();
     
     
     public Index (INoteService noteService, IJwtService jwtService)
@@ -44,8 +46,22 @@ public class Index : PageModel
         }
     }
 
-    public void OnPost()
+    public async Task<IActionResult> OnPost()
     {
-        Notes = new();
+        try
+        {
+            var userId = _jwtService.GetUserId(Request.Cookies["jwt"]);
+            Console.WriteLine(userId);
+            var result = await _noteService.CreateAsync(AddViewModel.Title, AddViewModel.Subtitle, AddViewModel.Content,
+                userId);
+            AddViewModel = new();
+            Notes = [];
+            return RedirectToPage(); 
+            
+        }
+        catch (Exception e)
+        {
+            return await OnGetAsync();
+        }
     }
 }

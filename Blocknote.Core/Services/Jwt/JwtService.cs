@@ -92,14 +92,34 @@ public class JwtService : IJwtService
                 ValidateLifetime = true,
                 ClockSkew = TimeSpan.Zero 
             };
-            
+
             var claims = tokenHandler.ValidateToken(token, validationParameters, out _);
-            var value = claims.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value;
-            return value != null ? Guid.Parse(value) : Guid.Empty;
+            foreach (var claim in claims.Claims)
+            {
+                Console.WriteLine($"Claim Type: {claim.Type}, Value: {claim.Value}");
+            }
+
+            var subClaim = claims.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+
+            if (subClaim == null)
+            {
+                Console.WriteLine("Claim 'sub' not found in token.");
+                return Guid.Empty;
+            }
+
+            if (!Guid.TryParse(subClaim.Value, out var userId))
+            {
+                Console.WriteLine($"Invalid GUID format in 'sub' claim: {subClaim.Value}");
+                return Guid.Empty;
+            }
+
+            return userId;
         }
         catch (Exception e)
         {
+            Console.WriteLine($"Error validating token: {e.Message}");
             return Guid.Empty;
         }
     }
+
 }

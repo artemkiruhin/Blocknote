@@ -22,8 +22,8 @@ builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
 builder.Services.AddAuthentication(options =>
     {
-        options.DefaultAuthenticateScheme = BearerTokenDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = BearerTokenDefaults.AuthenticationScheme;
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
     })
     .AddJwtBearer(options =>
     {
@@ -44,7 +44,7 @@ builder.Services.AddAuthentication(options =>
             },
             OnChallenge = context =>
             {
-                if (!context.HttpContext.User.Identity?.IsAuthenticated ?? true) context.Response.Redirect("/login");
+                if (!context.HttpContext.User.Identity?.IsAuthenticated ?? true) context.Response.Redirect("login");
                 return Task.CompletedTask;
             }
         };
