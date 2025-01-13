@@ -1,7 +1,5 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocknote.RazorFrontend", "Blocknote.RazorFrontend\Blocknote.RazorFrontend.csproj", "{CA91C496-8D9C-497D-8925-0E689BDCF018}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocknote.Core", "Blocknote.Core\Blocknote.Core.csproj", "{28987361-1F88-4976-9976-2972A07E93B3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocknote.Api", "Blocknote.Api\Blocknote.Api.csproj", "{28286AC4-719A-4212-9753-DC289F14CA32}"
@@ -12,10 +10,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{CA91C496-8D9C-497D-8925-0E689BDCF018}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CA91C496-8D9C-497D-8925-0E689BDCF018}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CA91C496-8D9C-497D-8925-0E689BDCF018}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CA91C496-8D9C-497D-8925-0E689BDCF018}.Release|Any CPU.Build.0 = Release|Any CPU
 		{28987361-1F88-4976-9976-2972A07E93B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{28987361-1F88-4976-9976-2972A07E93B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28987361-1F88-4976-9976-2972A07E93B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
