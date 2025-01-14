@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 using Blocknote.Core.Database;
 using Blocknote.Core.Database.Repositories;
@@ -27,25 +28,48 @@ builder.Services.AddAuthentication(options =>
         {
             OnMessageReceived = context =>
             {
-                var cookie = context.Request.Cookies["jwt"];
-                if (!string.IsNullOrEmpty(cookie)) context.Token = cookie;
+                var token = context.Request.Cookies["jwt"];
+                if (!string.IsNullOrEmpty(token)) context.Token = token;
                 return Task.CompletedTask;
+                
             },
             OnTokenValidated = context =>
             {
-                var claims = context.Principal?.Claims;
-                var userIdClaim = claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub);
-                if (Guid.TryParse(userIdClaim?.Value, out var userId)) context.HttpContext.Items["UserId"] = userId;
-                return Task.CompletedTask;
-            },
-            OnChallenge = context =>
-            {
-                if (!context.HttpContext.User.Identity?.IsAuthenticated ?? true) context.Response.Redirect("login");
+                try
+                {
+                    Console.WriteLine("Token validated successfully");
+                    var claims = context.Principal?.Claims;
+                    var userIdClaim = claims?.FirstOrDefault(c => c.Type == "UserId");
+                    if (Guid.TryParse(userIdClaim?.Value, out var userId))
+                    {
+                        Console.WriteLine($"UserId from token: {userId}");
+                        var identity = context.Principal.Identity as ClaimsIdentity;
+                        if (identity != null)
+                        {
+                            if (!identity.HasClaim(c => c.Type == "UserId"))
+                            {
+                                identity.AddClaim(new Claim("UserId", userId.ToString()));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Failed to parse UserId from token");
+                        context.Fail("Invalid UserId in token");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Token validation error: {ex.Message}");
+                    context.Fail("Invalid token");
+                }
                 return Task.CompletedTask;
             }
+
+
         };
 
-        options.TokenValidationParameters = new TokenValidationParameters()
+        options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
             ValidateAudience = true,
@@ -77,7 +101,7 @@ builder.Services.AddScoped<IJwtService>(provider =>
     var audience = configuration["jwt:audience"] ?? throw new NullReferenceException();
     var expires = int.Parse(configuration["jwt:expires"] ?? throw new NullReferenceException());
 
-    return new JwtService(key, audience, issuer, expires);
+    return new JwtService(key, issuer, audience, expires);
 });
 builder.Services.AddScoped<IHashService, Sha256HashService>();
 

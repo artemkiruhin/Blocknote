@@ -23,6 +23,7 @@ public class JwtService : IJwtService
     {
         var claims = new Claim[]
         {
+            new("UserId", userId.ToString()),
             new(JwtRegisteredClaimNames.Sub, userId.ToString()),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
@@ -34,7 +35,7 @@ public class JwtService : IJwtService
             claims: claims,
             issuer: _issuer,
             audience: _audience,
-            expires: DateTime.Now.AddMinutes(_expiresInHours),
+            expires: DateTime.Now.AddHours(_expiresInHours),
             signingCredentials: creds
         );
         

@@ -30,6 +30,12 @@ namespace Blocknote.Api.Controllers
             {
                 var result = await _service.Login(request.Username, _hasher.Compute(request.Password));
                 if (result == string.Empty) return Unauthorized();
+                Response.Cookies.Append("jwt", result, new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = false,
+                    SameSite = SameSiteMode.Strict
+                });
                 return Ok(result);
             }
             catch (Exception e)
