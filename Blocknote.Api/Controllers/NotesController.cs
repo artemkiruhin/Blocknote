@@ -72,5 +72,22 @@ namespace Blocknote.Api.Controllers
                 return BadRequest();
             }
         }
+
+        [HttpPut("update")]
+        public async Task<IActionResult> Update([FromBody] UpdateNoteRequestModel request)
+        {
+            try
+            {
+                var userId = User.FindFirst("UserId")?.Value;
+                if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var userGuid)) return Unauthorized();
+
+                var result = await _service.EditAsync(userGuid, request.Id, request.Title, request.Subtitle, request.Content);
+                return result ? Ok() : BadRequest();
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
+        }
     } 
 }

@@ -101,7 +101,7 @@ public class NoteService : INoteService
         }
     }
 
-    public async Task<bool> EditAsync(Guid userId, Guid noteId, string? title, string? subtitle, string? content)
+    public async Task<bool> EditAsync(Guid userId, Guid noteId, string title, string? subtitle, string? content)
     {
         try
         {
@@ -110,7 +110,6 @@ public class NoteService : INoteService
             
             if (note.UserId != userId) return false;
             
-            if (title != null) note.Title = title;
             if (subtitle != null) note.Subtitle = subtitle;
             if (content != null) note.Content = content;
             note.UpdatedAt = DateTime.UtcNow;
