@@ -19,6 +19,7 @@ public class NoteService : INoteService
         var notes = await _repository.GetAllAsync();
         return notes.Select(x => new NoteDto()
         {
+            Id = x.Id,
             Title = x.Title,
             Content = x.Content,
             CreatedAt = x.CreatedAt,
@@ -32,6 +33,7 @@ public class NoteService : INoteService
         var notes = await _repository.GetByUserIdAsync(userId);
         return notes.Select(x => new NoteDto()
         {
+            Id = x.Id,
             Title = x.Title,
             Content = x.Content,
             CreatedAt = x.CreatedAt,
@@ -48,6 +50,7 @@ public class NoteService : INoteService
             if (note?.UserId != userId) return null;
             return new NoteDto()
             {
+                Id = note.Id,
                 Title = note.Title,
                 Subtitle = note.Subtitle,
                 Content = note.Content,
@@ -70,6 +73,7 @@ public class NoteService : INoteService
                 string.Concat(x.Content, x.Title, x.Subtitle).Contains(fullContent));
             var dtos = notes.Select(x => new NoteDto()
             {
+                Id = x.Id,
                 Title = x.Title,
                 Subtitle = x.Subtitle,
                 Content = x.Content,
