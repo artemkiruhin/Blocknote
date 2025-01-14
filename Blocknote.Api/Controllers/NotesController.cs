@@ -89,5 +89,22 @@ namespace Blocknote.Api.Controllers
                 return BadRequest();
             }
         }
+
+        [HttpDelete("delete/{id:guid}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            try
+            {
+                var userId = User.FindFirst("UserId")?.Value;
+                if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var userGuid)) return Unauthorized();
+
+                var result = await _service.DeleteAsync(userGuid, id);
+                return result ? Ok() : BadRequest();
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
+        }
     } 
 }

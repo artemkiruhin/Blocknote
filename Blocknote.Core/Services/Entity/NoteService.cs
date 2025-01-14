@@ -122,7 +122,7 @@ public class NoteService : INoteService
         }
     }
 
-    public async Task<bool> DeleteUser(Guid userId, Guid noteId)
+    public async Task<bool> DeleteAsync(Guid userId, Guid noteId)
     {
         try
         {
