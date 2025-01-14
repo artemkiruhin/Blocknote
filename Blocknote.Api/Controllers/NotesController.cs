@@ -1,3 +1,4 @@
+using Blocknote.Api.Contracts;
 using Blocknote.Core.Services.Base;
 using Blocknote.Core.Services.Jwt;
 using Microsoft.AspNetCore.Authorization;
@@ -53,5 +54,23 @@ namespace Blocknote.Api.Controllers
                 return BadRequest();
             }
         }
-    }
+
+        [HttpPost("create")]
+        public async Task<IActionResult> Create([FromBody] CreateNoteRequestModel request)
+        {
+            try
+            {
+                var userId = User.FindFirst("UserId")?.Value;
+                if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var userGuid)) return Unauthorized();
+
+                var result = await _service.CreateAsync(request.Title, request.Subtitle, request.Content, userGuid);
+                return result ? Created() : BadRequest();
+                
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
+        }
+    } 
 }
