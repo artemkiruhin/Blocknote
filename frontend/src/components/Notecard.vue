@@ -1,8 +1,9 @@
 <script setup>
 import {defineEmits, ref} from 'vue';
 defineProps({
+  id: String,
   title: String,
-  subtitle: ref(""),
+  subtitle: String,
 });
 defineEmits(['open', 'edit', 'delete']);
 </script>
@@ -11,7 +12,7 @@ defineEmits(['open', 'edit', 'delete']);
   <div class="note-card">
     <div class="note-card-content">
       <span class="note-card-title">{{ title }}</span>
-      <span class="note-card-subtitle" v-if="subtitle!==undefined" >{{ subtitle }}</span>
+      <span class="note-card-subtitle" v-if="subtitle" >{{ subtitle }}</span>
     </div>
     <div class="note-card-menu">
       <div class="menu-item" @click="$emit('open')">Открыть</div>
