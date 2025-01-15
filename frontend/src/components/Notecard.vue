@@ -1,5 +1,5 @@
 <script setup>
-import {defineEmits, ref} from 'vue';
+import {defineEmits} from 'vue';
 defineProps({
   id: String,
   title: String,
