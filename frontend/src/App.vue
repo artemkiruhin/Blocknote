@@ -1,7 +1,10 @@
 <script setup>
 import Notepage from "@/components/Notepage.vue";
-import Note from "../models/Note.js";
+import {getToken} from '/models/cookie-manager.js'
+import {ref} from "vue";
 
+import Note from "../models/Note.js";
+import AuthPage from "@/components/AuthPage.vue";
 const notes = [
   new Note("1", "Title 1", "Subtitle 1", "Content 1"),
   new Note("2", "Title 2", "Subtitle 2", "Content 2"),
@@ -12,5 +15,6 @@ const notes = [
 </script>
 
 <template>
-  <Notepage :notes="notes || []"/>
+  <AuthPage v-if="!getToken()" />
+  <Notepage v-if="getToken()" :notes="notes || []"/>
 </template>
