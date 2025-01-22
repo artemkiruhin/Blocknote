@@ -45,7 +45,7 @@ namespace Blocknote.Api.Controllers
         }
         
         [HttpPost("register")]
-        public async Task<IActionResult> Login([FromBody] RegisterRequestModel request)
+        public async Task<IActionResult> Register([FromBody] RegisterRequestModel request)
         {
             try
             {
