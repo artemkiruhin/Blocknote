@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue';
+import { login, register } from '../../models/api-handler.js'; // Adjust the import path as needed
 
 const isLogin = ref(true);
 
@@ -8,7 +9,7 @@ const password = ref('');
 const confirmPassword = ref('');
 const errorMessage = ref('');
 
-const handleSubmit = (event) => {
+const handleSubmit = async (event) => {
   event.preventDefault();
 
   if (!username.value || !password.value || (!isLogin.value && !confirmPassword.value)) {
@@ -21,10 +22,16 @@ const handleSubmit = (event) => {
     return;
   }
 
-  if (isLogin.value) {
-    // Логика для входа
-  } else {
-    // Логика для регистрации
+  try {
+    if (isLogin.value) {
+      await login(username.value, password.value);
+      console.log('User logged in successfully');
+    } else {
+      await register(username.value, password.value);
+      console.log('User registered in successfully');
+    }
+  } catch (error) {
+    errorMessage.value = error.message || 'Ошибка при авторизации.';
   }
 };
 </script>
@@ -35,7 +42,6 @@ const handleSubmit = (event) => {
       <a @click="isLogin = true" :class="['auth-tab', { active: isLogin }]">Вход</a>
       <a @click="isLogin = false" :class="['auth-tab', { active: !isLogin }]">Регистрация</a>
     </div>
-
 
     <form v-if="isLogin" class="auth-form" @submit="handleSubmit">
       <div class="form-group">
@@ -52,7 +58,6 @@ const handleSubmit = (event) => {
 
       <button type="submit" class="submit-btn">Войти</button>
     </form>
-
 
     <form v-if="!isLogin" class="auth-form" @submit="handleSubmit">
       <div class="form-group">
@@ -97,8 +102,7 @@ body, html {
   justify-content: center;
   align-items: center;
   background-color: #f4f4f4;
-  overflow: hidden; /* Убирает скролл */
-
+  overflow: hidden;
 }
 
 .auth-container {
@@ -201,9 +205,5 @@ body, html {
   color: #ef4444;
   font-size: 0.85rem;
   margin-top: 0.5rem;
-}
-
-.hidden {
-  display: none;
 }
 </style>
