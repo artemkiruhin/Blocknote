@@ -17,16 +17,16 @@ obj/
 *.userprefs
 
 # Папки платформ
-**/Platforms/Android/bin/
-**/Platforms/Android/obj/
-**/Platforms/iOS/bin/
-**/Platforms/iOS/obj/
-**/Platforms/MacCatalyst/bin/
-**/Platforms/MacCatalyst/obj/
-**/Platforms/Windows/bin/
-**/Platforms/Windows/obj/
-**/Platforms/Tizen/bin/
-**/Platforms/Tizen/obj/
+Blocknote.MAUIFrontend/Platforms/Android/bin/
+Blocknote.MAUIFrontend/Platforms/Android/obj/
+Blocknote.MAUIFrontend/Platforms/iOS/bin/
+Blocknote.MAUIFrontend/Platforms/iOS/obj/
+Blocknote.MAUIFrontend/Platforms/MacCatalyst/bin/
+Blocknote.MAUIFrontend/Platforms/MacCatalyst/obj/
+Blocknote.MAUIFrontend/Platforms/Windows/bin/
+Blocknote.MAUIFrontend/Platforms/Windows/obj/
+Blocknote.MAUIFrontend/Platforms/Tizen/bin/
+Blocknote.MAUIFrontend/Platforms/Tizen/obj/
 
 # Логи и файлы блокировки
 *.log

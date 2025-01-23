@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocknote.Core", "Blocknote
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocknote.Api", "Blocknote.Api\Blocknote.Api.csproj", "{28286AC4-719A-4212-9753-DC289F14CA32}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blocknote.MAUIFrontend", "Blocknote.MAUIFrontend\Blocknote.MAUIFrontend.csproj", "{806687C7-FBD8-4E16-917E-1C4D40BBECE1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{28286AC4-719A-4212-9753-DC289F14CA32}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28286AC4-719A-4212-9753-DC289F14CA32}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28286AC4-719A-4212-9753-DC289F14CA32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{806687C7-FBD8-4E16-917E-1C4D40BBECE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{806687C7-FBD8-4E16-917E-1C4D40BBECE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{806687C7-FBD8-4E16-917E-1C4D40BBECE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{806687C7-FBD8-4E16-917E-1C4D40BBECE1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
