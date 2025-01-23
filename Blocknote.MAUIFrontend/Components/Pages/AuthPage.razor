@@ -1,0 +1,114 @@
+﻿@page "/auth"
+@using System.ComponentModel.DataAnnotations
+
+<div class="auth-container">
+    <div class="auth-tabs">
+        <a @onclick="() => ToggleAuthMode(true)" class="auth-tab @(IsLogin ? "active" : "")">Вход</a>
+        <a @onclick="() => ToggleAuthMode(false)" class="auth-tab @(!IsLogin ? "active" : "")">Регистрация</a>
+    </div>
+
+    <EditForm Model="@authModel" OnValidSubmit="HandleSubmit" class="auth-form">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <InputText @bind-Value="authModel.Username" class="form-input" id="username" placeholder=" " />
+            <label class="form-label" for="username">Имя пользователя</label>
+            <ValidationMessage For="@(() => authModel.Username)" />
+        </div>
+
+        <div class="form-group">
+            <InputText type="password" @bind-Value="authModel.Password" class="form-input" id="password" placeholder=" " />
+            <label class="form-label" for="password">Пароль</label>
+            <ValidationMessage For="@(() => authModel.Password)" />
+        </div>
+
+        @if (!IsLogin)
+        {
+            <div class="form-group">
+                <InputText type="password" @bind-Value="authModel.ConfirmPassword" class="form-input" id="confirm-password" placeholder=" " />
+                <label class="form-label" for="confirm-password">Подтверждение пароля</label>
+                <ValidationMessage For="@(() => authModel.ConfirmPassword)" />
+            </div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+        {
+            <div class="error-message">@ErrorMessage</div>
+        }
+
+        <button type="submit" class="submit-btn">
+            @(IsLogin ? "Войти" : "Зарегистрироваться")
+        </button>
+    </EditForm>
+</div>
+
+@code {
+    private AuthModel authModel = new();
+    private bool IsLogin { get; set; } = true;
+    private string ErrorMessage { get; set; } = string.Empty;
+
+    private void ToggleAuthMode(bool isLogin)
+    {
+        IsLogin = isLogin;
+        ErrorMessage = string.Empty;
+        authModel = new AuthModel();
+    }
+
+    private async Task HandleSubmit()
+    {
+        try
+        {
+            // if (IsLogin)
+            // {
+            //     var result = await AuthService.LoginAsync(authModel.Username, authModel.Password);
+            //     if (result.Succeeded)
+            //     {
+            //         NavigationManager.NavigateTo("/");
+            //     }
+            //     else
+            //     {
+            //         ErrorMessage = "Неверное имя пользователя или пароль";
+            //     }
+            // }
+            // else
+            // {
+            //     if (authModel.Password != authModel.ConfirmPassword)
+            //     {
+            //         ErrorMessage = "Пароли не совпадают";
+            //         return;
+            //     }
+            //
+            //     var result = await AuthService.RegisterAsync(authModel.Username, authModel.Password);
+            //     if (result.Succeeded)
+            //     {
+            //         NavigationManager.NavigateTo("/login");
+            //     }
+            //     else
+            //     {
+            //         ErrorMessage = "Не удалось зарегистрировать пользователя";
+            //     }
+            // }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = "Произошла ошибка при авторизации";
+        }
+    }
+
+    public class AuthModel
+    {
+        [Required(ErrorMessage = "Имя пользователя обязательно")]
+        [StringLength(50, ErrorMessage = "Имя пользователя не должно превышать 50 символов")]
+        public string Username { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Пароль обязателен")]
+        [StringLength(100, MinimumLength = 6, ErrorMessage = "Пароль должен быть от 6 до 100 символов")]
+        public string Password { get; set; } = string.Empty;
+
+        [Compare(nameof(Password), ErrorMessage = "Пароли не совпадают")]
+        public string ConfirmPassword { get; set; } = string.Empty;
+    }
+    
+    [Inject] private NavigationManager NavigationManager { get; set; }
+}
