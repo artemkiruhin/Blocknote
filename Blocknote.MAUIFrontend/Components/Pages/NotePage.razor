@@ -1,10 +1,13 @@
 ﻿@page "/NotePage"
 @using Blocknote.Core.Models.Dtos
+@using Blocknote.Core.Services.Base
 @using Blocknote.Core.Services.Entity
 @using Blocknote.Core.Services.Jwt
-@inject NoteService NoteService
-@inject JwtService JwtService
+@inject INoteService NoteService
+@inject IJwtService JwtService
 @inject NavigationManager NavigationManager
+
+<Header/>
 
 <div class="container">
     @if (Notes.Any())
