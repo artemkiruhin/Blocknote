@@ -1,5 +1,12 @@
 ﻿@page "/auth"
 @using System.ComponentModel.DataAnnotations
+@using Blocknote.Core.Services.Base
+@using Blocknote.Core.Services.Hasher
+@using Blocknote.Core.Services.Jwt
+
+@inject IUserService UserService
+@inject IJwtService JwtService
+@inject IHashService HashService
 
 <div class="auth-container">
     <div class="auth-tabs">
@@ -59,36 +66,38 @@
     {
         try
         {
-            // if (IsLogin)
-            // {
-            //     var result = await AuthService.LoginAsync(authModel.Username, authModel.Password);
-            //     if (result.Succeeded)
-            //     {
-            //         NavigationManager.NavigateTo("/");
-            //     }
-            //     else
-            //     {
-            //         ErrorMessage = "Неверное имя пользователя или пароль";
-            //     }
-            // }
-            // else
-            // {
-            //     if (authModel.Password != authModel.ConfirmPassword)
-            //     {
-            //         ErrorMessage = "Пароли не совпадают";
-            //         return;
-            //     }
-            //
-            //     var result = await AuthService.RegisterAsync(authModel.Username, authModel.Password);
-            //     if (result.Succeeded)
-            //     {
-            //         NavigationManager.NavigateTo("/login");
-            //     }
-            //     else
-            //     {
-            //         ErrorMessage = "Не удалось зарегистрировать пользователя";
-            //     }
-            // }
+            if (IsLogin)
+            {
+                var result = await UserService.GetByUsernameAndPasswordAsync(authModel.Username, authModel.Password);
+                if (result != null)
+                {
+                    //var token = JwtService.GenerateToken(result)
+                    
+                    NavigationManager.NavigateTo("/");
+                }
+                else
+                {
+                    ErrorMessage = "Неверное имя пользователя или пароль";
+                }
+            }
+            else
+            {
+                if (authModel.Password != authModel.ConfirmPassword)
+                {
+                    ErrorMessage = "Пароли не совпадают";
+                    return;
+                }
+            
+                var result = await UserService.Register(authModel.Username, HashService.Compute(authModel.Password));
+                if (result)
+                {
+                    IsLogin = true;
+                }
+                else
+                {
+                    ErrorMessage = "Не удалось зарегистрировать пользователя";
+                }
+            }
         }
         catch (Exception ex)
         {
