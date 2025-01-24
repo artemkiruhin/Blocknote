@@ -23,20 +23,22 @@ public class UserService : IUserService
         try
         {
             var user = await _repository.GetByIdAsync(userId);
-            return new UserDto()
-            {
-                Id = user.Id,
-                Username = user.Username,
-                RegisteredAt = user.RegisteredAt,
-                Notes = user.Notes.Select(n => new NoteDto()
+            if (user != null)
+                return new UserDto()
                 {
-                    Content = n.Content,
-                    CreatedAt = n.CreatedAt,
-                    UpdatedAt = n.UpdatedAt,
-                    Subtitle = n.Subtitle,
-                    Title = n.Title,
-                }).ToList()
-            };
+                    Id = user.Id,
+                    Username = user.Username,
+                    RegisteredAt = user.RegisteredAt,
+                    Notes = user.Notes.Select(n => new NoteDto()
+                    {
+                        Content = n.Content,
+                        CreatedAt = n.CreatedAt,
+                        UpdatedAt = n.UpdatedAt,
+                        Subtitle = n.Subtitle,
+                        Title = n.Title,
+                    }).ToList()
+                };
+            return null;
         }
         catch
         {
@@ -50,20 +52,22 @@ public class UserService : IUserService
         {
             var users = await _repository.FindAsync(u => u.Username == username);
             var user = users.FirstOrDefault();
-            return new UserDto()
-            {
-                Id = user.Id,
-                Username = user.Username,
-                RegisteredAt = user.RegisteredAt,
-                Notes = user.Notes.Select(n => new NoteDto()
+            if (user != null)
+                return new UserDto()
                 {
-                    Content = n.Content,
-                    CreatedAt = n.CreatedAt,
-                    UpdatedAt = n.UpdatedAt,
-                    Subtitle = n.Subtitle,
-                    Title = n.Title,
-                }).ToList()
-            };
+                    Id = user.Id,
+                    Username = user.Username,
+                    RegisteredAt = user.RegisteredAt,
+                    Notes = user.Notes.Select(n => new NoteDto()
+                    {
+                        Content = n.Content,
+                        CreatedAt = n.CreatedAt,
+                        UpdatedAt = n.UpdatedAt,
+                        Subtitle = n.Subtitle,
+                        Title = n.Title,
+                    }).ToList()
+                };
+            return null;
         }
         catch
         {
@@ -77,20 +81,22 @@ public class UserService : IUserService
         {
             var users = await _repository.FindAsync(u => u.Username == username && u.PasswordHash == password);
             var user = users.FirstOrDefault();
-            return new UserDto()
-            {
-                Id = user.Id,
-                Username = user.Username,
-                RegisteredAt = user.RegisteredAt,
-                Notes = user.Notes.Select(n => new NoteDto()
+            if (user != null)
+                return new UserDto()
                 {
-                    Content = n.Content,
-                    CreatedAt = n.CreatedAt,
-                    UpdatedAt = n.UpdatedAt,
-                    Subtitle = n.Subtitle,
-                    Title = n.Title,
-                }).ToList()
-            };
+                    Id = user.Id,
+                    Username = user.Username,
+                    RegisteredAt = user.RegisteredAt,
+                    Notes = user.Notes.Select(n => new NoteDto()
+                    {
+                        Content = n.Content,
+                        CreatedAt = n.CreatedAt,
+                        UpdatedAt = n.UpdatedAt,
+                        Subtitle = n.Subtitle,
+                        Title = n.Title,
+                    }).ToList()
+                };
+            return null;
         }
         catch
         {
