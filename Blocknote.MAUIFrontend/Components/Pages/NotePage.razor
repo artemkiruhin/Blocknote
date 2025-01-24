@@ -1,0 +1,51 @@
+﻿@page "/NotePage"
+@using Blocknote.Core.Models.Dtos
+
+    @* <Header/> *@
+    <div class="container">
+
+        
+        @{
+            if (Notes.Any())
+            {
+                foreach (var note in Notes)
+                {
+                    @* <Notecard *@
+                    @*     v-for="note in notes" *@
+                    @*     :key="note.id" *@
+                    @*     :id="note.id" *@
+                    @*     :title="note.title" *@
+                    @*     :subtitle="note.subtitle" *@
+                    @*     class="note-item" *@
+                    @* /> *@
+                }
+            }
+            else
+            {
+                <div v-if="!notes.length" class="empty-state">
+                    <p>Заметок пока нет</p>
+                </div>
+            }
+        }
+    </div>
+    
+@code {
+
+    List<NoteDto> Notes { get; set; } = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            //get jwt token
+            //validate and get guid
+            //get notes by guid
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+}
