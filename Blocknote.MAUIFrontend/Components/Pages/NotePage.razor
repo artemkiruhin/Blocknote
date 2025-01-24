@@ -1,51 +1,78 @@
 ﻿@page "/NotePage"
 @using Blocknote.Core.Models.Dtos
+@using Blocknote.Core.Services.Entity
+@using Blocknote.Core.Services.Jwt
+@inject NoteService NoteService
+@inject JwtService JwtService
+@inject NavigationManager NavigationManager
 
-    @* <Header/> *@
-    <div class="container">
-
-        
-        @{
-            if (Notes.Any())
-            {
-                foreach (var note in Notes)
-                {
-                    @* <Notecard *@
-                    @*     v-for="note in notes" *@
-                    @*     :key="note.id" *@
-                    @*     :id="note.id" *@
-                    @*     :title="note.title" *@
-                    @*     :subtitle="note.subtitle" *@
-                    @*     class="note-item" *@
-                    @* /> *@
-                }
-            }
-            else
-            {
-                <div v-if="!notes.length" class="empty-state">
-                    <p>Заметок пока нет</p>
-                </div>
-            }
+<div class="container">
+    @if (Notes.Any())
+    {
+        foreach (var note in Notes)
+        {
+            <NoteCard 
+                Model="note" 
+                OnNoteDeleted="RefreshNotes" 
+                class="note-item" />
         }
-    </div>
-    
-@code {
+    }
+    else
+    {
+        <div class="empty-state">
+            <p>Заметок пока нет</p>
+        </div>
+    }
+</div>
 
-    List<NoteDto> Notes { get; set; } = [];
+@code {
+    private List<NoteDto> Notes { get; set; } = new();
+    private string? ErrorMessage { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            //get jwt token
-            //validate and get guid
-            //get notes by guid
+            var token = await SecureStorage.Default.GetAsync("jwt");
+            if (string.IsNullOrEmpty(token))
+            {
+                NavigationManager.NavigateTo("auth");
+                return;
+            }
+
+            var userId = JwtService.GetUserId(token);
+            if (userId == Guid.Empty)
+            {
+                ErrorMessage = "Ошибка авторизации. Пожалуйста, выполните вход.";
+                return;
+            }
+
+            Notes = await NoteService.GetAllAsync(userId) as List<NoteDto> ?? [];
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine(e);
-            throw;
+            ErrorMessage = $"Ошибка загрузки заметок: {ex.Message}";
+            Console.WriteLine(ErrorMessage);
         }
     }
 
+    private async Task RefreshNotes()
+    {
+        try
+        {
+            var token = await SecureStorage.Default.GetAsync("jwt");
+            if (!string.IsNullOrEmpty(token))
+            {
+                var userId = JwtService.GetUserId(token);
+                if (userId != Guid.Empty)
+                {
+                    Notes = await NoteService.GetAllAsync(userId) as List<NoteDto> ?? [];
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ошибка обновления заметок: {ex.Message}");
+        }
+    }
 }
