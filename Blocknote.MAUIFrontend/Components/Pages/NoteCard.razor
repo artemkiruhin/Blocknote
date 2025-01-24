@@ -1,0 +1,45 @@
+﻿@using Blocknote.Core.Models.Dtos
+
+<div class="note-card">
+    <div class="note-card-content" @onclick="() => { ShowModal = true; }">
+        <span class="note-card-title">@Model.Title</span>
+        @{
+            if (!string.IsNullOrEmpty(Model.Subtitle))
+            {
+                <span class="note-card-subtitle">@Model.Subtitle</span>
+            }
+        }
+    </div>
+    <div class="note-card-menu">
+        <div class="menu-item" @onclick="OpenNote">Открыть</div>
+        <div class="menu-item" @onclick="EditNote">Редактировать</div>
+        <div class="menu-item delete" @onclick="DeleteNote">Удалить</div>
+    </div>
+</div>
+
+    @* <Notemodal *@
+    @*     v-if="showModal" *@
+    @*     :title="title" *@
+    @*     :subtitle="subtitle" *@
+    @*     :content="content" *@
+    @*     :id="id" *@
+    @*     @close="showModal = false" *@
+    @* /> *@
+
+@code {
+    public NoteDto Model { get; set; } = new();
+    bool ShowModal { get; set; } = false;
+
+    async Task OpenNote()
+    {
+        
+    }
+    async Task EditNote()
+    {
+        
+    }
+    async Task DeleteNote()
+    {
+        
+    }
+}
