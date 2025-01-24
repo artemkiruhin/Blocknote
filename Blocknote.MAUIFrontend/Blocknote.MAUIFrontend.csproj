@@ -67,6 +67,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Blocknote.Api\Blocknote.Api.csproj" />
       <ProjectReference Include="..\Blocknote.Core\Blocknote.Core.csproj" />
     </ItemGroup>
 

@@ -1,0 +1,132 @@
+﻿@using Blocknote.Api.Contracts
+@using Blocknote.Api.Controllers
+@using Blocknote.Core.Models.Dtos
+@using Blocknote.Core.Services.Base
+@using Blocknote.Core.Services.Entity
+@using Blocknote.Core.Services.Jwt
+
+@inject INoteService NoteService
+@inject IJwtService JwtService
+@inject NavigationManager NavigationManager
+
+<div class="modal">
+    <div class="modal-content">
+        <h2>@(!Id.HasValue ? "Добавить заметку" : "Редактировать заметку")</h2>
+        <input
+            @bind="LocalTitle"
+            class="modal-input"
+            placeholder="Заголовок заметки"
+            type="text"
+        />
+        <input
+            @bind="LocalSubtitle"
+            class="modal-input"
+            placeholder="Подзаголовок заметки"
+            type="text"
+        />
+        <textarea
+            @bind="LocalContent"
+            class="modal-textarea"
+            placeholder="Содержание заметки"
+        ></textarea>
+        <div class="modal-buttons">
+            <button class="modal-cancel" @onclick="OnClose">Отмена</button>
+            <button class="modal-save" @onclick="OnSave">Сохранить</button>
+        </div>
+        @if (!string.IsNullOrEmpty(ErrorMessage))
+        {
+            <p class="modal-error">@ErrorMessage</p>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Guid? Id { get; set; }
+
+    [Parameter]
+    public string Title { get; set; } = "";
+
+    [Parameter]
+    public string? Subtitle { get; set; }
+
+    [Parameter]
+    public string? Content { get; set; }
+
+    [Parameter]
+    public EventCallback OnCloseModal { get; set; }
+
+    private string LocalTitle { get; set; } = string.Empty;
+    private string LocalSubtitle { get; set; } = string.Empty;
+    private string LocalContent { get; set; } = string.Empty;
+    private string? ErrorMessage { get; set; }
+
+    protected override void OnInitialized()
+    {
+        LocalTitle = Title ?? string.Empty;
+        LocalSubtitle = Subtitle ?? string.Empty;
+        LocalContent = Content ?? string.Empty;
+    }
+
+    private async Task OnSave()
+    {
+        ErrorMessage = string.Empty;
+        
+        if (string.IsNullOrWhiteSpace(LocalTitle))
+        {
+            ErrorMessage = "Заголовок не может быть пустым.";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(LocalContent))
+        {
+            ErrorMessage = "Содержание заметки не может быть пустым.";
+            return;
+        }
+
+        try
+        {
+            var token = await SecureStorage.Default.GetAsync("jwt");
+            if (string.IsNullOrEmpty(token))
+            {
+                NavigationManager.NavigateTo("auth");
+                return;
+            }
+
+            var userId = JwtService.GetUserId(token);
+            if (userId == Guid.Empty)
+            {
+                ErrorMessage = "Ошибка авторизации.";
+                return;
+            }
+
+            bool result;
+
+            if (Id.HasValue)
+            {
+                result = await NoteService.EditAsync(userId, Id.Value, LocalTitle, LocalSubtitle, LocalContent);
+            }
+            else
+            {
+                result = await NoteService.CreateAsync(LocalTitle, LocalSubtitle, LocalContent, userId);
+            }
+
+            if (!result)
+            {
+                ErrorMessage = "Не удалось сохранить изменения. Попробуйте снова.";
+                return;
+            }
+
+            await OnCloseModal.InvokeAsync();
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Произошла ошибка: {ex.Message}";
+        }
+    }
+
+    private async Task OnClose()
+    {
+        await OnCloseModal.InvokeAsync();
+    }
+}
