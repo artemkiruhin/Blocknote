@@ -77,3 +77,4 @@ yarn-error.log*
 *.swp
 *.bak
 *.tmp
+/.vs
