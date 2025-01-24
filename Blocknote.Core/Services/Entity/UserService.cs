@@ -25,6 +25,7 @@ public class UserService : IUserService
             var user = await _repository.GetByIdAsync(userId);
             return new UserDto()
             {
+                Id = user.Id,
                 Username = user.Username,
                 RegisteredAt = user.RegisteredAt,
                 Notes = user.Notes.Select(n => new NoteDto()
@@ -51,6 +52,7 @@ public class UserService : IUserService
             var user = users.FirstOrDefault();
             return new UserDto()
             {
+                Id = user.Id,
                 Username = user.Username,
                 RegisteredAt = user.RegisteredAt,
                 Notes = user.Notes.Select(n => new NoteDto()
@@ -77,6 +79,7 @@ public class UserService : IUserService
             var user = users.FirstOrDefault();
             return new UserDto()
             {
+                Id = user.Id,
                 Username = user.Username,
                 RegisteredAt = user.RegisteredAt,
                 Notes = user.Notes.Select(n => new NoteDto()
