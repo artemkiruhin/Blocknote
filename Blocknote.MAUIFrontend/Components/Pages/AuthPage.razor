@@ -71,7 +71,8 @@
                 var result = await UserService.GetByUsernameAndPasswordAsync(authModel.Username, authModel.Password);
                 if (result != null)
                 {
-                    //var token = JwtService.GenerateToken(result)
+                    var token = JwtService.GenerateToken(result.Id);
+                    await SecureStorage.Default.SetAsync("jwt", token);
                     
                     NavigationManager.NavigateTo("/");
                 }
