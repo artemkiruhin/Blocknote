@@ -1,4 +1,10 @@
 ﻿@using Blocknote.Core.Models.Dtos
+@using Blocknote.Core.Services.Entity
+@using Blocknote.Core.Services.Jwt
+
+@inject NoteService NoteService
+@inject JwtService JwtService
+@inject NavigationManager NavigationManager
 
 <div class="note-card">
     <div class="note-card-content" @onclick="() => { ShowModal = true; }">
@@ -12,34 +18,164 @@
     </div>
     <div class="note-card-menu">
         <div class="menu-item" @onclick="OpenNote">Открыть</div>
-        <div class="menu-item" @onclick="EditNote">Редактировать</div>
+        <div class="menu-item" @onclick="() => ShowEditModal()">Редактировать</div>
         <div class="menu-item delete" @onclick="DeleteNote">Удалить</div>
     </div>
 </div>
 
-    @* <Notemodal *@
-    @*     v-if="showModal" *@
-    @*     :title="title" *@
-    @*     :subtitle="subtitle" *@
-    @*     :content="content" *@
-    @*     :id="id" *@
-    @*     @close="showModal = false" *@
-    @* /> *@
+@if (ShowModal)
+{
+    <div class="modal">
+        <div class="modal-content">
+            <h2>@(!EditMode ? "Просмотр заметки" : "Редактирование заметки")</h2>
+            @if (!string.IsNullOrEmpty(ErrorMessage))
+            {
+                <p class="error-message">@ErrorMessage</p>
+            }
+            @if (EditMode)
+            {
+                <input
+                    @bind="LocalTitle"
+                    class="modal-input"
+                    placeholder="Заголовок заметки"
+                    type="text"
+                />
+                <input
+                    @bind="LocalSubtitle"
+                    class="modal-input"
+                    placeholder="Подзаголовок заметки"
+                    type="text"
+                />
+                <textarea
+                    @bind="LocalContent"
+                    class="modal-textarea"
+                    placeholder="Содержание заметки"
+                ></textarea>
+                <div class="modal-buttons">
+                    <button class="modal-cancel" @onclick="CloseModal">Отмена</button>
+                    <button class="modal-save" @onclick="SaveChanges">Сохранить</button>
+                </div>
+            }
+            else
+            {
+                <p><strong>Заголовок:</strong> @Model.Title</p>
+                <p><strong>Подзаголовок:</strong> @Model.Subtitle</p>
+                <p><strong>Содержание:</strong></p>
+                <p>@Model.Content</p>
+                <button class="modal-close" @onclick="CloseModal">Закрыть</button>
+            }
+        </div>
+    </div>
+}
 
 @code {
-    public NoteDto Model { get; set; } = new();
-    bool ShowModal { get; set; } = false;
+    [Parameter] public NoteDto Model { get; set; } = new();
+    [Parameter] public EventCallback OnNoteDeleted { get; set; }
 
-    async Task OpenNote()
+    private bool ShowModal { get; set; } = false;
+    private bool EditMode { get; set; } = false;
+
+    private string LocalTitle { get; set; } = string.Empty;
+    private string LocalSubtitle { get; set; } = string.Empty;
+    private string LocalContent { get; set; } = string.Empty;
+    
+    private string? ErrorMessage { get; set; }
+
+    private async Task OpenNote()
     {
-        
+        ShowModal = true;
+        EditMode = false;
     }
-    async Task EditNote()
+
+    private async Task ShowEditModal()
     {
-        
+        ShowModal = true;
+        EditMode = true;
+
+        LocalTitle = Model.Title;
+        LocalSubtitle = Model.Subtitle;
+        LocalContent = Model.Content;
     }
-    async Task DeleteNote()
+
+    private async Task DeleteNote()
     {
-        
+        try
+        {
+            ErrorMessage = null;
+
+            var token = await SecureStorage.Default.GetAsync("jwt");
+            if (string.IsNullOrEmpty(token))
+            {
+                NavigationManager.NavigateTo("auth");
+                return;
+            }
+
+            var userId = JwtService.GetUserId(token);
+            if (userId == Guid.Empty)
+            {
+                ErrorMessage = "Ошибка авторизации.";
+                return;
+            }
+
+            var result = await NoteService.DeleteAsync(userId, Model.Id);
+            if (!result)
+            {
+                ErrorMessage = "Не удалось удалить заметку.";
+                return;
+            }
+
+            await OnNoteDeleted.InvokeAsync();
+            ShowModal = false;
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Ошибка удаления заметки: {ex.Message}";
+        }
+    }
+
+    private async Task SaveChanges()
+    {
+        try
+        {
+            ErrorMessage = null;
+
+            var token = await SecureStorage.Default.GetAsync("jwt");
+            if (string.IsNullOrEmpty(token))
+            {
+                NavigationManager.NavigateTo("auth");
+                return;
+            }
+
+            var userId = JwtService.GetUserId(token);
+            if (userId == Guid.Empty)
+            {
+                ErrorMessage = "Ошибка авторизации.";
+                return;
+            }
+
+            var result = await NoteService.EditAsync(userId, Model.Id, LocalTitle, LocalSubtitle, LocalContent);
+            if (!result)
+            {
+                ErrorMessage = "Не удалось сохранить изменения.";
+                return;
+            }
+
+            Model.Title = LocalTitle;
+            Model.Subtitle = LocalSubtitle;
+            Model.Content = LocalContent;
+
+            ShowModal = false;
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Ошибка сохранения изменений: {ex.Message}";
+        }
+    }
+
+    private void CloseModal()
+    {
+        ShowModal = false;
+        EditMode = false;
+        ErrorMessage = null;
     }
 }
