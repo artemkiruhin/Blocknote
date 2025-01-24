@@ -1,6 +1,34 @@
-﻿<Router AppAssembly="@typeof(MauiProgram).Assembly">
+﻿@using Blocknote.Core.Services.Base
+@using Blocknote.Core.Services.Jwt
+<Router AppAssembly="@typeof(MauiProgram).Assembly">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(Layout.MainLayout)"/>
         @*<FocusOnNavigate RouteData="@routeData" Selector="h1"/>*@
     </Found>
 </Router>
+
+@inject NavigationManager NavigationManager
+@inject IJwtService JwtService
+@inject IUserService UserService
+
+@code
+{
+    protected override async Task OnInitializedAsync()
+    {
+        var token = await SecureStorage.Default.GetAsync("jwt");
+        if (string.IsNullOrEmpty(token))
+        {
+            NavigationManager.NavigateTo("auth");
+        }
+        
+        var userId = JwtService.GetUserId(token);
+        if (userId == Guid.Empty)
+        {
+            NavigationManager.NavigateTo("auth");
+        }
+        var user = await UserService.GetInfoAsync(userId);
+        if (user == null) NavigationManager.NavigateTo("auth");
+        
+        NavigationManager.NavigateTo("/");
+    }
+}
