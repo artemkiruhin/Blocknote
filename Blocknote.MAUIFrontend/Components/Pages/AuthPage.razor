@@ -1,8 +1,14 @@
 ﻿@page "/auth"
+
+
+@using Blocknote.MAUIFrontend.Components.Layout;
 @using System.ComponentModel.DataAnnotations
 @using Blocknote.Core.Services.Base
 @using Blocknote.Core.Services.Hasher
 @using Blocknote.Core.Services.Jwt
+
+
+@layout AuthLayout
 
 @inject IUserService UserService
 @inject IJwtService JwtService
