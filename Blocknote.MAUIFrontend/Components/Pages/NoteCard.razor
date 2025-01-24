@@ -15,12 +15,24 @@
                 <span class="note-card-subtitle">@Model.Subtitle</span>
             }
         }
+        <span class="note-card-date">@Model.UpdatedAt.ToString()</span>
     </div>
     <div class="note-card-menu">
         <div class="menu-item" @onclick="OpenNote">Открыть</div>
         <div class="menu-item" @onclick="() => ShowEditModal()">Редактировать</div>
-        <div class="menu-item delete" @onclick="DeleteNote">Удалить</div>
+        <div class="menu-item delete" @onclick="ConfirmDeleteNote">Удалить</div>
     </div>
+
+    @if (ShowDeleteConfirmation)
+    {
+        <div class="delete-confirmation">
+            <p>Вы уверены, что хотите удалить заметку?</p>
+            <div class="confirmation-buttons">
+                <button @onclick="ConfirmDelete">Да</button>
+                <button @onclick="CancelDelete">Отмена</button>
+            </div>
+        </div>
+    }
 </div>
 
 @if (ShowModal)
@@ -74,6 +86,7 @@
 
     private bool ShowModal { get; set; } = false;
     private bool EditMode { get; set; } = false;
+    private bool ShowDeleteConfirmation { get; set; } = false;
 
     private string LocalTitle { get; set; } = string.Empty;
     private string LocalSubtitle { get; set; } = string.Empty;
@@ -95,6 +108,22 @@
         LocalTitle = Model.Title;
         LocalSubtitle = Model.Subtitle;
         LocalContent = Model.Content;
+    }
+
+    private void ConfirmDeleteNote()
+    {
+        ShowDeleteConfirmation = true;
+    }
+
+    private async Task ConfirmDelete()
+    {
+        await DeleteNote();
+        ShowDeleteConfirmation = false;
+    }
+
+    private void CancelDelete()
+    {
+        ShowDeleteConfirmation = false;
     }
 
     private async Task DeleteNote()

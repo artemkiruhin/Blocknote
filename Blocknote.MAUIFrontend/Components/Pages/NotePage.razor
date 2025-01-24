@@ -10,29 +10,59 @@
 <Header/>
 
 <div class="container">
+    @if (!string.IsNullOrEmpty(ErrorMessage))
+    {
+        <div class="alert alert-danger">@ErrorMessage</div>
+    }
+
     @if (Notes.Any())
     {
-        foreach (var note in Notes)
-        {
-            <NoteCard 
-                Model="note" 
-                OnNoteDeleted="RefreshNotes" 
-                class="note-item" />
-        }
+        <div class="notes-grid">
+            @foreach (var note in Notes)
+            {
+                <NoteCard 
+                    Model="note" 
+                    OnNoteDeleted="RefreshNotes" 
+                    class="note-item" />
+            }
+        </div>
     }
     else
     {
         <div class="empty-state">
-            <p>Заметок пока нет</p>
+            <p>Создайте свою первую заметку</p>
+            <button class="btn-primary" @onclick="ShowCreateNoteModal">Новая заметка</button>
         </div>
     }
+
+    <button class="fab-add-note" @onclick="ShowCreateNoteModal">+</button>
 </div>
+
+@if (ShowModal)
+{
+    <NoteModal 
+        OnCloseModal="CloseModal" 
+        Id="@EditingNoteId" 
+        Title="@EditingNoteTitle" 
+        Subtitle="@EditingNoteSubtitle" 
+        Content="@EditingNoteContent" />
+}
 
 @code {
     private List<NoteDto> Notes { get; set; } = new();
     private string? ErrorMessage { get; set; }
+    private bool ShowModal { get; set; } = false;
+    private Guid? EditingNoteId { get; set; }
+    private string EditingNoteTitle { get; set; } = string.Empty;
+    private string? EditingNoteSubtitle { get; set; }
+    private string? EditingNoteContent { get; set; }
 
     protected override async Task OnInitializedAsync()
+    {
+        await LoadNotes();
+    }
+
+    private async Task LoadNotes()
     {
         try
         {
@@ -55,27 +85,27 @@
         catch (Exception ex)
         {
             ErrorMessage = $"Ошибка загрузки заметок: {ex.Message}";
-            Console.WriteLine(ErrorMessage);
         }
+    }
+
+    private void ShowCreateNoteModal()
+    {
+        EditingNoteId = null;
+        EditingNoteTitle = string.Empty;
+        EditingNoteSubtitle = string.Empty;
+        EditingNoteContent = string.Empty;
+        ShowModal = true;
+    }
+
+    private void CloseModal()
+    {
+        ShowModal = false;
+        StateHasChanged();
+        LoadNotes();
     }
 
     private async Task RefreshNotes()
     {
-        try
-        {
-            var token = await SecureStorage.Default.GetAsync("jwt");
-            if (!string.IsNullOrEmpty(token))
-            {
-                var userId = JwtService.GetUserId(token);
-                if (userId != Guid.Empty)
-                {
-                    Notes = await NoteService.GetAllAsync(userId) as List<NoteDto> ?? [];
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Ошибка обновления заметок: {ex.Message}");
-        }
+        await LoadNotes();
     }
 }

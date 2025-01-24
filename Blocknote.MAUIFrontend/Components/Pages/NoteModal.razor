@@ -11,31 +11,37 @@
 
 <div class="modal">
     <div class="modal-content">
-        <h2>@(!Id.HasValue ? "Добавить заметку" : "Редактировать заметку")</h2>
-        <input
-            @bind="LocalTitle"
-            class="modal-input"
-            placeholder="Заголовок заметки"
-            type="text"
-        />
-        <input
-            @bind="LocalSubtitle"
-            class="modal-input"
-            placeholder="Подзаголовок заметки"
-            type="text"
-        />
-        <textarea
-            @bind="LocalContent"
-            class="modal-textarea"
-            placeholder="Содержание заметки"
-        ></textarea>
-        <div class="modal-buttons">
+        <div class="modal-header">
+            <h2>@(!Id.HasValue ? "Добавить заметку" : "Редактировать заметку")</h2>
+            <button class="modal-close" @onclick="OnClose">×</button>
+        </div>
+        <div class="modal-body">
+            <input
+                @bind="LocalTitle"
+                class="modal-input"
+                placeholder="Заголовок заметки"
+                type="text"
+            />
+            <input
+                @bind="LocalSubtitle"
+                class="modal-input"
+                placeholder="Подзаголовок заметки (необязательно)"
+                type="text"
+            />
+            <textarea
+                @bind="LocalContent"
+                class="modal-textarea"
+                placeholder="Содержание заметки"
+                rows="6"
+            ></textarea>
+        </div>
+        <div class="modal-footer">
             <button class="modal-cancel" @onclick="OnClose">Отмена</button>
-            <button class="modal-save" @onclick="OnSave">Сохранить</button>
+            <button class="modal-save" @onclick="OnSave" disabled="@(!IsFormValid)">Сохранить</button>
         </div>
         @if (!string.IsNullOrEmpty(ErrorMessage))
         {
-            <p class="modal-error">@ErrorMessage</p>
+            <div class="modal-error">@ErrorMessage</div>
         }
     </div>
 </div>
@@ -61,6 +67,10 @@
     private string LocalContent { get; set; } = string.Empty;
     private string? ErrorMessage { get; set; }
 
+    private bool IsFormValid =>
+        !string.IsNullOrWhiteSpace(LocalTitle) &&
+        !string.IsNullOrWhiteSpace(LocalContent);
+
     protected override void OnInitialized()
     {
         LocalTitle = Title ?? string.Empty;
@@ -71,16 +81,10 @@
     private async Task OnSave()
     {
         ErrorMessage = string.Empty;
-        
-        if (string.IsNullOrWhiteSpace(LocalTitle))
-        {
-            ErrorMessage = "Заголовок не может быть пустым.";
-            return;
-        }
 
-        if (string.IsNullOrWhiteSpace(LocalContent))
+        if (!IsFormValid)
         {
-            ErrorMessage = "Содержание заметки не может быть пустым.";
+            ErrorMessage = "Заголовок и содержание заметки обязательны.";
             return;
         }
 
