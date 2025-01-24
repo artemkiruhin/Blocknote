@@ -1,0 +1,42 @@
+﻿@using Blocknote.Core.Models.Dtos
+<div class="header">
+    <h1>Мои заметки</h1>
+    <button class="add-note-btn" @onclick="ShowModal">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        Добавить заметку
+    </button>
+
+    @if (IsModalVisible)
+    {
+        <NoteModal
+            Note="CurrentNote"
+            OnSave="AddNote"
+            OnClose="HideModal" />
+    }
+</div>
+
+@code {
+    [Parameter] public EventCallback<NoteDto> OnNoteAdded { get; set; }
+    private bool IsModalVisible { get; set; } = false;
+    private NoteDto CurrentNote { get; set; } = new NoteDto();
+
+    private void ShowModal()
+    {
+        CurrentNote = new NoteDto();
+        IsModalVisible = true;
+    }
+
+    private void HideModal()
+    {
+        IsModalVisible = false;
+    }
+
+    private async Task AddNote(NoteDto note)
+    {
+        await OnNoteAdded.InvokeAsync(note);
+        IsModalVisible = false;
+    }
+}
