@@ -74,7 +74,7 @@
         {
             if (IsLogin)
             {
-                var result = await UserService.GetByUsernameAndPasswordAsync(authModel.Username, authModel.Password);
+                var result = await UserService.GetByUsernameAndPasswordAsync(authModel.Username, HashService.Compute(authModel.Password));
                 if (result != null)
                 {
                     var token = JwtService.GenerateToken(result.Id);
