@@ -5,10 +5,24 @@ namespace Blocknote.Core.Database;
 
 public class AppDbContext : DbContext
 {
+    private readonly string _connectionString;
+
     public DbSet<UserEntity> Users { get; set; }
     public DbSet<NoteEntity> Notes { get; set; }
-    
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+
+    public AppDbContext(string connectionString)
+    {
+        _connectionString = connectionString;
+    }
+    //public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+
+        optionsBuilder.UseNpgsql(_connectionString);
+        optionsBuilder.UseLazyLoadingProxies();
+
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -7,23 +7,26 @@
 @inject IJwtService JwtService
 @inject NavigationManager NavigationManager
 
-<Header/>
+<Header />
 
 <div class="container">
-    @if (!string.IsNullOrEmpty(ErrorMessage))
+    @if (IsLoading)
+    {
+        <div class="loading-state">Загрузка заметок...</div>
+    }
+    else if (!string.IsNullOrEmpty(ErrorMessage))
     {
         <div class="alert alert-danger">@ErrorMessage</div>
     }
-
-    @if (Notes.Any())
+    else if (Notes.Count > 0)
     {
-        <div class="notes-grid">
+        <div class="note-list">
             @foreach (var note in Notes)
             {
-                <NoteCard 
-                    Model="note" 
-                    OnNoteDeleted="RefreshNotes" 
-                    class="note-item" />
+                <div class="note-card">
+                    <NoteCard Model="note"
+                              OnNoteDeleted="RefreshNotes" />
+                </div>
             }
         </div>
     }
@@ -31,27 +34,29 @@
     {
         <div class="empty-state">
             <p>Создайте свою первую заметку</p>
-            <button class="btn-primary" @onclick="ShowCreateNoteModal">Новая заметка</button>
+            <button class="add-note-btn" @onclick="ShowCreateNoteModal">Новая заметка</button>
         </div>
     }
-
-    <button class="fab-add-note" @onclick="ShowCreateNoteModal">+</button>
 </div>
 
 @if (ShowModal)
 {
-    <NoteModal 
-        OnCloseModal="CloseModal" 
-        Id="@EditingNoteId" 
-        Title="@EditingNoteTitle" 
-        Subtitle="@EditingNoteSubtitle" 
-        Content="@EditingNoteContent" />
+    <div class="modal">
+        <div class="modal-content">
+            <NoteModal OnCloseModal="CloseModal"
+                       Id="@EditingNoteId"
+                       Title="@EditingNoteTitle"
+                       Subtitle="@EditingNoteSubtitle"
+                       Content="@EditingNoteContent" />
+        </div>
+    </div>
 }
 
 @code {
     private List<NoteDto> Notes { get; set; } = new();
     private string? ErrorMessage { get; set; }
     private bool ShowModal { get; set; } = false;
+    private bool IsLoading { get; set; } = true;
     private Guid? EditingNoteId { get; set; }
     private string EditingNoteTitle { get; set; } = string.Empty;
     private string? EditingNoteSubtitle { get; set; }
@@ -59,53 +64,75 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadNotes();
+        await InitializeNotes();
     }
 
-    private async Task LoadNotes()
+    private async Task InitializeNotes()
     {
+        IsLoading = true;
+        ErrorMessage = null;
+
         try
         {
             var token = await SecureStorage.Default.GetAsync("jwt");
             if (string.IsNullOrEmpty(token))
             {
-                NavigationManager.NavigateTo("auth");
+                NavigateToLogin();
                 return;
             }
 
             var userId = JwtService.GetUserId(token);
             if (userId == Guid.Empty)
             {
-                ErrorMessage = "Ошибка авторизации. Пожалуйста, выполните вход.";
+                SetError("Ошибка авторизации. Пожалуйста, выполните вход.");
                 return;
             }
 
-            Notes = await NoteService.GetAllAsync(userId) as List<NoteDto> ?? [];
+            var notes = await NoteService.GetAllAsync(userId);
+            Notes = notes?.ToList() ?? new List<NoteDto>();
         }
         catch (Exception ex)
         {
-            ErrorMessage = $"Ошибка загрузки заметок: {ex.Message}";
+            SetError($"Ошибка загрузки заметок: {ex.Message}");
+        }
+        finally
+        {
+            IsLoading = false;
         }
     }
 
     private void ShowCreateNoteModal()
     {
-        EditingNoteId = null;
-        EditingNoteTitle = string.Empty;
-        EditingNoteSubtitle = string.Empty;
-        EditingNoteContent = string.Empty;
+        ResetEditingNote();
         ShowModal = true;
     }
 
     private void CloseModal()
     {
         ShowModal = false;
-        StateHasChanged();
-        LoadNotes();
+        _ = RefreshNotes();
     }
 
     private async Task RefreshNotes()
     {
-        await LoadNotes();
+        await InitializeNotes();
+    }
+
+    private void ResetEditingNote()
+    {
+        EditingNoteId = null;
+        EditingNoteTitle = string.Empty;
+        EditingNoteSubtitle = string.Empty;
+        EditingNoteContent = string.Empty;
+    }
+
+    private void SetError(string message)
+    {
+        ErrorMessage = message;
+    }
+
+    private void NavigateToLogin()
+    {
+        NavigationManager.NavigateTo("auth");
     }
 }

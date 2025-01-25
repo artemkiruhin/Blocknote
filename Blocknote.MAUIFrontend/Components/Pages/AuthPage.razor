@@ -1,12 +1,10 @@
 ﻿@page "/auth"
 
-
 @using Blocknote.MAUIFrontend.Components.Layout;
 @using System.ComponentModel.DataAnnotations
 @using Blocknote.Core.Services.Base
 @using Blocknote.Core.Services.Hasher
 @using Blocknote.Core.Services.Jwt
-
 
 @layout AuthLayout
 
@@ -74,41 +72,67 @@
         {
             if (IsLogin)
             {
-                var result = await UserService.GetByUsernameAndPasswordAsync(authModel.Username, HashService.Compute(authModel.Password));
-                if (result != null)
-                {
-                    var token = JwtService.GenerateToken(result.Id);
-                    await SecureStorage.Default.SetAsync("jwt", token);
-                    
-                    NavigationManager.NavigateTo("/");
-                }
-                else
-                {
-                    ErrorMessage = "Неверное имя пользователя или пароль";
-                }
+                await LoginAsync();
             }
             else
             {
-                if (authModel.Password != authModel.ConfirmPassword)
-                {
-                    ErrorMessage = "Пароли не совпадают";
-                    return;
-                }
-            
-                var result = await UserService.Register(authModel.Username, HashService.Compute(authModel.Password));
-                if (result)
-                {
-                    IsLogin = true;
-                }
-                else
-                {
-                    ErrorMessage = "Не удалось зарегистрировать пользователя";
-                }
+                await RegisterAsync();
             }
         }
         catch (Exception ex)
         {
-            ErrorMessage = "Произошла ошибка при авторизации";
+            ErrorMessage = "Произошла ошибка: " + ex.Message;
+        }
+    }
+
+    private async Task LoginAsync()
+    {
+        var hashedPassword = HashService.Compute(authModel.Password);
+
+        var user = await UserService.GetByUsernameAndPasswordAsync(authModel.Username, hashedPassword);
+        if (user != null)
+        {
+            var token = JwtService.GenerateToken(user.Id);
+            await SecureStorage.Default.SetAsync("jwt", token);
+
+            NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            ErrorMessage = "Неверное имя пользователя или пароль.";
+        }
+    }
+
+    private async Task RegisterAsync()
+    {
+        var existingUser = await UserService.GetByUsernameAndPasswordAsync(authModel.Username, string.Empty);
+
+
+        if (existingUser != null)
+        {
+            ErrorMessage = "Пользователь с таким именем уже существует.";
+            return;
+        }
+
+        if (authModel.Password != authModel.ConfirmPassword)
+        {
+            ErrorMessage = "Пароли не совпадают.";
+            return;
+        }
+
+        var hashedPassword = HashService.Compute(authModel.Password);
+        var success = await UserService.Register(authModel.Username, hashedPassword);
+
+        Console.WriteLine(hashedPassword);
+
+        if (success)
+        {
+            IsLogin = true;
+            ErrorMessage = "Регистрация успешно завершена. Теперь вы можете войти.";
+        }
+        else
+        {
+            ErrorMessage = "Не удалось зарегистрировать пользователя. Попробуйте позже.";
         }
     }
 
@@ -122,9 +146,9 @@
         [StringLength(100, MinimumLength = 6, ErrorMessage = "Пароль должен быть от 6 до 100 символов")]
         public string Password { get; set; } = string.Empty;
 
-        [Compare(nameof(Password), ErrorMessage = "Пароли не совпадают")]
+        //[Compare(nameof(Password), ErrorMessage = "Пароли не совпадают")]
         public string ConfirmPassword { get; set; } = string.Empty;
     }
-    
+
     [Inject] private NavigationManager NavigationManager { get; set; }
 }

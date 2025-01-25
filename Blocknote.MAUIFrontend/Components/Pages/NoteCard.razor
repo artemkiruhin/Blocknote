@@ -38,47 +38,49 @@
 
 @if (ShowModal)
 {
-    <div class="modal">
-        <div class="modal-content">
-            <h2>@(!EditMode ? "Просмотр заметки" : "Редактирование заметки")</h2>
-            @if (!string.IsNullOrEmpty(ErrorMessage))
-            {
-                <p class="error-message">@ErrorMessage</p>
-            }
-            @if (EditMode)
-            {
-                <input
-                    @bind="LocalTitle"
-                    class="modal-input"
-                    placeholder="Заголовок заметки"
-                    type="text"
-                />
-                <input
-                    @bind="LocalSubtitle"
-                    class="modal-input"
-                    placeholder="Подзаголовок заметки"
-                    type="text"
-                />
-                <textarea
-                    @bind="LocalContent"
-                    class="modal-textarea"
-                    placeholder="Содержание заметки"
-                ></textarea>
-                <div class="modal-buttons">
-                    <button class="modal-cancel" @onclick="CloseModal">Отмена</button>
-                    <button class="modal-save" @onclick="SaveChanges">Сохранить</button>
-                </div>
-            }
-            else
-            {
-                <p><strong>Заголовок:</strong> @Model.Title</p>
-                <p><strong>Подзаголовок:</strong> @Model.Subtitle</p>
-                <p><strong>Содержание:</strong></p>
-                <p>@Model.Content</p>
-                <button class="modal-close" @onclick="CloseModal">Закрыть</button>
-            }
-        </div>
-    </div>
+    @* <div class="modal"> *@
+    @*     <div class="modal-content"> *@
+    @*         <h2>@(!EditMode ? "Просмотр заметки" : "Редактирование заметки")</h2> *@
+    @*         @if (!string.IsNullOrEmpty(ErrorMessage)) *@
+    @*         { *@
+    @*             <p class="error-message">@ErrorMessage</p> *@
+    @*         } *@
+    @*         @if (EditMode) *@
+    @*         { *@
+    @*             <input *@
+    @*                 @bind="LocalTitle" *@
+    @*                 class="modal-input" *@
+    @*                 placeholder="Заголовок заметки" *@
+    @*                 type="text" *@
+    @*             /> *@
+    @*             <input *@
+    @*                 @bind="LocalSubtitle" *@
+    @*                 class="modal-input" *@
+    @*                 placeholder="Подзаголовок заметки" *@
+    @*                 type="text" *@
+    @*             /> *@
+    @*             <textarea *@
+    @*                 @bind="LocalContent" *@
+    @*                 class="modal-textarea" *@
+    @*                 placeholder="Содержание заметки" *@
+    @*             ></textarea> *@
+    @*             <div class="modal-buttons"> *@
+    @*                 <button class="modal-cancel" @onclick="CloseModal">Отмена</button> *@
+    @*                 <button class="modal-save" @onclick="SaveChanges">Сохранить</button> *@
+    @*             </div> *@
+    @*         } *@
+    @*         else *@
+    @*         { *@
+    @*             <p><strong>Заголовок:</strong> @Model.Title</p> *@
+    @*             <p><strong>Подзаголовок:</strong> @Model.Subtitle</p> *@
+    @*             <p><strong>Содержание:</strong></p> *@
+    @*             <p>@Model.Content</p> *@
+    @*             <button class="modal-close" @onclick="CloseModal">Закрыть</button> *@
+    @*         } *@
+    @*     </div> *@
+    @* </div> *@
+
+    <NoteModal/>
 }
 
 @code {
