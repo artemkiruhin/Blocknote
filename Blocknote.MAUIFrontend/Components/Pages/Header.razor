@@ -1,4 +1,5 @@
 ﻿@using Blocknote.Core.Models.Dtos
+
 <div class="header">
     <h1>Мои заметки</h1>
     <button class="add-note-btn" @onclick="ShowModal">
@@ -8,13 +9,9 @@
         </svg>
         Добавить заметку
     </button>
-
     @if (IsModalVisible)
     {
-        <NoteModal
-            Note="CurrentNote"
-            OnSave="AddNote"
-            OnClose="HideModal" />
+        <NoteModal/>
     }
 </div>
 
@@ -29,9 +26,19 @@
         IsModalVisible = true;
     }
 
-    private void HideModal()
+    private void CloseModal()
     {
         IsModalVisible = false;
+    }
+
+    private async Task SaveNote()
+    {
+        if (string.IsNullOrWhiteSpace(CurrentNote.Title))
+        {
+            return;
+        }
+
+        await AddNote(CurrentNote);
     }
 
     private async Task AddNote(NoteDto note)
