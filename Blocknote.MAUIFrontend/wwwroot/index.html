@@ -24,6 +24,16 @@
 
     <script src="_framework/blazor.webview.js" autostart="false"></script>
 
+    <script>
+        window.addClickOutsideHandler = (dotnetHelper, element) => {
+            document.addEventListener('click', (e) => {
+                if (element && !element.contains(e.target)) {
+                    dotnetHelper.invokeMethodAsync('CloseMenu');
+                }
+            });
+        };
+    </script>
+
 </body>
 
 </html>

@@ -1,16 +1,84 @@
-﻿@using Blocknote.Core.Models.Dtos
-
-<div class="header">
+﻿<div class="header">
     <h1>Мои заметки</h1>
-    <button class="add-note-btn" @onclick="@OnAddNote">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-        </svg>
-        Добавить заметку
-    </button>
+    <div class="actions">
+        <div style="position: relative;" @ref="menuContainer">
+            <button class="menu-btn" @onclick="ToggleActionMenu">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="5" r="1"></circle>
+                    <circle cx="12" cy="12" r="1"></circle>
+                    <circle cx="12" cy="19" r="1"></circle>
+                </svg>
+            </button>
+            <div class="action-menu @(isActionMenuVisible ? "visible" : "")">
+                <div class="action-menu-item" @onclick="OnExport">
+                    <span>Экспорт</span>
+                </div>
+                <div class="action-menu-item" @onclick="OnShare">
+                    <span>Поделиться</span>
+                </div>
+                <div class="action-menu-item" @onclick="OnLogout">
+                    <span>Выход</span>
+                </div>
+            </div>
+        </div>
+        <button class="add-note-btn" @onclick="@OnAddNote">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Добавить заметку
+        </button>
+    </div>
 </div>
 
 @code {
     [Parameter] public EventCallback OnAddNote { get; set; }
+    [Inject] NavigationManager NavigationManager { get; set; }
+    [Inject] IJSRuntime JSRuntime { get; set; }
+
+    private bool isActionMenuVisible = false;
+    private ElementReference menuContainer;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("addClickOutsideHandler",
+                DotNetObjectReference.Create(this), menuContainer);
+        }
+    }
+
+    [JSInvokable]
+    public void CloseMenu()
+    {
+        if (isActionMenuVisible)
+        {
+            isActionMenuVisible = false;
+            StateHasChanged();
+        }
+    }
+
+    private void ToggleActionMenu()
+    {
+        isActionMenuVisible = !isActionMenuVisible;
+    }
+
+    private void OnExport()
+    {
+        NavigationManager.NavigateTo("/export");
+        isActionMenuVisible = false;
+    }
+
+    private void OnShare()
+    {
+        NavigationManager.NavigateTo("/share");
+        isActionMenuVisible = false;
+    }
+
+    private void OnLogout()
+    {
+        SecureStorage.Default.Remove("jwt");
+        isActionMenuVisible = false;
+        NavigationManager.NavigateTo("auth");
+    }
 }

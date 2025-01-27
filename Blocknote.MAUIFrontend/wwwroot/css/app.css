@@ -13,6 +13,27 @@ body {
     min-height: 100vh;
 }
 
+
+.menu-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    color: #fff;
+    transition: color 0.2s ease;
+}
+
+    .menu-btn:hover {
+        color: #2563eb;
+    }
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+
 /* Шапка */
 .header {
     max-width: 1200px;
@@ -278,6 +299,30 @@ body {
     padding: 2rem;
     color: #9ca3af;
 }
+
+/* Меню действий */
+.action-menu {
+    position: absolute; /* Изменено с fixed на absolute */
+    top: 100%;
+    right: 0;
+    background: #1a1a1a;
+    border-radius: 8px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    padding: 0.5rem 0;
+    min-width: 160px;
+    opacity: 0;
+    visibility: hidden; /* Добавлено */
+    transform: scale(0.95);
+    transform-origin: top right;
+    transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s ease;
+    z-index: 1000;
+}
+
+    .action-menu.visible {
+        opacity: 1;
+        visibility: visible; /* Добавлено */
+        transform: scale(1);
+    }
 
 /* Адаптивность */
 @media (max-width: 768px) {
