@@ -1,6 +1,4 @@
-﻿@using Blocknote.Api.Contracts
-@using Blocknote.Api.Controllers
-@using Blocknote.Core.Models.Dtos
+﻿@using Blocknote.Core.Models.Dtos
 @using Blocknote.Core.Services.Base
 @using Blocknote.Core.Services.Entity
 @using Blocknote.Core.Services.Jwt
@@ -9,86 +7,57 @@
 @inject IJwtService JwtService
 @inject NavigationManager NavigationManager
 
-<div class="modal">
-    <div class="modal-content">
-        <h2>@(Id.HasValue ? "Редактировать заметку" : "Создать новую заметку")</h2>
+<div class="modal" @onclick="HandleBackgroundClick">
+    <div class="modal-content" @onclick:stopPropagation>
+        <h2>Создать новую заметку</h2>
 
         @if (!string.IsNullOrEmpty(ErrorMessage))
         {
             <div class="error-message">@ErrorMessage</div>
         }
 
-        <EditForm Model="@CurrentNote" OnValidSubmit="OnSave">
+        <EditForm Model="@newNote" OnValidSubmit="OnSave">
             <DataAnnotationsValidator />
             <div>
                 <input type="text"
                        class="modal-input"
                        placeholder="Заголовок заметки"
-                       @bind-value="LocalTitle"
+                       @bind-value="newNote.Title"
                        @bind-value:event="oninput" />
-                <ValidationMessage For="@(() => LocalTitle)" />
+                <ValidationMessage For="@(() => newNote.Title)" />
             </div>
             <div>
                 <input type="text"
                        class="modal-input"
                        placeholder="Подзаголовок (необязательно)"
-                       @bind-value="LocalSubtitle"
+                       @bind-value="newNote.Subtitle"
                        @bind-value:event="oninput" />
             </div>
             <div>
                 <textarea class="modal-textarea"
                           placeholder="Содержание заметки (необязательно)"
-                          @bind-value="LocalContent"
+                          @bind-value="newNote.Content"
                           @bind-value:event="oninput"></textarea>
             </div>
             <div class="modal-buttons">
                 <button type="button" class="modal-cancel" @onclick="OnClose">Отмена</button>
-                <button type="submit" class="modal-save" disabled="@(!IsFormValid)">
-                    @(Id.HasValue ? "Обновить" : "Сохранить")
-                </button>
-                @if (Id.HasValue)
-                {
-                    <button type="button" class="modal-delete" @onclick="OnDelete">Удалить</button>
-                }
+                <button type="submit" class="modal-save" disabled="@(!IsFormValid)">Сохранить</button>
             </div>
         </EditForm>
     </div>
 </div>
 
 @code {
-    [Parameter] public Guid? Id { get; set; }
-    [Parameter] public string Title { get; set; } = "";
-    [Parameter] public string? Subtitle { get; set; }
-    [Parameter] public string? Content { get; set; }
-    [Parameter] public EventCallback OnCloseModal { get; set; }
-    [Parameter] public EventCallback OnNoteDeleted { get; set; }
+    [Parameter] public EventCallback OnNoteCreated { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
 
-    private NoteDto CurrentNote { get; set; } = new NoteDto();
-    private string LocalTitle { get; set; } = string.Empty;
-    private string LocalSubtitle { get; set; } = string.Empty;
-    private string LocalContent { get; set; } = string.Empty;
+    private NoteDto newNote = new();
     private string? ErrorMessage { get; set; }
 
-    private bool IsFormValid =>
-        !string.IsNullOrWhiteSpace(LocalTitle);
-
-    protected override void OnInitialized()
-    {
-        LocalTitle = Title ?? string.Empty;
-        LocalSubtitle = Subtitle ?? string.Empty;
-        LocalContent = Content ?? string.Empty;
-    }
+    private bool IsFormValid => !string.IsNullOrWhiteSpace(newNote.Title);
 
     private async Task OnSave()
     {
-        ErrorMessage = string.Empty;
-
-        if (!IsFormValid)
-        {
-            ErrorMessage = "Заголовок заметки обязателен.";
-            return;
-        }
-
         try
         {
             var token = await SecureStorage.Default.GetAsync("jwt");
@@ -105,24 +74,16 @@
                 return;
             }
 
-            bool result;
-
-            if (Id.HasValue)
+            var result = await NoteService.CreateAsync(newNote.Title, newNote.Subtitle, newNote.Content, userId);
+            if (result)
             {
-                result = await NoteService.EditAsync(userId, Id.Value, LocalTitle, LocalSubtitle, LocalContent);
+                await OnNoteCreated.InvokeAsync();
+                await OnClose.InvokeAsync();
             }
             else
             {
-                result = await NoteService.CreateAsync(LocalTitle, LocalSubtitle, LocalContent, userId);
+                ErrorMessage = "Не удалось создать заметку.";
             }
-
-            if (!result)
-            {
-                ErrorMessage = "Не удалось сохранить изменения. Попробуйте снова.";
-                return;
-            }
-
-            await OnCloseModal.InvokeAsync();
         }
         catch (Exception ex)
         {
@@ -130,45 +91,8 @@
         }
     }
 
-    private async Task OnDelete()
+    private void HandleBackgroundClick()
     {
-        if (!Id.HasValue) return;
-
-        try
-        {
-            var token = await SecureStorage.Default.GetAsync("jwt");
-            if (string.IsNullOrEmpty(token))
-            {
-                NavigationManager.NavigateTo("auth");
-                return;
-            }
-
-            var userId = JwtService.GetUserId(token);
-            if (userId == Guid.Empty)
-            {
-                ErrorMessage = "Ошибка авторизации.";
-                return;
-            }
-
-            bool result = await NoteService.DeleteAsync(userId, Id.Value);
-
-            if (!result)
-            {
-                ErrorMessage = "Не удалось удалить заметку. Попробуйте снова.";
-                return;
-            }
-
-            await OnNoteDeleted.InvokeAsync();
-            await OnCloseModal.InvokeAsync();
-        }
-        catch (Exception ex)
-        {
-            ErrorMessage = $"Произошла ошибка: {ex.Message}";
-        }
-    }
-
-    private async Task OnClose()
-    {
-        await OnCloseModal.InvokeAsync();
+        OnClose.InvokeAsync();
     }
 }

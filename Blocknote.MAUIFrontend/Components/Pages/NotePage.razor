@@ -3,11 +3,12 @@
 @using Blocknote.Core.Services.Base
 @using Blocknote.Core.Services.Entity
 @using Blocknote.Core.Services.Jwt
+
 @inject INoteService NoteService
 @inject IJwtService JwtService
 @inject NavigationManager NavigationManager
 
-<Header />
+<Header OnAddNote="ShowCreateNoteModal" />
 
 <div class="container">
     @if (IsLoading)
@@ -24,8 +25,7 @@
             @foreach (var note in Notes)
             {
                 <div class="note-card">
-                    <NoteCard Model="note"
-                              OnNoteDeleted="RefreshNotes" />
+                    <NoteCard Model="note" OnNoteDeleted="RefreshNotes" />
                 </div>
             }
         </div>
@@ -41,26 +41,14 @@
 
 @if (ShowModal)
 {
-    <div class="modal">
-        <div class="modal-content">
-            <NoteModal OnCloseModal="CloseModal"
-                       Id="@EditingNoteId"
-                       Title="@EditingNoteTitle"
-                       Subtitle="@EditingNoteSubtitle"
-                       Content="@EditingNoteContent" />
-        </div>
-    </div>
+    <NoteModal OnNoteCreated="RefreshNotes" OnClose="CloseModal" />
 }
 
 @code {
     private List<NoteDto> Notes { get; set; } = new();
     private string? ErrorMessage { get; set; }
-    private bool ShowModal { get; set; } = false;
+    private bool ShowModal { get; set; }
     private bool IsLoading { get; set; } = true;
-    private Guid? EditingNoteId { get; set; }
-    private string EditingNoteTitle { get; set; } = string.Empty;
-    private string? EditingNoteSubtitle { get; set; }
-    private string? EditingNoteContent { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -101,38 +89,13 @@
         }
     }
 
-    private void ShowCreateNoteModal()
-    {
-        ResetEditingNote();
-        ShowModal = true;
-    }
+    private void ShowCreateNoteModal() => ShowModal = true;
 
-    private void CloseModal()
-    {
-        ShowModal = false;
-        _ = RefreshNotes();
-    }
+    private void CloseModal() => ShowModal = false;
 
-    private async Task RefreshNotes()
-    {
-        await InitializeNotes();
-    }
+    private async Task RefreshNotes() => await InitializeNotes();
 
-    private void ResetEditingNote()
-    {
-        EditingNoteId = null;
-        EditingNoteTitle = string.Empty;
-        EditingNoteSubtitle = string.Empty;
-        EditingNoteContent = string.Empty;
-    }
+    private void SetError(string message) => ErrorMessage = message;
 
-    private void SetError(string message)
-    {
-        ErrorMessage = message;
-    }
-
-    private void NavigateToLogin()
-    {
-        NavigationManager.NavigateTo("auth");
-    }
+    private void NavigateToLogin() => NavigationManager.NavigateTo("auth");
 }
