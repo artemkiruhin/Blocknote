@@ -43,20 +43,20 @@ public static class MauiProgram
         
         builder.Services.AddMauiBlazorWebView();
 
-        builder.Services.AddSingleton<AppDbContext>(provider =>
+        builder.Services.AddTransient<AppDbContext>(provider =>
         {
             return new AppDbContext(configuration.GetConnectionString("Database") ?? throw new NullReferenceException("Строка подключения к БД не указана в конфигурации."));
         }
         );
         
-        builder.Services.AddSingleton<IUserRepository, UserRepository>();
-        builder.Services.AddSingleton<INoteRepository, NoteRepository>();
+        builder.Services.AddScoped<IUserRepository, UserRepository>();
+        builder.Services.AddScoped<INoteRepository, NoteRepository>();
         
-        builder.Services.AddSingleton<IUserService, UserService>();
-        builder.Services.AddSingleton<INoteService, NoteService>();
+        builder.Services.AddScoped<IUserService, UserService>();
+        builder.Services.AddScoped<INoteService, NoteService>();
 
-        builder.Services.AddSingleton<IHashService, Sha256HashService>();
-        builder.Services.AddSingleton<IJwtService>(provider =>
+        builder.Services.AddScoped<IHashService, Sha256HashService>();
+        builder.Services.AddScoped<IJwtService>(provider =>
         {
             try
             {

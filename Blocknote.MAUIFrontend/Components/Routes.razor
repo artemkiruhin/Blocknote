@@ -15,23 +15,23 @@
 {
     protected override async Task OnInitializedAsync()
     {
-        // var token = await SecureStorage.Default.GetAsync("jwt");
-        // if (string.IsNullOrEmpty(token))
-        // {
-        //     NavigationManager.NavigateTo("auth");
-        // }
+        var token = await SecureStorage.Default.GetAsync("jwt");
+        if (string.IsNullOrEmpty(token))
+        {
+            NavigationManager.NavigateTo("auth");
+        }
         
-        // var userId = JwtService.GetUserId(token);
-        // if (userId == Guid.Empty)
-        // {
-        //     NavigationManager.NavigateTo("auth");
-        // }
-        // var user = await UserService.GetInfoAsync(userId);
-        // if (user == null) NavigationManager.NavigateTo("auth");
+        var userId = JwtService.GetUserId(token);
+        if (userId == Guid.Empty)
+        {
+            NavigationManager.NavigateTo("auth");
+        }
+        var user = await UserService.GetInfoAsync(userId);
+        if (user == null) NavigationManager.NavigateTo("auth");
         
-        // NavigationManager.NavigateTo("/");
+        NavigationManager.NavigateTo("/");
 
-        SecureStorage.Default.Remove("jwt");
-        NavigationManager.NavigateTo("create");
+        // SecureStorage.Default.Remove("jwt");
+        // NavigationManager.NavigateTo("create");
     }
 }
