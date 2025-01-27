@@ -1,4 +1,4 @@
-/* Основные стили */
+/* Базовые стили */
 * {
     margin: 0;
     padding: 0;
@@ -51,7 +51,13 @@ body {
     gap: 1.5rem;
 }
 
-/* Карточка заметки */
+/*.note-list {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+}*/
+
 .note-card {
     background: #121213;
     border-radius: 12px;
@@ -62,22 +68,24 @@ body {
     position: relative;
 }
 
+
     .note-card:hover {
         transform: translateY(-2px);
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
     }
 
 .note-card-title {
-    font-size: 1.25rem;
+    font-size: 1.125rem;
     font-weight: 600;
     color: #fff;
-    display: block;
     margin-bottom: 0.5rem;
+    word-break: break-word;
 }
 
 .note-card-subtitle {
-    font-size: 0.95rem;
+    font-size: 0.875rem;
     color: #9ca3af;
+    word-break: break-word;
 }
 
 /* Контекстное меню */
@@ -250,15 +258,51 @@ body {
     display: none;
 }
 
+/* Состояния загрузки и ошибки */
+.loading-state {
+    text-align: center;
+    padding: 2rem;
+    color: #9ca3af;
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.alert-danger {
+    background: #dc2626;
+    color: white;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 2rem;
+    color: #9ca3af;
+}
+
 /* Адаптивность */
 @media (max-width: 768px) {
     .container {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        padding: 1rem;
+    }
+
+    .note-card {
+        padding: 1rem;
     }
 
     .note {
         width: 95%;
         margin: 1rem;
         padding: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        grid-template-columns: 1fr;
+        gap: 0.875rem;
     }
 }

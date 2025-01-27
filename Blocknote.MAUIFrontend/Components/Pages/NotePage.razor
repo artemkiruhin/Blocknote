@@ -21,14 +21,14 @@
     }
     else if (Notes.Count > 0)
     {
-        <div class="note-list">
+        
             @foreach (var note in Notes)
             {
                 <div class="note-card">
                     <NoteCard Model="note" OnNoteDeleted="RefreshNotes" />
                 </div>
             }
-        </div>
+        
     }
     else
     {
