@@ -57,5 +57,22 @@ public class AppDbContext : DbContext
                 .WithMany(e => e.Notes)
                 .HasForeignKey(e => e.UserId);
         });
+        modelBuilder.Entity<SharingNoteEntity>(builder =>
+        {
+            builder.HasKey(e => e.Id);
+            builder.Property(e => e.Id).HasColumnName("uuid");
+            builder.HasIndex(e => e.Id).IsUnique();
+
+            builder.Property(e => e.CreatedAt).IsRequired();
+
+            builder
+                .HasOne(e => e.User)
+                .WithMany(e => e.Sharings)
+                .HasForeignKey(e => e.UserId);
+            builder
+                .HasOne(e => e.Note)
+                .WithMany(e => e.Sharings)
+                .HasForeignKey(e => e.NoteId);
+        });
     }
 }
