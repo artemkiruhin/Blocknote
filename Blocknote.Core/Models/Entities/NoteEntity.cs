@@ -10,7 +10,8 @@ public class NoteEntity
     public DateTime? UpdatedAt { get; set; }
     public Guid UserId { get; set; }
     public virtual UserEntity User { get; set; } = null!;
-
+    public virtual ICollection<SharingNoteEntity> Sharings { get; set; } = new List<SharingNoteEntity>();
+    
     public static NoteEntity Create(string title, string? subtitle, string? content, Guid userId)
     {
         return new()
