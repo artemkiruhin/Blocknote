@@ -9,6 +9,7 @@ public class AppDbContext : DbContext
 
     public DbSet<UserEntity> Users { get; set; }
     public DbSet<NoteEntity> Notes { get; set; }
+    public DbSet<SharingNoteEntity> Sharings { get; set; }
 
     public AppDbContext(string connectionString)
     {
