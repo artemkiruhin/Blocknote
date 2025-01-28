@@ -6,6 +6,7 @@ using Blocknote.Core.Services.Base;
 using Blocknote.Core.Services.Entity;
 using Blocknote.Core.Services.Hasher;
 using Blocknote.Core.Services.Jwt;
+using Blocknote.Core.Services.Sharing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -51,9 +52,11 @@ public static class MauiProgram
         
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<INoteRepository, NoteRepository>();
+        builder.Services.AddScoped<ISharingRepository, SharingNoteRepository>();
         
         builder.Services.AddScoped<IUserService, UserService>();
         builder.Services.AddScoped<INoteService, NoteService>();
+        builder.Services.AddScoped<ISharingService, SharingService>();
 
         builder.Services.AddScoped<IHashService, Sha256HashService>();
         builder.Services.AddScoped<IJwtService>(provider =>

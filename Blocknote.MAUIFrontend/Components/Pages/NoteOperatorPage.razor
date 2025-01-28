@@ -19,24 +19,24 @@
             <DataAnnotationsValidator />
             <div>
                 <input type="text"
-                       class="modal-input"
-                       placeholder="Заголовок заметки"
-                       @bind-value="LocalTitle"
-                       @bind-value:event="oninput" />
+                class="modal-input"
+                placeholder="Заголовок заметки"
+                @bind-value="LocalTitle"
+                @bind-value:event="oninput" />
                 <ValidationMessage For="@(() => LocalTitle)" />
             </div>
             <div>
                 <input type="text"
-                       class="modal-input"
-                       placeholder="Подзаголовок (необязательно)"
-                       @bind-value="LocalSubtitle"
-                       @bind-value:event="oninput" />
+                class="modal-input"
+                placeholder="Подзаголовок (необязательно)"
+                @bind-value="LocalSubtitle"
+                @bind-value:event="oninput" />
             </div>
             <div>
                 <textarea class="modal-textarea"
-                          placeholder="Содержание заметки (необязательно)"
-                          @bind-value="LocalContent"
-                          @bind-value:event="oninput"></textarea>
+                placeholder="Содержание заметки (необязательно)"
+                @bind-value="LocalContent"
+                @bind-value:event="oninput"></textarea>
             </div>
             <div class="modal-buttons">
                 <button type="button" class="modal-cancel" @onclick="OnClose">Отмена</button>
@@ -45,6 +45,7 @@
                 </button>
                 @if (Id.HasValue)
                 {
+                    <button type="button" class="modal-share" @onclick="OnShare">Поделиться</button>
                     <button type="button" class="modal-delete" @onclick="ShowDeleteConfirmation">Удалить</button>
                 }
             </div>
@@ -116,6 +117,15 @@
         catch (Exception ex)
         {
             ErrorMessage = $"Не удалось загрузить заметку: {ex.Message}";
+        }
+    }
+
+    private void OnShare()
+    {
+        if (Id.HasValue)
+        {
+            var noteId = Id.Value.ToString("D"); // Ensures proper Guid format
+            NavigationManager.NavigateTo($"/sharing/create/{noteId}");
         }
     }
 
