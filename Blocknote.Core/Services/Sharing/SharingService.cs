@@ -1,6 +1,7 @@
 ﻿using Blocknote.Core.Database.Repositories.Base;
 using Blocknote.Core.Models.Dtos;
 using Blocknote.Core.Models.Entities;
+using Blocknote.Core.Models.Enums;
 using Blocknote.Core.Services.Hasher;
 
 namespace Blocknote.Core.Services.Sharing;
