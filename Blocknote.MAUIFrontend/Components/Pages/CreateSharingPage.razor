@@ -1,7 +1,9 @@
 ﻿@page "/sharing/create/{NoteId:guid}"
-@    using Blocknote.Core.Models.Dtos
-@    using Blocknote.Core.Services.Jwt
-@    using Blocknote.Core.Services.Sharing
+@using Blocknote.Core.Models.Enums
+@using Blocknote.Core.Models.Dtos
+@using Blocknote.Core.Services.Extensions
+@using Blocknote.Core.Services.Jwt
+@using Blocknote.Core.Services.Sharing
 @inject ISharingService SharingService
 @inject NavigationManager NavigationManager
 @inject IJwtService JwtService
@@ -24,9 +26,9 @@
             <div class="mb-4">
                 <label class="block text-sm font-medium mb-2">Тип доступа</label>
                 <InputSelect @bind-Value="model.Type" class="modal-input">
-                    @foreach (var type in Enum.GetValues(typeof(SharingType)))
+                    @foreach (SharingType type in Enum.GetValues(typeof(SharingType)))
                     {
-                        <option value="@type">@type</option>
+                        <option value="@type">@EnumExtensionManager.GetDisplayName(type)</option>
                     }
                 </InputSelect>
             </div>
