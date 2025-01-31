@@ -9,32 +9,32 @@
 
 <div class="modal">
     <div class="modal-content">
-        <h2 class="text-xl font-semibold mb-4">Share Note</h2>
+        <h2 class="text-xl font-semibold mb-4">Поделиться заметкой</h2>
 
         @if (!string.IsNullOrEmpty(errorMessage))
         {
-                <div class="error-message">
+            <div class="error-message">
                 @errorMessage
-                </div>
+            </div>
         }
 
         <EditForm Model="@model" OnValidSubmit="HandleValidSubmit">
             <DataAnnotationsValidator />
 
             <div class="mb-4">
-                <label class="block text-sm font-medium mb-2">Sharing Type</label>
+                <label class="block text-sm font-medium mb-2">Тип доступа</label>
                 <InputSelect @bind-Value="model.Type" class="modal-input">
                     @foreach (var type in Enum.GetValues(typeof(SharingType)))
                     {
-                            <option value="@type">@type</option>
+                        <option value="@type">@type</option>
                     }
                 </InputSelect>
             </div>
 
             <div class="mb-4">
-                <label class="block text-sm font-medium mb-2">Close Date</label>
-                <InputDate @bind-Value="model.CloseAt" 
-                           class="modal-input" 
+                <label class="block text-sm font-medium mb-2">Дата закрытия</label>
+                <InputDate @bind-Value="model.CloseAt"
+                           class="modal-input"
                            min="@DateTime.UtcNow.ToString("yyyy-MM-dd")" />
             </div>
 
@@ -42,35 +42,35 @@
 
             <div class="modal-buttons">
                 <button type="button" class="modal-cancel" @onclick="NavigateBack" disabled="@isProcessing">
-                    Cancel
+                    Отмена
                 </button>
                 <button type="submit" class="modal-save" disabled="@isProcessing">
                     @if (isProcessing)
                     {
-                            <span class="loading-spinner"></span>
+                        <span class="loading-spinner"></span>
                     }
-                    Create Sharing Link
+                    Создать ссылку для доступа
                 </button>
             </div>
         </EditForm>
 
         @if (!string.IsNullOrEmpty(sharingCode))
         {
-                <div class="mt-4 p-4 bg-gray-800 rounded-lg">
-                    <div class="flex justify-between items-center">
-                        <span class="text-sm font-medium">Sharing Code:</span>
-                        <button class="text-blue-500 hover:text-blue-400" @onclick="CopyToClipboard">
-                            Copy
-                        </button>
-                    </div>
-                    <div class="mt-2 break-all">
+            <div class="mt-4 p-4 bg-gray-800 rounded-lg">
+                <div class="flex justify-between items-center">
+                    <span class="text-sm font-medium">Код доступа:</span>
+                    <button class="text-blue-500 hover:text-blue-400" @onclick="CopyToClipboard">
+                        Копировать
+                    </button>
+                </div>
+                <div class="mt-2 break-all">
                     @sharingCode
-                    </div>
+                </div>
                 @if (isCopied)
                 {
-                            <div class="text-green-500 text-sm mt-2">Copied to clipboard!</div>
+                    <div class="text-green-500 text-sm mt-2">Скопировано в буфер обмена!</div>
                 }
-                </div>
+            </div>
         }
     </div>
 </div>
@@ -96,7 +96,7 @@
         try
         {
             isProcessing = true;
-            isCopied = false; // Reset copy state
+            isCopied = false; // Сброс состояния копирования
             errorMessage = string.Empty;
 
             var token = await SecureStorage.Default.GetAsync("jwt");
@@ -109,7 +109,7 @@
             var userId = JwtService.GetUserId(token);
             if (userId == Guid.Empty)
             {
-                errorMessage = "Authentication error.";
+                errorMessage = "Ошибка аутентификации.";
                 return;
             }
 
@@ -117,7 +117,7 @@
         }
         catch (Exception ex)
         {
-            errorMessage = $"An error occurred: {ex.Message}";
+            errorMessage = $"Произошла ошибка: {ex.Message}";
         }
         finally
         {
@@ -137,7 +137,7 @@
             await JSRuntime.InvokeVoidAsync("navigator.clipboard.writeText", sharingCode);
             isCopied = true;
 
-            // Reset the copy state after a few seconds
+            // Сброс состояния копирования через несколько секунд
             _ = Task.Delay(3000).ContinueWith(_ => isCopied = false);
         }
     }
