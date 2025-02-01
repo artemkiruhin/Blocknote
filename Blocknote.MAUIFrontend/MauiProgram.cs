@@ -44,12 +44,11 @@ public static class MauiProgram
         
         builder.Services.AddMauiBlazorWebView();
 
-        builder.Services.AddDbContext<AppDbContext>((provider, options) =>
+        builder.Services.AddDbContext<AppDbContext>(optionsBuilder =>
         {
-            var connectionString = configuration.GetConnectionString("Database");
-            options.UseNpgsql(connectionString);
-            options.UseLazyLoadingProxies();
-        });
+            optionsBuilder.UseNpgsql(configuration.GetConnectionString("Database"));
+            optionsBuilder.UseLazyLoadingProxies();
+        }, ServiceLifetime.Transient);
 
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<INoteRepository, NoteRepository>();
