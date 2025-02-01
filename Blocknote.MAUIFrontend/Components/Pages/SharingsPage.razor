@@ -10,53 +10,69 @@
     <div class="actions">
         <button class="menu-btn back-btn" @onclick="NavigateToHome">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M19 12H5M12 19l-7-7 7-7"/>
+                <path d="M19 12H5M12 19l-7-7 7-7" />
             </svg>
         </button>
         <h1>Шаринги</h1>
     </div>
 </div>
 
+<div class="search-container">
+    <div class="search-box">
+        <input type="text"
+               class="search-input"
+               placeholder="Вставьте ссылку на шаринг..."
+               @bind="SearchUrl"
+               @onkeyup="HandleKeyPress" />
+        <button class="search-btn" @onclick="SearchSharing">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+        </button>
+    </div>
+</div>
+
 <div class="container">
     @if (IsLoading)
     {
-            <div class="loading-state">Загрузка шарингов...</div>
+        <div class="loading-state">Загрузка шарингов...</div>
     }
     else if (!string.IsNullOrEmpty(ErrorMessage))
     {
-            <div class="alert alert-danger">@ErrorMessage</div>
+        <div class="alert alert-danger">@ErrorMessage</div>
     }
     else if (Sharings.Count > 0)
     {
         @foreach (var sharing in Sharings)
         {
-                    <div class="note-card">
-                        <div class="note-card-title">@sharing.Title</div>
-                        <div class="note-card-subtitle">@sharing.Subtitle</div>
-                        <div class="sharing-info">
-                            <div class="sharing-author">Автор: @sharing.AuthorUsername</div>
-                            <div class="sharing-type">Тип доступа: @sharing.Type</div>
-                            <div class="sharing-dates">
-                                <div>Создано: @sharing.CreatedAt.ToString("dd.MM.yyyy HH:mm")</div>
-                                <div>Действует до: @sharing.CloseAt.ToString("dd.MM.yyyy HH:mm")</div>
-                            </div>
-                        </div>
-                        <div class="sharing-actions">
-                            <button class="sharing-btn copy" @onclick="() => CopyShareLink(sharing.Id)">
-                                Копировать ссылку
-                            </button>
-                            <button class="sharing-btn delete" @onclick="() => DeleteSharing(sharing.Id.ToString())">
-                                Удалить
-                            </button>
-                        </div>
+            <div class="note-card">
+                <div class="note-card-title">@sharing.Title</div>
+                <div class="note-card-subtitle">@sharing.Subtitle</div>
+                <div class="sharing-info">
+                    <div class="sharing-author">Автор: @sharing.AuthorUsername</div>
+                    <div class="sharing-type">Тип доступа: @sharing.Type</div>
+                    <div class="sharing-dates">
+                        <div>Создано: @sharing.CreatedAt.ToString("dd.MM.yyyy HH:mm")</div>
+                        <div>Действует до: @sharing.CloseAt.ToString("dd.MM.yyyy HH:mm")</div>
                     </div>
+                </div>
+                <div class="sharing-actions">
+                    <button class="sharing-btn copy" @onclick="() => CopyShareLink(sharing.Id)">
+                        Копировать ссылку
+                    </button>
+                    <button class="sharing-btn delete" @onclick="() => DeleteSharing(sharing.Id.ToString())">
+                        Удалить
+                    </button>
+                </div>
+            </div>
         }
     }
     else
     {
-            <div class="empty-state">
-                <p>У вас пока нет общих заметок</p>
-            </div>
+        <div class="empty-state">
+            <p>У вас пока нет общих заметок</p>
+        </div>
     }
 </div>
 
@@ -64,10 +80,48 @@
     private List<SharingNoteDto> Sharings { get; set; } = new();
     private string? ErrorMessage { get; set; }
     private bool IsLoading { get; set; } = true;
+    private string SearchUrl { get; set; } = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
         await InitializeSharings();
+    }
+
+    private async Task HandleKeyPress(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await SearchSharing();
+        }
+    }
+
+    private async Task SearchSharing()
+    {
+        if (string.IsNullOrWhiteSpace(SearchUrl))
+        {
+            return;
+        }
+
+        try
+        {
+            // Извлекаем ID шаринга из URL
+            var uri = new Uri(SearchUrl);
+            var segments = uri.Segments;
+            var sharingId = segments.LastOrDefault()?.TrimEnd('/');
+
+            if (string.IsNullOrEmpty(sharingId))
+            {
+                SetError("Неверный формат ссылки");
+                return;
+            }
+
+            // Переходим на страницу шаринга
+            NavigationManager.NavigateTo($"share/{sharingId}");
+        }
+        catch
+        {
+            SetError("Неверный формат ссылки");
+        }
     }
 
     private async Task InitializeSharings()
