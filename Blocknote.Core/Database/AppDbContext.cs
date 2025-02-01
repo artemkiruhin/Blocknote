@@ -43,6 +43,10 @@ public class AppDbContext : DbContext
                 .HasMany(e => e.Notes)
                 .WithOne(e => e.User)
                 .HasForeignKey(e => e.UserId);
+            builder
+                .HasMany(e => e.Sharings)
+                .WithOne(e => e.User)
+                .HasForeignKey(e => e.UserId);
         });
         modelBuilder.Entity<NoteEntity>(builder =>
         {
@@ -57,6 +61,10 @@ public class AppDbContext : DbContext
                 .HasOne(e => e.User)
                 .WithMany(e => e.Notes)
                 .HasForeignKey(e => e.UserId);
+            builder
+                .HasMany(e => e.Sharings)
+                .WithOne(e => e.Note)
+                .HasForeignKey(e => e.NoteId);
         });
         modelBuilder.Entity<SharingNoteEntity>(builder =>
         {
@@ -65,6 +73,8 @@ public class AppDbContext : DbContext
             builder.HasIndex(e => e.Id).IsUnique();
 
             builder.Property(e => e.CreatedAt).IsRequired();
+            builder.Property(e => e.Type).IsRequired();
+            builder.Property(e => e.CloseAt).IsRequired();
 
             builder
                 .HasOne(e => e.User)
