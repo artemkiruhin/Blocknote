@@ -5,27 +5,18 @@ namespace Blocknote.Core.Database;
 
 public class AppDbContext : DbContext
 {
-    private readonly string _connectionString;
+    //private readonly string _connectionString;
 
     public DbSet<UserEntity> Users { get; set; }
     public DbSet<NoteEntity> Notes { get; set; }
     public DbSet<SharingNoteEntity> Sharings { get; set; }
 
 
-    public AppDbContext(DbContextOptions<AppDbContext> options, string connectionString)
+    public AppDbContext(DbContextOptions<AppDbContext> options)
         : base(options)
     {
-        _connectionString = connectionString;
     }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        if (!optionsBuilder.IsConfigured)
-        {
-            optionsBuilder.UseNpgsql(_connectionString);
-            optionsBuilder.UseLazyLoadingProxies();
-        }
-    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

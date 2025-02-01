@@ -33,8 +33,8 @@
 
 @code {
     [Parameter] public EventCallback OnAddNote { get; set; }
-    [Inject] NavigationManager NavigationManager { get; set; }
-    [Inject] IJSRuntime JSRuntime { get; set; }
+    [Inject] NavigationManager NavigationManager { get; set; } = null!;
+    [Inject] IJSRuntime JSRuntime { get; set; } = null!;
 
     private bool isActionMenuVisible = false;
     private ElementReference menuContainer;
