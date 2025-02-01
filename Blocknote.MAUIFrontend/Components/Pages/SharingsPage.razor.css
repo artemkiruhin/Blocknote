@@ -1,0 +1,85 @@
+﻿.sharing-info {
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    color: #9ca3af;
+}
+
+.sharing-author {
+    margin-bottom: 0.5rem;
+}
+
+.sharing-type {
+    margin-bottom: 0.5rem;
+}
+
+.sharing-dates {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin-bottom: 1rem;
+}
+
+.sharing-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: auto;
+}
+
+.sharing-btn {
+    flex: 1;
+    padding: 0.5rem;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+}
+
+    .sharing-btn.copy {
+        background: #2563eb;
+        color: white;
+    }
+
+        .sharing-btn.copy:hover {
+            background: #1d4ed8;
+        }
+
+    .sharing-btn.delete {
+        background: #dc2626;
+        color: white;
+    }
+
+        .sharing-btn.delete:hover {
+            background: #b91c1c;
+        }
+
+.back-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    margin-right: 1rem;
+}
+
+    .back-btn svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    .back-btn:hover {
+        color: #2563eb;
+    }
+
+@media (max-width: 640px) {
+    .sharing-actions {
+        flex-direction: column;
+    }
+
+    .actions {
+        gap: 0.5rem;
+    }
+
+    .back-btn {
+        margin-right: 0.5rem;
+    }
+}
