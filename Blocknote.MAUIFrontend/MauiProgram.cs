@@ -44,12 +44,13 @@ public static class MauiProgram
         
         builder.Services.AddMauiBlazorWebView();
 
-        builder.Services.AddTransient<AppDbContext>(provider =>
+        builder.Services.AddDbContext<AppDbContext>((provider, options) =>
         {
-            return new AppDbContext(configuration.GetConnectionString("Database") ?? throw new NullReferenceException("Строка подключения к БД не указана в конфигурации."));
-        }
-        );
-        
+            var connectionString = configuration.GetConnectionString("Database");
+            options.UseNpgsql(connectionString);
+            options.UseLazyLoadingProxies();
+        });
+
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<INoteRepository, NoteRepository>();
         builder.Services.AddScoped<ISharingRepository, SharingNoteRepository>();

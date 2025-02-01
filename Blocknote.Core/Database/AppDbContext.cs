@@ -11,18 +11,20 @@ public class AppDbContext : DbContext
     public DbSet<NoteEntity> Notes { get; set; }
     public DbSet<SharingNoteEntity> Sharings { get; set; }
 
-    public AppDbContext(string connectionString)
+
+    public AppDbContext(DbContextOptions<AppDbContext> options, string connectionString)
+        : base(options)
     {
         _connectionString = connectionString;
     }
-    //public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-
-        optionsBuilder.UseNpgsql(_connectionString);
-        optionsBuilder.UseLazyLoadingProxies();
-
+        if (!optionsBuilder.IsConfigured)
+        {
+            optionsBuilder.UseNpgsql(_connectionString);
+            optionsBuilder.UseLazyLoadingProxies();
+        }
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
