@@ -1,5 +1,7 @@
 ﻿@page "/share/{SharingId:guid}"
 @using Blocknote.Core.Models.Dtos
+@using Blocknote.Core.Models.Enums
+@using Blocknote.Core.Services.Extensions
 @using Blocknote.Core.Services.Sharing
 @inject ISharingService SharingService
 @inject NavigationManager NavigationManager
@@ -56,7 +58,7 @@
                 </div>
                 <div class="metadata-item">
                     <span class="metadata-label">Тип доступа:</span>
-                    <span class="metadata-value">@SharedNote.Type</span>
+                    <span class="metadata-value">@(((SharingType)Type).GetDisplayName())</span>
                 </div>
             </div>
 
@@ -80,6 +82,9 @@
     private SharingNoteDto? SharedNote { get; set; }
     private string? ErrorMessage { get; set; }
     private bool IsLoading { get; set; } = true;
+
+
+    private SharingType Type { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -105,6 +110,10 @@
             {
                 SetError("Заметка не найдена или срок доступа истек");
             }
+
+            if (SharedNote.Type == nameof(SharingType.Registered)) Type = SharingType.Registered;
+            else Type = SharingType.All;
+
         }
         catch (Exception ex)
         {
