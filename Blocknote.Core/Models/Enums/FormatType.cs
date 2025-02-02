@@ -4,6 +4,7 @@
     {
         Docx,
         Markdown,
-        HTML
+        HTML,
+        PDF
     }
 }

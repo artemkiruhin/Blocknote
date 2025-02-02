@@ -1,12 +1,19 @@
 ﻿@page "/edit/{id:guid}"
 @using Blocknote.Core.Models.Dtos
+@using Blocknote.Core.Models.Enums
 @using Blocknote.Core.Services.Base
 @using Blocknote.Core.Services.Entity
 @using Blocknote.Core.Services.Jwt
+@using Blocknote.Core.Services.Sharing
+@using System.Text
+@using Microsoft.AspNetCore.Builder
+@using Microsoft.JSInterop
+@using System.Diagnostics
 
 @inject INoteService NoteService
 @inject IJwtService JwtService
 @inject NavigationManager NavigationManager
+@inject ISharingService SharingService
 
 <div class="modal">
     <div class="modal-content">
@@ -18,25 +25,14 @@
         <EditForm Model="@CurrentNote" OnValidSubmit="OnSave">
             <DataAnnotationsValidator />
             <div>
-                <input type="text"
-                class="modal-input"
-                placeholder="Заголовок заметки"
-                @bind-value="LocalTitle"
-                @bind-value:event="oninput" />
+                <input type="text" class="modal-input" placeholder="Заголовок заметки" @bind-value="LocalTitle" @bind-value:event="oninput" />
                 <ValidationMessage For="@(() => LocalTitle)" />
             </div>
             <div>
-                <input type="text"
-                class="modal-input"
-                placeholder="Подзаголовок (необязательно)"
-                @bind-value="LocalSubtitle"
-                @bind-value:event="oninput" />
+                <input type="text" class="modal-input" placeholder="Подзаголовок (необязательно)" @bind-value="LocalSubtitle" @bind-value:event="oninput" />
             </div>
             <div>
-                <textarea class="modal-textarea"
-                placeholder="Содержание заметки (необязательно)"
-                @bind-value="LocalContent"
-                @bind-value:event="oninput"></textarea>
+                <textarea class="modal-textarea" placeholder="Содержание заметки (необязательно)" @bind-value="LocalContent" @bind-value:event="oninput"></textarea>
             </div>
             <div class="modal-buttons">
                 <button type="button" class="modal-cancel" @onclick="OnClose">Отмена</button>
@@ -47,25 +43,14 @@
                 {
                     <button type="button" class="modal-share" @onclick="OnShare">Поделиться</button>
                     <button type="button" class="modal-delete" @onclick="ShowDeleteConfirmation">Удалить</button>
+                    <button type="button" class="modal-export" @onclick="ExportToMarkdown">Экспорт в Markdown</button>
+                    <button type="button" class="modal-export" @onclick="ExportToWord">Экспорт в Word</button>
+                    <button type="button" class="modal-export" @onclick="ExportToPdf">Экспорт в PDF</button>
                 }
             </div>
         </EditForm>
     </div>
 </div>
-
-@if (ShowDeleteConfirmationModal)
-{
-    <div class="modal">
-        <div class="modal-content">
-            <h2>Подтверждение удаления</h2>
-            <p>Вы уверены, что хотите удалить эту заметку?</p>
-            <div class="modal-buttons">
-                <button class="modal-cancel" @onclick="CancelDelete">Отмена</button>
-                <button class="modal-delete" @onclick="OnDelete">Удалить</button>
-            </div>
-        </div>
-    </div>
-}
 
 @code {
     [Parameter] public Guid? Id { get; set; }
@@ -217,4 +202,43 @@
     {
         NavigationManager.NavigateTo("/");
     }
+
+    private async Task ExportToMarkdown()
+    {
+        var markdown = $"# {LocalTitle}\n\n{(string.IsNullOrEmpty(LocalSubtitle) ? "" : $"## {LocalSubtitle}\n\n")}{LocalContent}";
+        await SaveFile(markdown, LocalTitle, "md");
+    }
+
+    private async Task ExportToWord()
+    {
+        var formattedContent = SharingService.FormatContent(LocalContent, FormatType.Docx);
+        await SaveFile(formattedContent, LocalTitle, "docx");
+    }
+
+    private async Task ExportToPdf()
+    {
+        var formattedContent = SharingService.FormatContent(LocalContent, FormatType.PDF);
+        await SaveFile(formattedContent, LocalTitle, "pdf");
+    }
+
+    private async Task SaveFile(string content, string fileName, string fileExtension)
+    {
+        try
+        {
+            var documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            var exportPath = Path.Combine(documentsPath, "Blocknote", "Exports");
+            Directory.CreateDirectory(exportPath);
+
+            var filePath = Path.Combine(exportPath, $"{fileName}.{fileExtension}");
+            await File.WriteAllTextAsync(filePath, content);
+            await Application.Current.MainPage.DisplayAlert("Успешно", $"Файл сохранён в {filePath}", "OK");
+
+            Process.Start(new ProcessStartInfo { FileName = exportPath, UseShellExecute = true });
+        }
+        catch (Exception ex)
+        {
+            await Application.Current.MainPage.DisplayAlert("Ошибка", ex.Message, "OK");
+        }
+    }
+
 }
