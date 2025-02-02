@@ -1,0 +1,146 @@
+﻿@page "/share/{SharingId:guid}"
+@using Blocknote.Core.Models.Dtos
+@using Blocknote.Core.Services.Sharing
+@inject ISharingService SharingService
+@inject NavigationManager NavigationManager
+
+<div class="header">
+    <div class="actions">
+        <button class="menu-btn back-btn" @onclick="NavigateBack">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
+        </button>
+        <h1>Общая заметка</h1>
+    </div>
+</div>
+
+<div class="container shared-note-container">
+    @if (IsLoading)
+    {
+        <div class="loading-state">Загрузка заметки...</div>
+    }
+    else if (!string.IsNullOrEmpty(ErrorMessage))
+    {
+        <div class="alert alert-danger">@ErrorMessage</div>
+    }
+    else if (SharedNote != null)
+    {
+        <div class="shared-note">
+            <div class="shared-note-header">
+                <h2 class="shared-note-title">@SharedNote.Title</h2>
+                @if (!string.IsNullOrEmpty(SharedNote.Subtitle))
+                {
+                    <p class="shared-note-subtitle">@SharedNote.Subtitle</p>
+                }
+            </div>
+
+            <div class="shared-note-metadata">
+                <div class="metadata-item">
+                    <span class="metadata-label">Автор:</span>
+                    <span class="metadata-value">@SharedNote.AuthorUsername</span>
+                </div>
+                <div class="metadata-item">
+                    <span class="metadata-label">Создано:</span>
+                    <span class="metadata-value">@SharedNote.CreatedAt.ToString("dd.MM.yyyy HH:mm")</span>
+                </div>
+                <div class="metadata-item">
+                    <span class="metadata-label">Действует до:</span>
+                    <span class="metadata-value">@SharedNote.CloseAt.ToString("dd.MM.yyyy HH:mm")</span>
+                </div>
+                <div class="metadata-item">
+                    <span class="metadata-label">Тип доступа:</span>
+                    <span class="metadata-value">@SharedNote.Type</span>
+                </div>
+            </div>
+
+            <div class="shared-note-content">
+                @((MarkupString)FormatContent(SharedNote.Content))
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="empty-state">
+            <p>Заметка не найдена или срок доступа истек</p>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public Guid SharingId { get; set; }
+
+    private SharingNoteDto? SharedNote { get; set; }
+    private string? ErrorMessage { get; set; }
+    private bool IsLoading { get; set; } = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadSharedNote();
+    }
+
+    private async Task LoadSharedNote()
+    {
+        if (string.IsNullOrEmpty(SharingId.ToString()))
+        {
+            SetError("Неверный идентификатор заметки");
+            return;
+        }
+
+        try
+        {
+            IsLoading = true;
+            ErrorMessage = null;
+
+            // if (!Guid.TryParse(SharingId, out var sharingGuid))
+            // {
+            //     SetError("Неверный формат идентификатора");
+            //     return;
+            // }
+
+            // var token = await SecureStorage.Default.GetAsync("jwt");
+            // if (string.IsNullOrEmpty(token))
+            // {
+            //     NavigateToLogin();
+            //     return;
+            // }
+
+            // var userId = JwtService.GetUserId(token);
+            // if (userId == Guid.Empty)
+            // {
+            //     SetError("Ошибка авторизации. Пожалуйста, выполните вход.");
+            //     return;
+            // }
+
+
+            SharedNote = await SharingService.GetSharingCodeAsync(SharingId);
+
+            if (SharedNote == null)
+            {
+                SetError("Заметка не найдена или срок доступа истек");
+            }
+        }
+        catch (Exception ex)
+        {
+            SetError($"Ошибка загрузки заметки: {ex.Message}");
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    private string FormatContent(string? content)
+    {
+        if (string.IsNullOrEmpty(content))
+            return string.Empty;
+
+        // Здесь можно добавить форматирование контента,
+        // например, преобразование Markdown в HTML
+        return content.Replace("\n", "<br>");
+    }
+
+    private void NavigateBack() => NavigationManager.NavigateTo("/sharing");
+    private void SetError(string message) => ErrorMessage = message;
+}

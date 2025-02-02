@@ -39,7 +39,77 @@ public class SharingService : ISharingService
             NoteId = sharingNote.NoteId
         };
     }
-    
+
+    public async Task<SharingNoteDto> GetSharingCodeAsync(Guid code)
+    {
+        var sharingNote = await _sharingRepository.GetByIdAsync(code) ?? throw new KeyNotFoundException();
+
+        if (DateTime.UtcNow > sharingNote.CloseAt)
+        {
+            await _sharingRepository.DeleteAsync(sharingNote.Id);
+            throw new KeyNotFoundException();
+        }
+
+        if (sharingNote.Type == nameof(SharingType.Registered))
+            throw new UnauthorizedAccessException();
+
+        // Получаем связанную заметку
+        var note = await _noteRepository.GetByIdAsync(sharingNote.NoteId);
+        // Получаем автора
+        var author = await _userRepository.GetByIdAsync(sharingNote.UserId);
+
+        return new SharingNoteDto()
+        {
+            Id = sharingNote.Id,
+            UserId = sharingNote.UserId,
+            NoteId = sharingNote.NoteId,
+            CreatedAt = sharingNote.CreatedAt,
+            CloseAt = sharingNote.CloseAt,
+            Type = sharingNote.Type,
+            // Добавляем данные из связанной заметки
+            Title = note.Title,
+            Subtitle = note.Subtitle,
+            Content = note.Content,
+            // Добавляем имя автора
+            AuthorUsername = author.Username
+        };
+    }
+
+    public async Task<SharingNoteDto> GetSharingCodeAsync(string code)
+    {
+        var sharingNote = await _sharingRepository.GetByIdAsync(Guid.Parse(code)) ?? throw new KeyNotFoundException();
+
+        if (DateTime.UtcNow > sharingNote.CloseAt)
+        {
+            await _sharingRepository.DeleteAsync(sharingNote.Id);
+            throw new KeyNotFoundException();
+        }
+
+        if (sharingNote.Type == nameof(SharingType.Registered))
+            throw new UnauthorizedAccessException();
+
+        // Получаем связанную заметку
+        var note = await _noteRepository.GetByIdAsync(sharingNote.NoteId);
+        // Получаем автора
+        var author = await _userRepository.GetByIdAsync(sharingNote.UserId);
+
+        return new SharingNoteDto()
+        {
+            Id = sharingNote.Id,
+            UserId = sharingNote.UserId,
+            NoteId = sharingNote.NoteId,
+            CreatedAt = sharingNote.CreatedAt,
+            CloseAt = sharingNote.CloseAt,
+            Type = sharingNote.Type,
+            // Добавляем данные из связанной заметки
+            Title = note.Title,
+            Subtitle = note.Subtitle,
+            Content = note.Content,
+            // Добавляем имя автора
+            AuthorUsername = author.Username
+        };
+    }
+
     public async Task<IEnumerable<SharingNoteDto>> GetSharingsAsync(Guid userId)
     {
         var entities = await _sharingRepository.GetByUserAsync(userId);
