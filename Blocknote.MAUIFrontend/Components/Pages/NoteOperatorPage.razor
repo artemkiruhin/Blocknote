@@ -9,6 +9,10 @@
 @using Microsoft.AspNetCore.Builder
 @using Microsoft.JSInterop
 @using System.Diagnostics
+@using iTextSharp.text
+@using iTextSharp.text.pdf
+@using DocumentFormat.OpenXml.Packaging
+@using DocumentFormat.OpenXml.Wordprocessing
 
 @inject INoteService NoteService
 @inject IJwtService JwtService
@@ -211,14 +215,84 @@
 
     private async Task ExportToWord()
     {
-        var formattedContent = SharingService.FormatContent(LocalContent, FormatType.Docx);
-        await SaveFile(formattedContent, LocalTitle, "docx");
+        try
+        {
+            var documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            var exportPath = Path.Combine(documentsPath, "Blocknote", "Exports");
+            Directory.CreateDirectory(exportPath);
+
+            var filePath = Path.Combine(exportPath, $"{LocalTitle}.docx");
+
+            using (WordprocessingDocument wordDocument = WordprocessingDocument.Create(filePath, DocumentFormat.OpenXml.WordprocessingDocumentType.Document))
+            {
+                MainDocumentPart mainPart = wordDocument.AddMainDocumentPart();
+                mainPart.Document = new DocumentFormat.OpenXml.Wordprocessing.Document();
+                Body body = new Body();
+
+                body.AppendChild(new DocumentFormat.OpenXml.Wordprocessing.Paragraph(new Run(new Text(LocalTitle))) { ParagraphProperties = new ParagraphProperties(new Justification { Val = JustificationValues.Center }) });
+                if (!string.IsNullOrEmpty(LocalSubtitle))
+                {
+                    body.AppendChild(new DocumentFormat.OpenXml.Wordprocessing.Paragraph(new Run(new Text(LocalSubtitle))) { ParagraphProperties = new ParagraphProperties(new Justification { Val = JustificationValues.Center }) });
+                }
+                body.AppendChild(new DocumentFormat.OpenXml.Wordprocessing.Paragraph(new Run(new Text(LocalContent))));
+
+                mainPart.Document.AppendChild(body);
+                mainPart.Document.Save();
+            }
+
+            await Application.Current.MainPage.DisplayAlert("Успешно", $"Файл сохранён в {filePath}", "OK");
+            Process.Start(new ProcessStartInfo { FileName = exportPath, UseShellExecute = true });
+        }
+        catch (Exception ex)
+        {
+            await Application.Current.MainPage.DisplayAlert("Ошибка", ex.Message, "OK");
+        }
     }
 
     private async Task ExportToPdf()
     {
-        var formattedContent = SharingService.FormatContent(LocalContent, FormatType.PDF);
-        await SaveFile(formattedContent, LocalTitle, "pdf");
+        try
+        {
+            var documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            var exportPath = Path.Combine(documentsPath, "Blocknote", "Exports");
+            Directory.CreateDirectory(exportPath);
+
+            var filePath = Path.Combine(exportPath, $"{LocalTitle}.pdf");
+
+            using (FileStream fs = new FileStream(filePath, FileMode.Create))
+            {
+                iTextSharp.text.Document document = new iTextSharp.text.Document();
+                PdfWriter.GetInstance(document, fs);
+                document.Open();
+
+                var font = FontFactory.GetFont(FontFactory.HELVETICA, 12, BaseColor.BLACK);
+                document.Add(new iTextSharp.text.Paragraph(LocalTitle, font));
+                if (!string.IsNullOrEmpty(LocalSubtitle)) document.Add(new iTextSharp.text.Paragraph(LocalSubtitle, font));
+                if (!string.IsNullOrEmpty(LocalContent)) document.Add(new iTextSharp.text.Paragraph(LocalContent, font));
+
+                document.Close();
+            }
+
+            await Application.Current.MainPage.DisplayAlert("Успешно", $"Файл сохранён в {filePath}", "OK");
+
+            Process.Start(new ProcessStartInfo { FileName = exportPath, UseShellExecute = true });
+        }
+        catch (Exception ex)
+        {
+            await Application.Current.MainPage.DisplayAlert("Ошибка", ex.Message, "OK");
+        }
+    }
+
+    public string FormatToPDF(string content, string filePath)
+    {
+        try
+        {
+            return filePath;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Ошибка при создании PDF: " + ex.Message);
+        }
     }
 
     private async Task SaveFile(string content, string fileName, string fileExtension)
