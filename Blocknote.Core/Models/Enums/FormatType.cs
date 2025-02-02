@@ -3,7 +3,7 @@
     public enum FormatType
     {
         Docx,
-        Markdowm,
+        Markdown,
         HTML
     }
 }
