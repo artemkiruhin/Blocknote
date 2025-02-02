@@ -24,7 +24,12 @@ public class SharingNoteEntity
             UserId = userId,
             CloseAt = closeAt,
             CreatedAt = DateTime.UtcNow,
-            Type = nameof(sharingType)
+            Type = sharingType switch
+            {
+                SharingType.All => nameof(SharingType.All),
+                SharingType.Registered => nameof(SharingType.Registered),
+                _ => throw new ArgumentException()
+            }
         };
     }
 }
