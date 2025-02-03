@@ -16,10 +16,10 @@ namespace Blocknote.Core.Services.Extensions
 
         public static byte[] FormatDocx(string title, string? subtitle, string content)
         {
-            var htmlConvertedFullContent = FormatMarkdown(title, subtitle, content);
+            var htmlConvertedFullContent = FormatHtml(title, subtitle, content);
 
-            using MemoryStream memoryStream = new MemoryStream();
-            using (WordprocessingDocument doc = WordprocessingDocument.Create(memoryStream, WordprocessingDocumentType.Document, true))
+            using var memoryStream = new MemoryStream();
+            using (var doc = WordprocessingDocument.Create(memoryStream, WordprocessingDocumentType.Document, true))
             {
                 var mainPart = doc.AddMainDocumentPart();
                 mainPart.Document = new DocumentFormat.OpenXml.Wordprocessing.Document();

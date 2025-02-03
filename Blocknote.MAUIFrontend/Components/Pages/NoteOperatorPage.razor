@@ -65,6 +65,8 @@
                     </button>
                     <button type="button" class="modal-export" @onclick="ExportToHTML">
                         <Code /> HTML
+                    </button><button type="button" class="modal-export" @onclick="ExportToWord">
+                        <Code /> Docx
                     </button>
                 }
             </div>
@@ -275,6 +277,29 @@
         {
             var html = TextFormatter.FormatHtml(LocalTitle, LocalSubtitle, LocalContent);
             await SaveFile(html, LocalTitle, "html");
+        }
+        catch (Exception ex)
+        {
+            await Application.Current.MainPage.DisplayAlert("Ошибка", ex.Message, "OK");
+        }
+    }
+
+    private async Task ExportToWord()
+    {
+        try
+        {
+            var docxDocument = TextFormatter.FormatDocx(LocalTitle, LocalSubtitle, LocalContent);
+
+            var documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            var exportPath = Path.Combine(documentsPath, "Blocknote", "Exports");
+            Directory.CreateDirectory(exportPath);
+
+            var filePath = Path.Combine(exportPath, $"{LocalTitle}.docx");
+            await File.WriteAllBytesAsync(filePath, docxDocument);
+
+            await Application.Current.MainPage.DisplayAlert("Успешно", $"Файл сохранён в {filePath}", "OK");
+
+            Process.Start(new ProcessStartInfo { FileName = exportPath, UseShellExecute = true });
         }
         catch (Exception ex)
         {
