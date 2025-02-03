@@ -4,11 +4,8 @@ using DocumentFormat.OpenXml.Wordprocessing;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Markdig;
-using Markdig.Syntax;
-using Markdig.Syntax.Inlines;
-using System.Linq;
-using System.Text;
-using Paragraph = DocumentFormat.OpenXml.Wordprocessing.Paragraph;
+using HtmlToOpenXml;
+
 
 namespace Blocknote.Core.Services.Extensions
 {
@@ -16,6 +13,29 @@ namespace Blocknote.Core.Services.Extensions
     {
         private static readonly HeyRed.MarkdownSharp.Markdown _markdown = new();
         private static readonly MarkdownPipeline _markdownPipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+
+        public static byte[] FormatDocx(string title, string? subtitle, string content)
+        {
+            var htmlConvertedFullContent = FormatMarkdown(title, subtitle, content);
+
+            using MemoryStream memoryStream = new MemoryStream();
+            using (WordprocessingDocument doc = WordprocessingDocument.Create(memoryStream, WordprocessingDocumentType.Document, true))
+            {
+                var mainPart = doc.AddMainDocumentPart();
+                mainPart.Document = new DocumentFormat.OpenXml.Wordprocessing.Document();
+                var body = new Body();
+                mainPart.Document.Append(body);
+
+                var converter = new HtmlConverter(mainPart);
+                var elements = converter.Parse(htmlConvertedFullContent);
+
+                foreach (var element in elements)
+                {
+                    body.Append(element);
+                }
+            }
+            return memoryStream.ToArray();
+        }
 
         public static byte[] FormatPdf(string title, string? subtitle, string content)
         {
@@ -45,21 +65,7 @@ namespace Blocknote.Core.Services.Extensions
             return $"# {title}\n\n{(string.IsNullOrEmpty(subtitle) ? "" : $"## {subtitle}\n\n")}{content}";
         }
 
-        private static DocumentFormat.OpenXml.Wordprocessing.Paragraph CreateParagraph(string text, int fontSize, bool bold, JustificationValues justification)
-        {
-            return new DocumentFormat.OpenXml.Wordprocessing.Paragraph(
-                new ParagraphProperties(
-                    new Justification { Val = justification },
-                    new SpacingBetweenLines { After = "200" }
-                ),
-                new Run(
-                    new RunProperties(
-                        new FontSize { Val = (fontSize * 2).ToString() },
-                        bold ? new Bold() : null
-                    ),
-                    new Text(text)
-                )
-            );
-        }
+
+
     }
 }
