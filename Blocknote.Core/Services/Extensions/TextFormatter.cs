@@ -5,6 +5,8 @@ using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Markdig;
 using HtmlToOpenXml;
+using DinkToPdf;
+using System.Net.Http;
 
 
 namespace Blocknote.Core.Services.Extensions
@@ -13,6 +15,33 @@ namespace Blocknote.Core.Services.Extensions
     {
         private static readonly HeyRed.MarkdownSharp.Markdown _markdown = new();
         private static readonly MarkdownPipeline _markdownPipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+
+        public static byte[] FormatPDF(string title, string? subtitle, string content)
+        {
+            var htmlFullContent = FormatHtml(title, subtitle, content);
+            var converter = new BasicConverter(new PdfTools());
+
+            var doc = new HtmlToPdfDocument()
+            {
+                GlobalSettings = {
+                ColorMode = ColorMode.Color,
+                Orientation = Orientation.Portrait,
+                PaperSize = PaperKind.A4
+            },
+                Objects = {
+                new ObjectSettings() {
+                    HtmlContent = htmlFullContent,
+                    WebSettings = {
+                        DefaultEncoding = "utf-8"
+                    }
+                }
+            }
+            };
+
+            var pdfBytes = converter.Convert(doc);
+
+            return pdfBytes;
+        }
 
         public static byte[] FormatDocx(string title, string? subtitle, string content)
         {
