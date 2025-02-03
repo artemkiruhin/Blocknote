@@ -1,18 +1,148 @@
-﻿.modal-share {
-    background: #2563eb;
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border-radius: 6px;
+﻿/* Advanced Button Styles */
+.modal-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+}
+
+/* Base Button Style */
+.modal-cancel,
+.modal-save,
+.modal-share,
+.modal-delete,
+.modal-export {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    border-radius: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
     border: none;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Button Hover and Active States */
+.modal-buttons > *:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+}
+
+.modal-buttons > *:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Specific Button Styles */
+.modal-cancel {
+    background-color: #374151;
+    color: #e5e7eb;
+}
+
+    .modal-cancel:hover {
+        background-color: #4b5563;
+    }
+
+.modal-save {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white;
+}
+
+    .modal-save:hover {
+        background: linear-gradient(135deg, #1d4ed8, #1e40af);
+    }
+
+    .modal-save:disabled {
+        background: #4b5563;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+
+.modal-share {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
 }
 
     .modal-share:hover {
-        background: #1d4ed8;
+        background: linear-gradient(135deg, #059669, #047857);
     }
 
-    .modal-share:disabled {
-        background: #4b5563;
-        cursor: not-allowed;
+.modal-delete {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    color: white;
+}
+
+    .modal-delete:hover {
+        background: linear-gradient(135deg, #b91c1c, #991b1b);
     }
+
+.modal-export {
+    background: #166534;
+    color: white;
+    background: linear-gradient(135deg, #15803d, #166534);
+}
+
+    .modal-export:hover {
+        background: linear-gradient(135deg, #166534, #14532d);
+    }
+
+/* Button Icons */
+.modal-buttons svg {
+    width: 1.2rem;
+    height: 1.2rem;
+    stroke-width: 2;
+    transition: transform 0.2s ease;
+}
+
+.modal-buttons > *:hover svg {
+    transform: scale(1.1);
+}
+
+/* Ripple Effect */
+.modal-buttons > * {
+    position: relative;
+    overflow: hidden;
+}
+
+    .modal-buttons > *::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        width: 0;
+        height: 0;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        opacity: 0;
+        transition: all 0.3s ease;
+    }
+
+    .modal-buttons > *:active::after {
+        width: 200%;
+        height: 200%;
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+/* Responsive Adjustments */
+@media (max-width: 480px) {
+    .modal-buttons {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+        .modal-buttons > * {
+            width: 100%;
+            justify-content: center;
+        }
+}

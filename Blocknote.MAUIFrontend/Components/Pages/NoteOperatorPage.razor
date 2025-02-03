@@ -23,36 +23,49 @@
 
 <div class="modal">
     <div class="modal-content">
-        <h2>@(Id.HasValue ? "Редактировать заметку" : "Создать новую заметку")</h2>
-        @if (!string.IsNullOrEmpty(ErrorMessage))
-        {
-            <div class="error-message">@ErrorMessage</div>
-        }
+        <h2>
+            <!-- Use Lucide Note or Edit icon here -->
+            @(Id.HasValue ? "Редактировать заметку" : "Создать новую заметку")
+        </h2>
+        
         <EditForm Model="@CurrentNote" OnValidSubmit="OnSave">
-            <DataAnnotationsValidator />
             <div>
-                <input type="text" class="modal-input" placeholder="Заголовок заметки" @bind="LocalTitle" @bind:event="oninput" />
-                <ValidationMessage For="@(() => LocalTitle)" />
+                <input type="text" class="modal-input" placeholder="Заголовок заметки" 
+                       @bind="LocalTitle" @bind:event="oninput" />
+                <ValidationMessage For="@(() => LocalTitle)" class="validation-message" />
             </div>
+            
             <div>
-                <input type="text" class="modal-input" placeholder="Подзаголовок (необязательно)" @bind="LocalSubtitle" @bind:event="oninput" />
+                <input type="text" class="modal-input" placeholder="Подзаголовок (необязательно)" 
+                       @bind="LocalSubtitle" @bind:event="oninput" />
             </div>
+            
             <div>
-                <textarea class="modal-textarea" placeholder="Содержание заметки (необязательно)" @bind="LocalContent" @bind:event="oninput"></textarea>
+                <textarea class="modal-textarea" placeholder="Содержание заметки (необязательно)" 
+                          @bind="LocalContent" @bind:event="oninput"></textarea>
             </div>
+            
             <div class="modal-buttons">
-                <button type="button" class="modal-cancel" @onclick="OnClose">Отмена</button>
+                <button type="button" class="modal-cancel" @onclick="OnClose">
+                    <X /> Отмена
+                </button>
                 <button type="submit" class="modal-save" disabled="@(!IsFormValid)">
-                    @(Id.HasValue ? "Обновить" : "Сохранить")
+                    <Save /> @(Id.HasValue ? "Обновить" : "Сохранить")
                 </button>
                 @if (Id.HasValue)
                 {
-                    <button type="button" class="modal-share" @onclick="OnShare">Поделиться</button>
-                    <button type="button" class="modal-delete" @onclick="ShowDeleteConfirmation">Удалить</button>
-                    <button type="button" class="modal-export" @onclick="ExportToMarkdown">MD</button>
-                    <button type="button" class="modal-export" @onclick="ExportToWord">DOCX</button>
-                    <button type="button" class="modal-export" @onclick="ExportToPdf">PDF</button>
-                    <button type="button" class="modal-export" @onclick="ExportToHTML">HTML</button>
+                    <button type="button" class="modal-share" @onclick="OnShare">
+                        <Share2 /> Поделиться
+                    </button>
+                    <button type="button" class="modal-delete" @onclick="ShowDeleteConfirmation">
+                        <Trash2 /> Удалить
+                    </button>
+                    <button type="button" class="modal-export" @onclick="ExportToMarkdown">
+                        <FileText /> MD
+                    </button>
+                    <button type="button" class="modal-export" @onclick="ExportToHTML">
+                        <Code /> HTML
+                    </button>
                 }
             </div>
         </EditForm>
@@ -227,27 +240,6 @@
         NavigationManager.NavigateTo("/");
     }
 
-    private async Task ExportToWord()
-    {
-        try
-        {
-            var fileBytes = TextFormatter.FormatWord(LocalTitle, LocalSubtitle, LocalContent);
-            var fileName = $"{LocalTitle}.docx";
-            var documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            var exportPath = Path.Combine(documentsPath, "Blocknote", "Exports");
-            Directory.CreateDirectory(exportPath);
-            var filePath = Path.Combine(exportPath, fileName);
-
-            await File.WriteAllBytesAsync(filePath, fileBytes);
-
-            await Application.Current.MainPage.DisplayAlert("Успешно", $"Файл сохранён в {filePath}", "OK");
-            Process.Start(new ProcessStartInfo { FileName = filePath, UseShellExecute = true });
-        }
-        catch (Exception ex)
-        {
-            await Application.Current.MainPage.DisplayAlert("Ошибка", ex.Message, "OK");
-        }
-    }
 
 
     private async Task ExportToPdf()
