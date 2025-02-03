@@ -1,0 +1,13 @@
+﻿@page "/export"
+
+<h3>Экспорт</h3>
+
+<button class="btn btn-primary" @onclick="ExportToJson">JSON</button>
+
+@code {
+    private async Task ExportToJson()
+    {
+        var data = new { Name = "Test", Age = 30 };
+        var json = System.Text.Json.JsonSerializer.Serialize(data);
+    }
+}
