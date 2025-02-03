@@ -1,13 +1,46 @@
 ﻿@page "/export"
+@inject NavigationManager NavigationManager
 
-<h3>Экспорт</h3>
+<div class="export-container">
+    <div class="export-card">
+        <!-- Кнопка назад -->
+        <div class="back-button-container">
+            <button class="back-button" @onclick="ReturnToPreviousPage">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+        </div>
 
-<button class="btn btn-primary" @onclick="ExportToJson">JSON</button>
+        <div class="export-header">
+            <i class="fas fa-file-export fa-3x export-icon"></i>
+            <h2>Экспорт данных</h2>
+            <p class="export-subtitle">Выберите формат для экспорта ваших данных</p>
+        </div>
+
+        <div class="export-actions">
+            <button class="export-button" @onclick="ExportToJson">
+                <i class="fas fa-file-code"></i>
+                Экспорт в JSON
+                <span class="button-hover-effect"></span>
+            </button>
+        </div>
+
+        <div class="export-info">
+            <i class="fas fa-info-circle"></i>
+            <p>Экспортированные данные будут содержать всю информацию в выбранном формате</p>
+        </div>
+    </div>
+</div>
 
 @code {
     private async Task ExportToJson()
     {
         var data = new { Name = "Test", Age = 30 };
         var json = System.Text.Json.JsonSerializer.Serialize(data);
+        // Логика сохранения файла
+    }
+
+    private void ReturnToPreviousPage()
+    {
+        NavigationManager.NavigateTo("/"); // Или другой адрес для возврата
     }
 }

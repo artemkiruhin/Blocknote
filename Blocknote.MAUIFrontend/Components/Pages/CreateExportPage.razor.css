@@ -1,0 +1,164 @@
+﻿.back-button-container {
+    position: absolute;
+    top: 1.5rem;
+    left: 1.5rem;
+    z-index: 10;
+}
+
+.back-button {
+    background: #2d2d2d;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+    .back-button:hover {
+        background: #2563eb;
+        transform: translateX(-3px);
+        box-shadow: 0 6px 12px rgba(37, 99, 235, 0.2);
+    }
+
+    .back-button i {
+        font-size: 1.1rem;
+    }
+
+.export-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+}
+
+.export-card {
+    background: #121213;
+    border-radius: 16px;
+    padding: 2.5rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease;
+    border: 1px solid #2d2d2d;
+    position: relative;
+}
+
+.export-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+}
+
+.export-card {
+    background: #121213;
+    border-radius: 16px;
+    padding: 2.5rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease;
+    border: 1px solid #2d2d2d;
+}
+
+    .export-card:hover {
+        transform: translateY(-5px);
+    }
+
+.export-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.export-icon {
+    color: #2563eb;
+    margin-bottom: 1.5rem;
+    filter: drop-shadow(0 4px 6px rgba(37, 99, 235, 0.2));
+}
+
+.export-subtitle {
+    color: #9ca3af;
+    font-size: 0.95rem;
+    margin-top: 0.5rem;
+}
+
+.export-actions {
+    display: flex;
+    justify-content: center;
+    margin: 2rem 0;
+}
+
+.export-button {
+    position: relative;
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 1.25rem 2.5rem;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+    .export-button:hover {
+        background: #1d4ed8;
+        box-shadow: 0 8px 24px rgba(37, 99, 235, 0.3);
+    }
+
+    .export-button i {
+        font-size: 1.25rem;
+    }
+
+.button-hover-effect {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.1);
+    width: 50px;
+    height: 100%;
+    left: -75px;
+    top: 0;
+    transform: skewX(-15deg);
+    transition: left 0.4s ease;
+}
+
+.export-button:hover .button-hover-effect {
+    left: 120%;
+}
+
+.export-info {
+    background: #1a1a1a;
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-top: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border: 1px solid #333;
+}
+
+    .export-info i {
+        color: #2563eb;
+        font-size: 1.5rem;
+        flex-shrink: 0;
+    }
+
+    .export-info p {
+        color: #9ca3af;
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .export-card {
+        padding: 1.5rem;
+    }
+
+    .export-button {
+        padding: 1rem 2rem;
+        font-size: 1rem;
+    }
+}
