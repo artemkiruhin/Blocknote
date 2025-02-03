@@ -1,5 +1,13 @@
 ﻿@page "/export"
+@using Blocknote.Core.Services.Base
+@using Blocknote.Core.Services.Entity
+@using Blocknote.Core.Services.Jwt
+@using System.Diagnostics
+@using System.Text.Json
+@using System.Text.Encodings.Web
 @inject NavigationManager NavigationManager
+@inject INoteService NoteService
+@inject IJwtService JwtService
 
 <div class="export-container">
     <div class="export-card">
@@ -34,13 +42,43 @@
 @code {
     private async Task ExportToJson()
     {
-        var data = new { Name = "Test", Age = 30 };
-        var json = System.Text.Json.JsonSerializer.Serialize(data);
-        // Логика сохранения файла
+        var token = await SecureStorage.Default.GetAsync("jwt");
+        if (string.IsNullOrEmpty(token))
+        {
+            NavigationManager.NavigateTo("auth");
+            return;
+        }
+
+        var userId = JwtService.GetUserId(token);
+        if (userId == Guid.Empty)
+        {
+            NavigationManager.NavigateTo("/");
+            return;
+        }
+
+        var notes = await NoteService.GetAllAsync(userId);
+        var jsonNoteList = System.Text.Json.JsonSerializer.Serialize(notes, new JsonSerializerOptions { WriteIndented = true, Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping});
+
+        var sanitizedFileName = $"Export-{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.json";
+        var documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+        var exportPath = Path.Combine(documentsPath, "Blocknote", "Exports");
+        Directory.CreateDirectory(exportPath);
+
+        var filePath = Path.Combine(exportPath, sanitizedFileName);
+        await File.WriteAllTextAsync(filePath, jsonNoteList);
+
+        await Application.Current.MainPage.DisplayAlert("Успешно", $"Файл сохранён в {filePath}", "OK");
+
+        Process.Start(new ProcessStartInfo
+            {
+                FileName = exportPath,
+                UseShellExecute = true
+            });
     }
+
 
     private void ReturnToPreviousPage()
     {
-        NavigationManager.NavigateTo("/"); // Или другой адрес для возврата
+        NavigationManager.NavigateTo("/"); 
     }
 }
