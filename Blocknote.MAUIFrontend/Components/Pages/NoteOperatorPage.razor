@@ -27,24 +27,24 @@
             <!-- Use Lucide Note or Edit icon here -->
             @(Id.HasValue ? "Редактировать заметку" : "Создать новую заметку")
         </h2>
-        
+
         <EditForm Model="@CurrentNote" OnValidSubmit="OnSave">
             <div>
                 <input type="text" class="modal-input" placeholder="Заголовок заметки" 
-                       @bind="LocalTitle" @bind:event="oninput" />
+                @bind="LocalTitle" @bind:event="oninput" />
                 <ValidationMessage For="@(() => LocalTitle)" class="validation-message" />
             </div>
-            
+
             <div>
                 <input type="text" class="modal-input" placeholder="Подзаголовок (необязательно)" 
-                       @bind="LocalSubtitle" @bind:event="oninput" />
+                @bind="LocalSubtitle" @bind:event="oninput" />
             </div>
-            
+
             <div>
                 <textarea class="modal-textarea" placeholder="Содержание заметки (необязательно)" 
-                          @bind="LocalContent" @bind:event="oninput"></textarea>
+                @bind="LocalContent" @bind:event="oninput"></textarea>
             </div>
-            
+
             <div class="modal-buttons">
                 <button type="button" class="modal-cancel" @onclick="OnClose">
                     <X /> Отмена
@@ -65,9 +65,13 @@
                     </button>
                     <button type="button" class="modal-export" @onclick="ExportToHTML">
                         <Code /> HTML
-                    </button><button type="button" class="modal-export" @onclick="ExportToWord">
+                    </button>
+                    <button type="button" class="modal-export" @onclick="ExportToWord">
                         <Code /> Docx
                     </button>
+                    @* <button type="button" class="modal-export" @onclick="ExportToPDF"> *@
+                    @*     <Code /> PDF *@
+                    @* </button> *@
                 }
             </div>
         </EditForm>
@@ -306,6 +310,19 @@
             await Application.Current.MainPage.DisplayAlert("Ошибка", ex.Message, "OK");
         }
     }
+
+    // private async Task ExportToPDF()
+    // {
+    //     try
+    //     {
+    //         var pdf = TextFormatter.FormatPDF(LocalTitle, LocalSubtitle, LocalContent);
+    //         await SaveFile(Convert.ToBase64String(pdf), LocalTitle, "pdf");
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         await Application.Current.MainPage.DisplayAlert("Ошибка", ex.Message, "OK");
+    //     }
+    // }
 
 
     private async Task ExportToMarkdown()
