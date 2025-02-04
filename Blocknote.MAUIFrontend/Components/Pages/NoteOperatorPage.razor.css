@@ -1,148 +1,193 @@
-﻿/* Advanced Button Styles */
-.modal-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    justify-content: flex-end;
-    margin-top: 1.5rem;
-}
-
-/* Base Button Style */
-.modal-cancel,
-.modal-save,
-.modal-share,
-.modal-delete,
-.modal-export {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1.25rem;
-    border-radius: 10px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    transition: all 0.3s ease;
-    border: none;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
+﻿/* Editor Page Styles */
+.editor-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #1a1a1a;
+    border-radius: 12px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Button Hover and Active States */
-.modal-buttons > *:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+.editor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #333;
 }
 
-.modal-buttons > *:active {
-    transform: translateY(1px);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.header-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 0.75rem;
 }
 
-/* Specific Button Styles */
-.modal-cancel {
-    background-color: #374151;
+.editor-title {
+    display: flex;
+    align-items: center;
+    font-size: 1.5rem;
+    color: #fff;
+}
+
+.editor-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.preview-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: none;
+    border: 1px solid #374151;
     color: #e5e7eb;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
-    .modal-cancel:hover {
-        background-color: #4b5563;
+    .preview-toggle:hover {
+        background: #2563eb20;
+        border-color: #2563eb;
     }
 
-.modal-save {
-    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+.editor-form {
+    margin: 2rem 0;
+}
+
+.editor-fields {
+    display: grid;
+    gap: 2rem;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.input-label {
+    font-size: 0.9rem;
+    color: #9ca3af;
+    font-weight: 500;
+}
+
+.editor-input {
+    width: 100%;
+    padding: 1rem;
+    background: #121213;
+    border: 1px solid #333;
     color: white;
+    border-radius: 8px;
+    font-size: 1rem;
 }
 
-    .modal-save:hover {
-        background: linear-gradient(135deg, #1d4ed8, #1e40af);
+.editor-textarea {
+    width: 100%;
+    height: 500px;
+    padding: 1.5rem;
+    background: #121213;
+    border: 1px solid #333;
+    color: white;
+    border-radius: 8px;
+    font-size: 1rem;
+    line-height: 1.6;
+    resize: vertical;
+    font-family: 'Fira Code', monospace;
+}
+
+.preview-content {
+    padding: 1.5rem;
+    background: #121213;
+    border: 1px solid #333;
+    border-radius: 8px;
+    min-height: 500px;
+    color: #e5e7eb;
+    line-height: 1.6;
+}
+
+    .preview-content h1,
+    .preview-content h2,
+    .preview-content h3 {
+        color: #fff;
+        margin: 1.5rem 0 1rem;
     }
 
-    .modal-save:disabled {
+    .preview-content p {
+        margin: 1rem 0;
+    }
+
+    .preview-content strong {
+        color: #fff;
+        font-weight: 600;
+    }
+
+    .preview-content em {
+        font-style: italic;
+    }
+
+    .preview-content pre {
+        background: #000;
+        padding: 1rem;
+        border-radius: 8px;
+        margin: 1rem 0;
+    }
+
+.editor-footer {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #333;
+}
+
+.footer-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.secondary-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #374151;
+    color: #e5e7eb;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+    .secondary-btn:hover {
         background: #4b5563;
-        cursor: not-allowed;
-        transform: none;
-        box-shadow: none;
     }
 
-.modal-share {
-    background: linear-gradient(135deg, #10b981, #059669);
+.danger-btn {
+    background: #dc2626;
     color: white;
 }
 
-    .modal-share:hover {
-        background: linear-gradient(135deg, #059669, #047857);
-    }
-
-.modal-delete {
-    background: linear-gradient(135deg, #dc2626, #b91c1c);
-    color: white;
+.export-buttons {
+    display: flex;
+    gap: 0.5rem;
 }
 
-    .modal-delete:hover {
-        background: linear-gradient(135deg, #b91c1c, #991b1b);
-    }
-
-.modal-export {
+.export-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     background: #166534;
     color: white;
-    background: linear-gradient(135deg, #15803d, #166534);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
 }
 
-    .modal-export:hover {
-        background: linear-gradient(135deg, #166534, #14532d);
-    }
-
-/* Button Icons */
-.modal-buttons svg {
-    width: 1.2rem;
-    height: 1.2rem;
-    stroke-width: 2;
-    transition: transform 0.2s ease;
-}
-
-.modal-buttons > *:hover svg {
-    transform: scale(1.1);
-}
-
-/* Ripple Effect */
-.modal-buttons > * {
-    position: relative;
-    overflow: hidden;
-}
-
-    .modal-buttons > *::after {
-        content: "";
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%) scale(0);
-        width: 0;
-        height: 0;
-        background: rgba(255, 255, 255, 0.2);
-        border-radius: 50%;
-        opacity: 0;
-        transition: all 0.3s ease;
-    }
-
-    .modal-buttons > *:active::after {
-        width: 200%;
-        height: 200%;
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1);
-    }
-
-/* Responsive Adjustments */
-@media (max-width: 480px) {
-    .modal-buttons {
-        flex-direction: column;
-        gap: 0.75rem;
-    }
-
-        .modal-buttons > * {
-            width: 100%;
-            justify-content: center;
-        }
+.icon {
+    width: 18px;
+    height: 18px;
 }

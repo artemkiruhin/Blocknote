@@ -16,65 +16,111 @@
 @using DocumentFormat.OpenXml.Wordprocessing
 @using Markdig
 
+@inherits LayoutComponentBase
 @inject INoteService NoteService
 @inject IJwtService JwtService
 @inject NavigationManager NavigationManager
 @inject ISharingService SharingService
 
-<div class="modal">
-    <div class="modal-content">
-        <h2>
-            <!-- Use Lucide Note or Edit icon here -->
-            @(Id.HasValue ? "Редактировать заметку" : "Создать новую заметку")
+<div class="editor-container">
+    <div class="editor-header">
+        <h2 class="editor-title">
+            @if (Id.HasValue)
+            {
+                <Edit class="header-icon"/>
+                <span>Редактирование заметки</span>
+            }
+            else
+            {
+                <FilePlus class="header-icon"/>
+                <span>Новая заметка</span>
+            }
         </h2>
-
-        <EditForm Model="@CurrentNote" OnValidSubmit="OnSave">
-            <div>
-                <input type="text" class="modal-input" placeholder="Заголовок заметки" 
-                @bind="LocalTitle" @bind:event="oninput" />
-                <ValidationMessage For="@(() => LocalTitle)" class="validation-message" />
-            </div>
-
-            <div>
-                <input type="text" class="modal-input" placeholder="Подзаголовок (необязательно)" 
-                @bind="LocalSubtitle" @bind:event="oninput" />
-            </div>
-
-            <div>
-                <textarea class="modal-textarea" placeholder="Содержание заметки (необязательно)" 
-                @bind="LocalContent" @bind:event="oninput"></textarea>
-            </div>
-
-            <div class="modal-buttons">
-                <button type="button" class="modal-cancel" @onclick="OnClose">
-                    <X /> Отмена
-                </button>
-                <button type="submit" class="modal-save" disabled="@(!IsFormValid)">
-                    <Save /> @(Id.HasValue ? "Обновить" : "Сохранить")
-                </button>
-                @if (Id.HasValue)
+        
+        <div class="editor-actions">
+            <button class="preview-toggle" @onclick="TogglePreview">
+                @if (isPreview)
                 {
-                    <button type="button" class="modal-share" @onclick="OnShare">
-                        <Share2 /> Поделиться
-                    </button>
-                    <button type="button" class="modal-delete" @onclick="ShowDeleteConfirmation">
-                        <Trash2 /> Удалить
-                    </button>
-                    <button type="button" class="modal-export" @onclick="ExportToMarkdown">
-                        <FileText /> MD
-                    </button>
-                    <button type="button" class="modal-export" @onclick="ExportToHTML">
-                        <Code /> HTML
-                    </button>
-                    <button type="button" class="modal-export" @onclick="ExportToWord">
-                        <Code /> Docx
-                    </button>
-                    @* <button type="button" class="modal-export" @onclick="ExportToPDF"> *@
-                    @*     <Code /> PDF *@
-                    @* </button> *@
+                    <Edit class="icon"/>
+                    <span>Редактировать</span>
+                }
+                else
+                {
+                    <Eye class="icon"/>
+                    <span>Предпросмотр</span>
+                }
+            </button>
+            
+            <button class="save-btn" @onclick="OnSave" disabled="@(!IsFormValid)">
+                <Save class="icon"/>
+                @(Id.HasValue ? "Обновить" : "Создать")
+            </button>
+        </div>
+    </div>
+
+    <EditForm Model="@CurrentNote" class="editor-form">
+        <div class="editor-fields">
+            <div class="input-group">
+                <label class="input-label">Заголовок</label>
+                <input type="text" class="editor-input" 
+                       @bind="LocalTitle" @bind:event="oninput"/>
+                <ValidationMessage For="@(() => LocalTitle)" class="validation-message"/>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label">Подзаголовок</label>
+                <input type="text" class="editor-input" 
+                       @bind="LocalSubtitle" @bind:event="oninput"/>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label">Содержание</label>
+                @if (isPreview)
+                {
+                    <div class="preview-content">
+                        @((MarkupString)renderedContent)
+                    </div>
+                }
+                else
+                {
+                    <textarea class="editor-textarea" 
+                            @bind="LocalContent" @bind:event="oninput"></textarea>
                 }
             </div>
-        </EditForm>
+        </div>
+    </EditForm>
+
+    <div class="editor-footer">
+        <div class="footer-actions">
+            <button class="secondary-btn" @onclick="OnClose">
+                <X class="icon"/>
+                Отмена
+            </button>
+            
+            @if (Id.HasValue)
+            {
+                <button class="secondary-btn" @onclick="OnShare">
+                    <Share2 class="icon"/>
+                    Поделиться
+                </button>
+                <button class="danger-btn" @onclick="ShowDeleteConfirmation">
+                    <Trash2 class="icon"/>
+                    Удалить
+                </button>
+                
+                <div class="export-buttons">
+                    <button class="export-btn" @onclick="ExportToMarkdown">
+                        <FileText class="icon"/> MD
+                    </button>
+                    <button class="export-btn" @onclick="ExportToHTML">
+                        <Code class="icon"/> HTML
+                    </button>
+                    <button class="export-btn" @onclick="ExportToWord">
+                        <File class="icon"/> DOCX
+                    </button>
+                </div>
+            }
+        </div>
     </div>
 </div>
 
@@ -101,6 +147,17 @@
     private string? ErrorMessage { get; set; }
     private bool ShowDeleteConfirmationModal { get; set; } = false;
     private MarkdownPipeline _markdownPipeline;
+    private bool isPreview = false;
+    private string renderedContent = string.Empty;
+
+    private void TogglePreview()
+    {
+        isPreview = !isPreview;
+        if (isPreview)
+        {
+            renderedContent = Markdown.ToHtml(LocalContent ?? "", _markdownPipeline);
+        }
+    }
 
     private bool IsFormValid => !string.IsNullOrWhiteSpace(LocalTitle);
 
