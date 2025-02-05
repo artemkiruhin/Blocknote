@@ -81,11 +81,11 @@ builder.Services.AddAuthentication(options =>
         };
     });
 
-builder.Services.AddDbContext<AppDbContext>(optionsBuilder =>
-{
-    optionsBuilder.UseNpgsql(configuration.GetConnectionString("Database"));
-    optionsBuilder.UseLazyLoadingProxies();
-});
+//builder.Services.AddDbContext<AppDbContext>(optionsBuilder =>
+//{
+//    optionsBuilder.UseNpgsql(configuration.GetConnectionString("Database"));
+//    optionsBuilder.UseLazyLoadingProxies();
+//});
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<INoteRepository, NoteRepository>();
