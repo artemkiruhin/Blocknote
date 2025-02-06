@@ -78,3 +78,4 @@ yarn-error.log*
 *.bak
 *.tmp
 /.vs
+/Blocknote.Core/appsettings.json
