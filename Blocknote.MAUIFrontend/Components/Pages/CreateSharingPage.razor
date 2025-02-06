@@ -98,7 +98,7 @@
         try
         {
             isProcessing = true;
-            isCopied = false; // Сброс состояния копирования
+            isCopied = false; 
             errorMessage = string.Empty;
 
             var token = await SecureStorage.Default.GetAsync("jwt");
@@ -139,7 +139,6 @@
             await JSRuntime.InvokeVoidAsync("navigator.clipboard.writeText", sharingCode);
             isCopied = true;
 
-            // Сброс состояния копирования через несколько секунд
             _ = Task.Delay(3000).ContinueWith(_ => isCopied = false);
         }
     }

@@ -368,20 +368,6 @@
         }
     }
 
-    // private async Task ExportToPDF()
-    // {
-    //     try
-    //     {
-    //         var pdf = TextFormatter.FormatPDF(LocalTitle, LocalSubtitle, LocalContent);
-    //         await SaveFile(Convert.ToBase64String(pdf), LocalTitle, "pdf");
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         await Application.Current.MainPage.DisplayAlert("Ошибка", ex.Message, "OK");
-    //     }
-    // }
-
-
     private async Task ExportToMarkdown()
     {
         var markdown = TextFormatter.FormatMarkdown(LocalTitle, LocalSubtitle, LocalContent);
