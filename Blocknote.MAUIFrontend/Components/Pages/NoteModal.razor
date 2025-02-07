@@ -51,6 +51,8 @@
     [Parameter] public EventCallback OnNoteCreated { get; set; }
     [Parameter] public EventCallback OnClose { get; set; }
 
+    [Inject] AuthValidator AuthValidator { get; set; }
+
     private NoteDto newNote = new();
     private string? ErrorMessage { get; set; }
 
@@ -60,22 +62,11 @@
     {
         try
         {
-            var token = await SecureStorage.Default.GetAsync("jwt");
-            if (string.IsNullOrEmpty(token))
-            {
-                NavigationManager.NavigateTo("auth");
-                return;
-            }
+            (bool result, Guid userId) = await AuthValidator.ValidateUser();
+            if (!result) NavigationManager.NavigateTo("auth");
 
-            var userId = JwtService.GetUserId(token);
-            if (userId == Guid.Empty)
-            {
-                ErrorMessage = "Ошибка авторизации.";
-                return;
-            }
-
-            var result = await NoteService.CreateAsync(newNote.Title, newNote.Subtitle, newNote.Content, userId);
-            if (result)
+            var resultOperation = await NoteService.CreateAsync(newNote.Title, newNote.Subtitle, newNote.Content, userId);
+            if (resultOperation)
             {
                 await OnNoteCreated.InvokeAsync();
                 await OnClose.InvokeAsync();

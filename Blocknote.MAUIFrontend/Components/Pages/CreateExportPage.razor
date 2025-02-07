@@ -39,21 +39,12 @@
 </div>
 
 @code {
+    [Inject] AuthValidator AuthValidator { get; set; }
+
     private async Task ExportToJson()
     {
-        var token = await SecureStorage.Default.GetAsync("jwt");
-        if (string.IsNullOrEmpty(token))
-        {
-            NavigationManager.NavigateTo("auth");
-            return;
-        }
-
-        var userId = JwtService.GetUserId(token);
-        if (userId == Guid.Empty)
-        {
-            NavigationManager.NavigateTo("/");
-            return;
-        }
+        (bool result, Guid userId) = await AuthValidator.ValidateUser();
+        if (!result) NavigationManager.NavigateTo("auth");
 
         var notes = await NoteService.GetAllAsync(userId);
         var jsonNoteList = System.Text.Json.JsonSerializer.Serialize(notes, new JsonSerializerOptions { WriteIndented = true, Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping});

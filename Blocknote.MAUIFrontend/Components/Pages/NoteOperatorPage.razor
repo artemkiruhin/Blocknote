@@ -150,6 +150,8 @@
     private bool isPreview = false;
     private string renderedContent = string.Empty;
 
+    [Inject] AuthValidator AuthValidator { get; set; }
+
     private void TogglePreview()
     {
         isPreview = !isPreview;
@@ -177,19 +179,8 @@
     {
         try
         {
-            var token = await SecureStorage.Default.GetAsync("jwt");
-            if (string.IsNullOrEmpty(token))
-            {
-                NavigationManager.NavigateTo("auth");
-                return;
-            }
-
-            var userId = JwtService.GetUserId(token);
-            if (userId == Guid.Empty)
-            {
-                ErrorMessage = "Ошибка авторизации.";
-                return;
-            }
+            (bool result, Guid userId) = await AuthValidator.ValidateUser();
+            if (!result) NavigationManager.NavigateTo("auth");
 
             CurrentNote = await NoteService.GetInfoAsync(userId, Id.Value);
             if (CurrentNote != null)
@@ -218,28 +209,17 @@
     {
         try
         {
-            var token = await SecureStorage.Default.GetAsync("jwt");
-            if (string.IsNullOrEmpty(token))
-            {
-                NavigationManager.NavigateTo("auth");
-                return;
-            }
+            (bool result, Guid userId) = await AuthValidator.ValidateUser();
+            if (!result) NavigationManager.NavigateTo("auth");
 
-            var userId = JwtService.GetUserId(token);
-            if (userId == Guid.Empty)
-            {
-                ErrorMessage = "Ошибка авторизации.";
-                return;
-            }
-
-            bool result;
+            bool resultOperation;
             if (Id.HasValue)
             {
-                result = await NoteService.EditAsync(userId, Id.Value, LocalTitle, LocalSubtitle, LocalContent);
+                resultOperation = await NoteService.EditAsync(userId, Id.Value, LocalTitle, LocalSubtitle, LocalContent);
             }
             else
             {
-                result = await NoteService.CreateAsync(LocalTitle, LocalSubtitle, LocalContent, userId);
+                resultOperation = await NoteService.CreateAsync(LocalTitle, LocalSubtitle, LocalContent, userId);
             }
 
             if (result)
@@ -267,23 +247,12 @@
 
         try
         {
-            var token = await SecureStorage.Default.GetAsync("jwt");
-            if (string.IsNullOrEmpty(token))
-            {
-                NavigationManager.NavigateTo("auth");
-                return;
-            }
+            (bool result, Guid userId) = await AuthValidator.ValidateUser();
+            if (!result) NavigationManager.NavigateTo("auth");
 
-            var userId = JwtService.GetUserId(token);
-            if (userId == Guid.Empty)
-            {
-                ErrorMessage = "Ошибка авторизации.";
-                return;
-            }
+            bool resultOperation = await NoteService.DeleteAsync(userId, Id.Value);
 
-            bool result = await NoteService.DeleteAsync(userId, Id.Value);
-
-            if (result)
+            if (resultOperation)
             {
                 NavigationManager.NavigateTo("/");
             }
@@ -302,8 +271,6 @@
     {
         NavigationManager.NavigateTo("/");
     }
-
-
 
     private async Task ExportToPdf()
     {

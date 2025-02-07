@@ -32,6 +32,8 @@
     [Parameter] public NoteDto Model { get; set; } = new();
     [Parameter] public EventCallback OnNoteDeleted { get; set; }
 
+    [Inject] AuthValidator AuthValidator { get; set; }
+
     private bool ShowModal { get; set; } = false;
     private bool ShowDeleteConfirmation { get; set; } = false;
 
@@ -69,21 +71,11 @@
     {
         try
         {
-            var token = await SecureStorage.Default.GetAsync("jwt");
-            if (string.IsNullOrEmpty(token))
-            {
-                NavigationManager.NavigateTo("auth");
-                return;
-            }
+            (bool result, Guid userId) = await AuthValidator.ValidateUser();
+            if (!result) NavigationManager.NavigateTo("auth");
 
-            var userId = JwtService.GetUserId(token);
-            if (userId == Guid.Empty)
-            {
-                return;
-            }
-
-            var result = await NoteService.DeleteAsync(userId, Model.Id);
-            if (result)
+            var resultOperation = await NoteService.DeleteAsync(userId, Model.Id);
+            if (resultOperation)
             {
                 await OnNoteDeleted.InvokeAsync();
             }

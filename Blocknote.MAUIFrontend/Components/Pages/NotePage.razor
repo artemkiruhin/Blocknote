@@ -50,6 +50,8 @@
     private bool ShowModal { get; set; }
     private bool IsLoading { get; set; } = true;
 
+    [Inject] AuthValidator AuthValidator { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         await InitializeNotes();
@@ -62,19 +64,8 @@
 
         try
         {
-            var token = await SecureStorage.Default.GetAsync("jwt");
-            if (string.IsNullOrEmpty(token))
-            {
-                NavigateToLogin();
-                return;
-            }
-
-            var userId = JwtService.GetUserId(token);
-            if (userId == Guid.Empty)
-            {
-                SetError("Ошибка авторизации. Пожалуйста, выполните вход.");
-                return;
-            }
+            (bool result, Guid userId) = await AuthValidator.ValidateUser();
+            if (!result) NavigationManager.NavigateTo("auth");
 
             var notes = await NoteService.GetAllAsync(userId);
             Notes = notes?.ToList() ?? new List<NoteDto>();

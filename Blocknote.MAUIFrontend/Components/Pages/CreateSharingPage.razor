@@ -81,6 +81,8 @@
     [Parameter]
     public Guid NoteId { get; set; }
 
+    [Inject] AuthValidator AuthValidator { get; set; }
+
     private SharingNoteCreateModel model = new();
     private bool isProcessing;
     private bool isCopied = false;
@@ -101,19 +103,8 @@
             isCopied = false; 
             errorMessage = string.Empty;
 
-            var token = await SecureStorage.Default.GetAsync("jwt");
-            if (string.IsNullOrEmpty(token))
-            {
-                NavigationManager.NavigateTo("auth");
-                return;
-            }
-
-            var userId = JwtService.GetUserId(token);
-            if (userId == Guid.Empty)
-            {
-                errorMessage = "Ошибка аутентификации.";
-                return;
-            }
+            (bool result, Guid userId) = await AuthValidator.ValidateUser();
+            if (!result) NavigationManager.NavigateTo("auth");
 
             sharingCode = await SharingService.CreateSharingCodeAsync(userId, NoteId, model.CloseAt, model.Type);
         }
