@@ -9,15 +9,15 @@ namespace Blocknote.MAUIFrontend.Extensions
         {
             _jwtService = jwtService;
         }
-        public async Task<bool> ValidateUser()
+        public async Task<(bool, Guid)> ValidateUser()
         {
             var token = await SecureStorage.Default.GetAsync("jwt");
-            if (string.IsNullOrEmpty(token)) return false;
+            if (string.IsNullOrEmpty(token)) return (false, Guid.Empty);
             
             var userId = _jwtService.GetUserId(token);
-            if (userId == Guid.Empty) return false;
-            
-            return true;
+            if (userId == Guid.Empty) return (false, Guid.Empty);
+
+            return (true, userId);
         }
     }
 }
