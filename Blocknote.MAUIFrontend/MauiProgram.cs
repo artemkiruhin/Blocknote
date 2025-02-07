@@ -6,6 +6,7 @@ using Blocknote.Core.Services.Entity;
 using Blocknote.Core.Services.Hasher;
 using Blocknote.Core.Services.Jwt;
 using Blocknote.Core.Services.Sharing;
+using Blocknote.MAUIFrontend.Extensions;
 using Microsoft.Extensions.Logging;
 
 namespace Blocknote.MAUIFrontend;
@@ -32,6 +33,7 @@ public static class MauiProgram
         builder.Services.AddScoped<ISharingService, SharingService>();
         builder.Services.AddScoped<IHashService, Sha256HashService>();
         builder.Services.AddScoped<IJwtService>(provider => JwtServiceFactory.Create());
+        builder.Services.AddScoped<AuthValidator>();
 
 #if DEBUG
         builder.Services.AddBlazorWebViewDeveloperTools();
