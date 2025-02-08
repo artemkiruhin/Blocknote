@@ -9,22 +9,15 @@
 @inject NavigationManager NavigationManager
 @inject IJwtService JwtService
 @inject IUserService UserService
+@inject AuthValidator AuthValidator
 
 @code
 {
     protected override async Task OnInitializedAsync()
     {
-        var token = await SecureStorage.Default.GetAsync("jwt");
-        if (string.IsNullOrEmpty(token))
-        {
-            NavigationManager.NavigateTo("auth");
-        }
-        
-        var userId = JwtService.GetUserId(token);
-        if (userId == Guid.Empty)
-        {
-            NavigationManager.NavigateTo("auth");
-        }
+        (var result, var userId) = await AuthValidator.ValidateUser();
+
+        if (!result) NavigationManager.NavigateTo("auth");
         var user = await UserService.GetInfoAsync(userId);
         if (user == null) NavigationManager.NavigateTo("auth");
         
