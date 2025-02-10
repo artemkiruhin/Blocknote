@@ -9,14 +9,25 @@
 
 <div class="modal" @onclick="HandleBackgroundClick">
     <div class="modal-content markdown-modal" @onclick:stopPropagation>
-        <h2>Создать новую заметку</h2>
+        <div class="modal-header">
+            <h2><i class="oi oi-document"></i> Создать новую заметку</h2>
+            <button type="button" class="close-button" @onclick="OnClose">
+                <i class="oi oi-x"></i>
+            </button>
+        </div>
+
         @if (!string.IsNullOrEmpty(ErrorMessage))
         {
-            <div class="error-message">@ErrorMessage</div>
+            <div class="error-message">
+                <i class="oi oi-warning"></i>
+                @ErrorMessage
+            </div>
         }
+
         <EditForm Model="@newNote" OnValidSubmit="OnSave">
             <DataAnnotationsValidator />
-            <div>
+            <div class="input-group">
+                <i class="oi oi-header input-icon"></i>
                 <input type="text"
                        class="modal-input"
                        placeholder="Заголовок заметки"
@@ -24,19 +35,31 @@
                        @bind-value:event="oninput" />
                 <ValidationMessage For="@(() => newNote.Title)" />
             </div>
-            <div>
+
+            <div class="input-group">
+                <i class="oi oi-text input-icon"></i>
                 <input type="text"
                        class="modal-input"
                        placeholder="Подзаголовок (необязательно)"
                        @bind-value="newNote.Subtitle"
                        @bind-value:event="oninput" />
             </div>
+
             <div class="editor-container">
                 <div class="editor-section">
                     <div class="editor-header">
-                        <span>Редактор</span>
+                        <span><i class="oi oi-pencil"></i> Редактор</span>
                         <button type="button" class="preview-toggle" @onclick="TogglePreview">
-                            @(showPreview ? "Редактировать" : "Предпросмотр")
+                            @if (showPreview)
+                            {
+                                <i class="oi oi-pencil"></i>
+                                <span>Редактировать</span>
+                            }
+                            else
+                            {
+                                <i class="oi oi-eye"></i>
+                                <span>Предпросмотр</span>
+                            }
                         </button>
                     </div>
                     @if (!showPreview)
@@ -54,7 +77,7 @@
                     }
                 </div>
                 <div class="markdown-hints">
-                    <h3>Подсказки по форматированию</h3>
+                    <h3><i class="oi oi-lightbulb"></i> Подсказки по форматированию</h3>
                     <div class="hints-content">
                         @foreach (var hint in markdownHints)
                         {
@@ -66,9 +89,14 @@
                     </div>
                 </div>
             </div>
+
             <div class="modal-buttons">
-                <button type="button" class="modal-cancel" @onclick="OnClose">Отмена</button>
-                <button type="submit" class="modal-save" disabled="@(!IsFormValid)">Сохранить</button>
+                <button type="button" class="modal-cancel" @onclick="OnClose">
+                    <i class="oi oi-x"></i> Отмена
+                </button>
+                <button type="submit" class="modal-save" disabled="@(!IsFormValid)">
+                    <i class="oi oi-check"></i> Сохранить
+                </button>
             </div>
         </EditForm>
     </div>
