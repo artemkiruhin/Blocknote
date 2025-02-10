@@ -1,21 +1,19 @@
-﻿@using Blocknote.Core.Models.Dtos
+﻿@using Markdig
+@using Blocknote.Core.Models.Dtos
 @using Blocknote.Core.Services.Base
 @using Blocknote.Core.Services.Entity
 @using Blocknote.Core.Services.Jwt
-
 @inject INoteService NoteService
 @inject IJwtService JwtService
 @inject NavigationManager NavigationManager
 
 <div class="modal" @onclick="HandleBackgroundClick">
-    <div class="modal-content" @onclick:stopPropagation>
+    <div class="modal-content markdown-modal" @onclick:stopPropagation>
         <h2>Создать новую заметку</h2>
-
         @if (!string.IsNullOrEmpty(ErrorMessage))
         {
             <div class="error-message">@ErrorMessage</div>
         }
-
         <EditForm Model="@newNote" OnValidSubmit="OnSave">
             <DataAnnotationsValidator />
             <div>
@@ -33,11 +31,40 @@
                        @bind-value="newNote.Subtitle"
                        @bind-value:event="oninput" />
             </div>
-            <div>
-                <textarea class="modal-textarea"
-                          placeholder="Содержание заметки (необязательно)"
-                          @bind-value="newNote.Content"
-                          @bind-value:event="oninput"></textarea>
+            <div class="editor-container">
+                <div class="editor-section">
+                    <div class="editor-header">
+                        <span>Редактор</span>
+                        <button type="button" class="preview-toggle" @onclick="TogglePreview">
+                            @(showPreview ? "Редактировать" : "Предпросмотр")
+                        </button>
+                    </div>
+                    @if (!showPreview)
+                    {
+                        <textarea class="modal-textarea"
+                                  placeholder="Содержание заметки (поддерживается Markdown)"
+                                  @bind-value="newNote.Content"
+                                  @bind-value:event="oninput"></textarea>
+                    }
+                    else
+                    {
+                        <div class="preview-content">
+                            @((MarkupString)ConvertToHtml(newNote.Content))
+                        </div>
+                    }
+                </div>
+                <div class="markdown-hints">
+                    <h3>Подсказки по форматированию</h3>
+                    <div class="hints-content">
+                        @foreach (var hint in markdownHints)
+                        {
+                            <div class="hint-item">
+                                <code>@hint.Syntax</code>
+                                <span>@hint.Description</span>
+                            </div>
+                        }
+                    </div>
+                </div>
             </div>
             <div class="modal-buttons">
                 <button type="button" class="modal-cancel" @onclick="OnClose">Отмена</button>
@@ -50,13 +77,42 @@
 @code {
     [Parameter] public EventCallback OnNoteCreated { get; set; }
     [Parameter] public EventCallback OnClose { get; set; }
-
     [Inject] AuthValidator AuthValidator { get; set; }
 
     private NoteDto newNote = new();
     private string? ErrorMessage { get; set; }
-
     private bool IsFormValid => !string.IsNullOrWhiteSpace(newNote.Title);
+    private bool showPreview = false;
+
+    private record MarkdownHint(string Syntax, string Description);
+
+    private readonly MarkdownHint[] markdownHints = new[]
+    {
+        new MarkdownHint("# Заголовок", "Заголовок 1 уровня"),
+        new MarkdownHint("## Подзаголовок", "Заголовок 2 уровня"),
+        new MarkdownHint("**текст**", "Жирный текст"),
+        new MarkdownHint("*текст*", "Курсив"),
+        new MarkdownHint("- элемент", "Маркированный список"),
+        new MarkdownHint("1. элемент", "Нумерованный список"),
+        new MarkdownHint("```код```", "Блок кода"),
+        new MarkdownHint("[текст](ссылка)", "Ссылка"),
+        new MarkdownHint("> цитата", "Цитата")
+    };
+
+    private void TogglePreview()
+    {
+        showPreview = !showPreview;
+    }
+
+    private string ConvertToHtml(string markdown)
+    {
+        if (string.IsNullOrEmpty(markdown))
+            return string.Empty;
+
+        return Markdig.Markdown.ToHtml(markdown, new MarkdownPipelineBuilder()
+            .UseAdvancedExtensions()
+            .Build());
+    }
 
     private async Task OnSave()
     {
@@ -65,7 +121,13 @@
             (bool result, Guid userId) = await AuthValidator.ValidateUser();
             if (!result) NavigationManager.NavigateTo("auth");
 
-            var resultOperation = await NoteService.CreateAsync(newNote.Title, newNote.Subtitle, newNote.Content, userId);
+            var resultOperation = await NoteService.CreateAsync(
+                newNote.Title,
+                newNote.Subtitle,
+                newNote.Content,
+                userId
+            );
+
             if (resultOperation)
             {
                 await OnNoteCreated.InvokeAsync();
