@@ -1,8 +1,6 @@
 ﻿using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
-using iTextSharp.text;
-using iTextSharp.text.pdf;
 using Markdig;
 using HtmlToOpenXml;
 using DinkToPdf;
@@ -64,24 +62,6 @@ namespace Blocknote.Core.Services.Extensions
                 }
             }
             return memoryStream.ToArray();
-        }
-
-        public static byte[] FormatPdf(string title, string? subtitle, string content)
-        {
-            using var stream = new MemoryStream();
-            var document = new iTextSharp.text.Document(iTextSharp.text.PageSize.A4, 50, 50, 50, 50);
-            var writer = PdfWriter.GetInstance(document, stream);
-            document.Open();
-
-            document.Add(new iTextSharp.text.Paragraph(title, FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 24)) { Alignment = Element.ALIGN_CENTER, SpacingAfter = 20f });
-            if (!string.IsNullOrEmpty(subtitle))
-            {
-                document.Add(new iTextSharp.text.Paragraph(subtitle, FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 18)) { Alignment = Element.ALIGN_CENTER, SpacingAfter = 30f });
-            }
-            document.Add(new iTextSharp.text.Paragraph(_markdown.Transform(content), FontFactory.GetFont(FontFactory.HELVETICA, 12)) { SpacingAfter = 15f });
-
-            document.Close();
-            return stream.ToArray();
         }
 
         public static string FormatHtml(string title, string? subtitle, string content)

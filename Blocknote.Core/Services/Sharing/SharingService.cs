@@ -7,9 +7,6 @@ using System.Text.RegularExpressions;
 using System.Text;
 using Npgsql.Internal;
 using System.Reflection.Metadata;
-using iTextSharp.text.pdf;
-using iTextSharp.text;
-using Document = iTextSharp.text.Document;
 
 namespace Blocknote.Core.Services.Sharing;
 

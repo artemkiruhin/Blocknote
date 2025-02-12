@@ -10,8 +10,6 @@
 @using Microsoft.AspNetCore.Builder
 @using Microsoft.JSInterop
 @using System.Diagnostics
-@using iTextSharp.text
-@using iTextSharp.text.pdf
 @using DocumentFormat.OpenXml.Packaging
 @using DocumentFormat.OpenXml.Wordprocessing
 @using Markdig
@@ -350,32 +348,6 @@
     private void OnClose()
     {
         NavigationManager.NavigateTo("/");
-    }
-
-    private async Task ExportToPdf()
-    {
-        try
-        {
-            var pdfBytes = TextFormatter.FormatPdf(LocalTitle, LocalSubtitle, LocalContent);
-            if (pdfBytes != null && pdfBytes.Length > 0)
-            {
-                var fileName = $"{LocalTitle}.pdf";
-                var filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), fileName);
-
-                await File.WriteAllBytesAsync(filePath, pdfBytes);
-
-                await Application.Current.MainPage.DisplayAlert("Успешно", $"Файл сохранён в {filePath}", "OK");
-                Process.Start(new ProcessStartInfo { FileName = Path.GetDirectoryName(filePath), UseShellExecute = true });
-            }
-            else
-            {
-                await Application.Current.MainPage.DisplayAlert("Ошибка", "Не удалось создать PDF", "OK");
-            }
-        }
-        catch (Exception ex)
-        {
-            await Application.Current.MainPage.DisplayAlert("Ошибка", ex.Message, "OK");
-        }
     }
 
 
