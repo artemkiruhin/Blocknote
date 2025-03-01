@@ -33,8 +33,7 @@ namespace Blocknote.Api.Controllers
                 Response.Cookies.Append("jwt", result, new CookieOptions
                 {
                     HttpOnly = true,
-                    Secure = false,
-                    SameSite = SameSiteMode.Strict
+                    Secure = false
                 });
                 return Ok(result);
             }
