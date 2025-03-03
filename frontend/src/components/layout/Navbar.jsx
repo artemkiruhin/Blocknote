@@ -12,6 +12,11 @@ const Navbar = () => {
         setMenuOpen(!menuOpen);
     };
 
+    const logoutHandler = () => {
+        //stub
+        navigate('/login');
+    }
+
     // Close menu when clicking outside
     useEffect(() => {
         const handleClickOutside = (event) => {
