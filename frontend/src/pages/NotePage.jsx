@@ -47,7 +47,7 @@ const NotePage = () => {
     };
 
     const handleShare = () => {
-        alert('Функция "Поделиться" в разработке');
+        navigate(`/sharings/new/${id}`)
     };
 
     const handleExport = (format) => {
