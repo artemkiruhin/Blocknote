@@ -29,10 +29,10 @@ const MainPage = () => {
         },
     ]);
 
-    //const navigate = useNavigate();
+    const navigate = useNavigate();
 
     const openNoteHandler = (noteId) => {
-        //navigate(`/notes/${noteId}`);
+        navigate(`/notes/${noteId}`);
     }
 
     return (

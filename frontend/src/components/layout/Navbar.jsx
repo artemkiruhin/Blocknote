@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import '../../styles/Navbar.css';
 
 const Navbar = () => {
     const [menuOpen, setMenuOpen] = useState(false);
     const menuRef = useRef(null);
+
+    const navigate = useNavigate();
 
     const toggleMenu = () => {
         setMenuOpen(!menuOpen);
@@ -27,10 +29,10 @@ const Navbar = () => {
     return (
         <nav className="navbar">
             <div className="container">
-                <a className="logo">Blocknote</a>
+                <a className="logo" onClick={() => navigate("/")}>Blocknote</a>
                 <ul className="nav-list">
                     <li className="nav-item">
-                        <a className="nav-link">+ Добавить запись</a>
+                        <a className="nav-link" onClick={() => navigate("/notes/new")}>+ Добавить запись</a>
                     </li>
                     <li className="nav-item" ref={menuRef}>
                         <div className="menu-dots" onClick={toggleMenu}>

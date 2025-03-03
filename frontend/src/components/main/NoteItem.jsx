@@ -3,7 +3,7 @@ import '../../styles/NoteItem.css';
 
 const NoteItem = ({note, openNoteHandler}) => {
     return (
-        <div className="note-item" onClick={() => openNoteHandler(note)}>
+        <div className="note-item" onClick={() => openNoteHandler(note.id)}>
             <h3 className="note-title">{note.title}</h3>
             {note.subtitle && <h4 className="note-subtitle">{note.subtitle}</h4>}
 
