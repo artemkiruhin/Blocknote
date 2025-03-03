@@ -6,6 +6,7 @@ import NotePage from "./pages/NotePage";
 import AuthPage from "./pages/AuthPage";
 import Container from "./components/layout/Container";
 import SharingsPage from "./pages/SharingsPage";
+import ShareNotePage from "./pages/SharingNotePage";
 
 const App = () => {
     return (
@@ -15,6 +16,7 @@ const App = () => {
                 <Route path="/notes/:id" element={<RootAuthLayout><NotePage /></RootAuthLayout>} />
                 <Route path="/notes/new" element={<RootAuthLayout><NotePage /></RootAuthLayout>} />
                 <Route path="/sharings" element={<RootAuthLayout><SharingsPage /></RootAuthLayout>} />
+                <Route path="/sharings/:id" element={<RootAuthLayout><ShareNotePage /></RootAuthLayout>} />
                 <Route path="/auth" element={<AuthPage />} />
             </Routes>
         </BrowserRouter>

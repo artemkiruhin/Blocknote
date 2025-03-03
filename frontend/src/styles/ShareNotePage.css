@@ -1,0 +1,277 @@
+/* ShareNotePage.css */
+
+.share-note {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.share-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+}
+
+.btn-icon {
+    color: var(--text-primary);
+    font-size: 1.4rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin-right: 12px;
+    transition: all 0.2s ease;
+}
+
+.btn-icon:hover {
+    background-color: var(--card-hover);
+}
+
+.header-title {
+    font-size: 1.2rem;
+    font-weight: 500;
+    flex-grow: 1;
+}
+
+.header-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-action {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.btn-action:hover {
+    background-color: var(--card-hover);
+    border-color: var(--text-secondary);
+}
+
+.btn-save {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: white;
+}
+
+.btn-save:hover {
+    background-color: var(--accent-hover);
+    border-color: var(--accent-hover);
+}
+
+.btn-delete {
+    background-color: transparent;
+    border-color: var(--error);
+    color: var(--error);
+}
+
+.btn-delete:hover {
+    background-color: rgba(255, 77, 79, 0.1);
+}
+
+.share-info {
+    background-color: var(--bg-secondary);
+    border-radius: 6px;
+    padding: 20px;
+    margin-bottom: 24px;
+    border: 1px solid var(--border);
+}
+
+.share-id {
+    font-size: 0.9rem;
+    margin-bottom: 16px;
+    color: var(--text-secondary);
+}
+
+.highlight {
+    color: var(--accent);
+    font-weight: 500;
+    padding: 2px 6px;
+    background-color: rgba(123, 104, 238, 0.1);
+    border-radius: 4px;
+}
+
+.share-dates {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.date-field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.date-field label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    min-width: 115px;
+}
+
+.date-field span {
+    font-size: 0.9rem;
+}
+
+.date-input, .access-select {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    min-width: 220px;
+}
+
+.date-input:focus, .access-select:focus {
+    border-color: var(--accent);
+    outline: none;
+}
+
+.access-select {
+    cursor: pointer;
+}
+
+.access-select option {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    padding: 8px;
+}
+
+.access-type {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background-color: rgba(123, 104, 238, 0.1);
+    color: var(--accent);
+    font-size: 0.85rem;
+}
+
+.share-settings-help {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.share-content-wrapper {
+    background-color: var(--bg-secondary);
+    border-radius: 6px;
+    padding: 30px;
+    margin-bottom: 24px;
+    border: 1px solid var(--border);
+    min-height: 400px;
+}
+
+.share-note-header {
+    margin-bottom: 30px;
+}
+
+.note-title {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--text-primary);
+}
+
+.note-subtitle {
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: var(--text-secondary);
+}
+
+.share-note-content {
+    line-height: 1.7;
+    color: var(--text-primary);
+}
+
+.share-note-content h1 {
+    font-size: 1.5rem;
+    margin: 24px 0 16px;
+}
+
+.share-note-content h2 {
+    font-size: 1.3rem;
+    margin: 20px 0 14px;
+}
+
+.share-note-content h3 {
+    font-size: 1.1rem;
+    margin: 18px 0 12px;
+}
+
+.share-note-content p {
+    margin-bottom: 16px;
+}
+
+.share-note-content ul {
+    margin: 16px 0;
+    padding-left: 20px;
+}
+
+.share-note-content li {
+    margin-bottom: 8px;
+}
+
+.share-note-content a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.share-note-content a:hover {
+    text-decoration: underline;
+}
+
+.share-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+@media (max-width: 768px) {
+    .share-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .btn-icon {
+        margin-bottom: 10px;
+    }
+
+    .header-actions {
+        width: 100%;
+    }
+
+    .btn-action {
+        flex-grow: 1;
+        text-align: center;
+    }
+
+    .share-dates {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .date-field {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .date-input, .access-select {
+        width: 100%;
+    }
+
+    .share-content-wrapper {
+        padding: 20px;
+    }
+}
