@@ -1,15 +1,16 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import './styles/App.css';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import RootAuthLayout from "./components/layout/RootAuthLayout";
 import MainPage from "./pages/MainPage";
-import Navbar from "./components/layout/Navbar";
+import "./styles/App.css"
 
 const App = () => {
     return (
-        <div>
-            <Navbar/>
-            <MainPage/>
-        </div>
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<RootAuthLayout><MainPage /></RootAuthLayout>} />
+                {/*<Route path="/notes/:noteId" element={<RootAuthLayout><NotePage /></RootAuthLayout>} />*/}
+            </Routes>
+        </BrowserRouter>
     );
 };
 

@@ -36,9 +36,7 @@ const MainPage = () => {
     }
 
     return (
-        <Container>
-            <NoteList notes={notes} openNoteHandler={openNoteHandler} />
-        </Container>
+        <NoteList notes={notes} openNoteHandler={openNoteHandler} />
     );
 };
 
