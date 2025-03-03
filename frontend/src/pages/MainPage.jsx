@@ -1,44 +1,72 @@
+import NoteList from "../components/main/NotesList";
+import {useState} from "react";
+
 const MainPage = () => {
+
+    const [notes, setNotes] = useState([
+        {
+            id: 1,
+            title: "Заголовок заметки",
+            subtitle: "Подзаголовок заметки",
+            content: "Текст заметки",
+            createdAt: new Date().toLocaleString(),
+            updatedAt: new Date().toLocaleString(),
+        },
+        {
+            id: 1,
+            title: "Заголовок заметки",
+            subtitle: "Подзаголовок заметки",
+            content: "Текст заметки",
+            createdAt: new Date().toLocaleString(),
+            updatedAt: new Date().toLocaleString(),
+        },
+        {
+            id: 1,
+            title: "Заголовок заметки",
+            subtitle: "Подзаголовок заметки",
+            content: "Текст заметки",
+            createdAt: new Date().toLocaleString(),
+            updatedAt: new Date().toLocaleString(),
+        },
+        {
+            id: 1,
+            title: "Заголовок заметки",
+            subtitle: "Подзаголовок заметки",
+            content: "Текст заметки",
+            createdAt: new Date().toLocaleString(),
+            updatedAt: new Date().toLocaleString(),
+        },
+        {
+            id: 1,
+            title: "Заголовок заметки",
+            subtitle: "Подзаголовок заметки",
+            content: "Текст заметки",
+            createdAt: new Date().toLocaleString(),
+            updatedAt: new Date().toLocaleString(),
+        },
+        {
+            id: 1,
+            title: "Заголовок заметки",
+            subtitle: "Подзаголовок заметки",
+            content: "Текст заметки",
+            createdAt: new Date().toLocaleString(),
+            updatedAt: new Date().toLocaleString(),
+        },
+        {
+            id: 1,
+            title: "Заголовок заметки",
+            subtitle: "Подзаголовок заметки",
+            content: "Текст заметки",
+            createdAt: new Date().toLocaleString(),
+            updatedAt: new Date().toLocaleString(),
+        },
+
+    ]);
+
+
     return (
         <div>
-            <div className="notes-list">
-                <div className="note-item">
-                    <h3 className={"note-title"}>Сделать дело</h3>
-                    <h4 className={"note-subtitle"}>Гулять смело</h4>
-                    <span className={"note-created"}>Создано: 09:10 21 октября 2024</span>
-                    <span className={"note-updated"}>Изменено: 11:00 21 октября 2024</span>
-                </div>
-                <div className="note-item">
-                    <h3 className={"note-title"}>Сделать дело</h3>
-                    <h4 className={"note-subtitle"}>Гулять смело</h4>
-                    <span className={"note-created"}>Создано: 09:10 21 октября 2024</span>
-                    <span className={"note-updated"}>Изменено: 11:00 21 октября 2024</span>
-                </div>
-                <div className="note-item">
-                    <h3 className={"note-title"}>Сделать дело</h3>
-                    <h4 className={"note-subtitle"}>Гулять смело</h4>
-                    <span className={"note-created"}>Создано: 09:10 21 октября 2024</span>
-                    <span className={"note-updated"}>Изменено: 11:00 21 октября 2024</span>
-                </div>
-                <div className="note-item">
-                    <h3 className={"note-title"}>Сделать дело</h3>
-                    <h4 className={"note-subtitle"}>Гулять смело</h4>
-                    <span className={"note-created"}>Создано: 09:10 21 октября 2024</span>
-                    <span className={"note-updated"}>Изменено: 11:00 21 октября 2024</span>
-                </div>
-                <div className="note-item">
-                    <h3 className={"note-title"}>Сделать дело</h3>
-                    <h4 className={"note-subtitle"}>Гулять смело</h4>
-                    <span className={"note-created"}>Создано: 09:10 21 октября 2024</span>
-                    <span className={"note-updated"}>Изменено: 11:00 21 октября 2024</span>
-                </div>
-                <div className="note-item">
-                    <h3 className={"note-title"}>Сделать дело</h3>
-                    <h4 className={"note-subtitle"}>Гулять смело</h4>
-                    <span className={"note-created"}>Создано: 09:10 21 октября 2024</span>
-                    <span className={"note-updated"}>Изменено: 11:00 21 октября 2024</span>
-                </div>
-            </div>
+            <NoteList notes={notes}/>
         </div>
     )
 }
