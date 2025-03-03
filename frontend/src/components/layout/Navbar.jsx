@@ -41,7 +41,7 @@ const Navbar = () => {
                         <div className={`dropdown-menu ${menuOpen ? 'active' : ''}`}>
                             <div className="dropdown-item">Экспорт</div>
                             <div className="dropdown-item">Профиль</div>
-                            <div className="dropdown-item">Шаринги</div>
+                            <div className="dropdown-item" onClick={() => navigate("/sharings")}>Шаринги</div>
                             <div className="dropdown-item">Выйти</div>
                         </div>
                     </li>
