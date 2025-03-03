@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import '../styles/SharingsPage.css';
+import {useNavigate} from "react-router-dom";
 
 const SharingsPage = () => {
+
+    const navigate = useNavigate();
+
     const [searchId, setSearchId] = useState('');
     const [sharings, setSharings] = useState([
         {
@@ -72,7 +76,7 @@ const SharingsPage = () => {
             <div className="sharings-page-content">
                 <div className="sharings-list">
                     {sharings.map((sharing) => (
-                        <div className="sharing-item" key={sharing.id}>
+                        <div className="sharing-item" key={sharing.id} onClick={() => navigate(`/sharings/${sharing.id}`)} >
                             <h3 className="sharing-title">{sharing.title}</h3>
                             <div className="sharing-meta">
                                 <span className="sharing-created">
