@@ -1,6 +1,7 @@
 import NoteList from "../components/main/NotesList";
 import { useState } from "react";
 import Container from "../components/layout/Container";
+import {useNavigate} from "react-router-dom";
 
 const MainPage = () => {
     const [notes, setNotes] = useState([
@@ -28,9 +29,15 @@ const MainPage = () => {
         },
     ]);
 
+    //const navigate = useNavigate();
+
+    const openNoteHandler = (noteId) => {
+        //navigate(`/notes/${noteId}`);
+    }
+
     return (
         <Container>
-            <NoteList notes={notes} />
+            <NoteList notes={notes} openNoteHandler={openNoteHandler} />
         </Container>
     );
 };

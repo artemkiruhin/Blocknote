@@ -1,9 +1,9 @@
 import React from 'react';
 import '../../styles/NoteItem.css';
 
-const NoteItem = ({note}) => {
+const NoteItem = ({note, openNoteHandler}) => {
     return (
-        <div className="note-item">
+        <div className="note-item" onClick={() => openNoteHandler(note)}>
             <h3 className="note-title">{note.title}</h3>
             {note.subtitle && <h4 className="note-subtitle">{note.subtitle}</h4>}
 
