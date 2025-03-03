@@ -1,0 +1,62 @@
+.note-item {
+    background-color: var(--bg-secondary);
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    padding: 20px;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    position: relative;
+}
+
+.note-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    background-color: var(--card-hover);
+    border-color: #2a2a2a;
+}
+
+.note-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 3px;
+    width: 100%;
+    background-color: var(--accent);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.note-item:hover::before {
+    opacity: 1;
+}
+
+.note-title {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+    letter-spacing: 0.2px;
+}
+
+.note-subtitle {
+    font-size: 0.85rem;
+    font-weight: normal;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+    letter-spacing: 0.2px;
+}
+
+.note-meta {
+    margin-top: auto;
+    padding-top: 16px;
+}
+
+.note-created, .note-updated {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    display: block;
+    line-height: 1.5;
+}

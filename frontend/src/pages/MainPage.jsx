@@ -1,8 +1,8 @@
 import NoteList from "../components/main/NotesList";
-import {useState} from "react";
+import { useState } from "react";
+import Container from "../components/layout/Container";
 
 const MainPage = () => {
-
     const [notes, setNotes] = useState([
         {
             id: 1,
@@ -13,28 +13,26 @@ const MainPage = () => {
             updatedAt: new Date().toLocaleString(),
         },
         {
-            id: 1,
-            title: "Заголовок заметки",
-            content: "Текст заметки",
+            id: 2,
+            title: "Заголовок заметки 2",
+            content: "Текст заметки 2",
             createdAt: new Date().toLocaleString(),
             updatedAt: new Date().toLocaleString(),
         },
         {
-            id: 1,
-            title: "Заголовок заметки",
-            subtitle: "Подзаголовок заметки",
-            content: "Текст заметки",
+            id: 3,
+            title: "Заголовок заметки 3",
+            subtitle: "Подзаголовок заметки 3",
+            content: "Текст заметки 3",
             createdAt: new Date().toLocaleString(),
         },
-
     ]);
 
-
     return (
-        <div>
-            <NoteList notes={notes}/>
-        </div>
-    )
-}
+        <Container>
+            <NoteList notes={notes} />
+        </Container>
+    );
+};
 
 export default MainPage;

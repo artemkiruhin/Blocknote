@@ -1,10 +1,41 @@
+:root {
+    --bg-primary: #0a0a0a;
+    --bg-secondary: #121212;
+    --text-primary: #f0f0f0;
+    --text-secondary: #888888;
+    --accent: #7b68ee;
+    --accent-hover: #6658d3;
+    --border: #222222;
+    --card-hover: #1a1a1a;
+}
+
 * {
-    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    border: 0;
-    outline: 0;
-    font-family: Segoe UI, Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #000;
-    color: #fff;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+}
+
+a {
+    color: var(--text-primary);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    outline: none;
+    background: none;
+    font-family: inherit;
+}
+
+ul {
+    list-style: none;
 }

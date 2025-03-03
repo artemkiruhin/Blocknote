@@ -1,0 +1,128 @@
+.navbar {
+    background-color: var(--bg-secondary);
+    padding: 16px 0;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid var(--border);
+}
+
+.navbar .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.5px;
+}
+
+.nav-list {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.nav-item {
+    position: relative;
+}
+
+.nav-link {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    transition: color 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.nav-link:hover {
+    color: var(--text-primary);
+}
+
+.messages-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.messages-header h2 {
+    font-size: 1.1rem;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
+.new-chat-button {
+    background-color: var(--accent);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
+    letter-spacing: 0.2px;
+}
+
+.new-chat-button:hover {
+    background-color: var(--accent-hover);
+    transform: translateY(-1px);
+}
+
+.menu-dots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+}
+
+.menu-dots:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.menu-dots-icon {
+    font-size: 1.2rem;
+    line-height: 0;
+    letter-spacing: 1px;
+    color: var(--text-secondary);
+}
+
+/* Dropdown menu styles */
+.dropdown-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background-color: var(--bg-secondary);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    min-width: 180px;
+    z-index: 10;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(5px);
+    transition: all 0.2s ease;
+    overflow: hidden;
+}
+
+.dropdown-menu.active {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.dropdown-item {
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    transition: background-color 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background-color: rgba(255, 255, 255, 0.03);
+    color: var(--text-primary);
+}
