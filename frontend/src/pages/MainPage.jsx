@@ -15,7 +15,6 @@ const MainPage = () => {
         {
             id: 1,
             title: "Заголовок заметки",
-            subtitle: "Подзаголовок заметки",
             content: "Текст заметки",
             createdAt: new Date().toLocaleString(),
             updatedAt: new Date().toLocaleString(),
@@ -26,39 +25,6 @@ const MainPage = () => {
             subtitle: "Подзаголовок заметки",
             content: "Текст заметки",
             createdAt: new Date().toLocaleString(),
-            updatedAt: new Date().toLocaleString(),
-        },
-        {
-            id: 1,
-            title: "Заголовок заметки",
-            subtitle: "Подзаголовок заметки",
-            content: "Текст заметки",
-            createdAt: new Date().toLocaleString(),
-            updatedAt: new Date().toLocaleString(),
-        },
-        {
-            id: 1,
-            title: "Заголовок заметки",
-            subtitle: "Подзаголовок заметки",
-            content: "Текст заметки",
-            createdAt: new Date().toLocaleString(),
-            updatedAt: new Date().toLocaleString(),
-        },
-        {
-            id: 1,
-            title: "Заголовок заметки",
-            subtitle: "Подзаголовок заметки",
-            content: "Текст заметки",
-            createdAt: new Date().toLocaleString(),
-            updatedAt: new Date().toLocaleString(),
-        },
-        {
-            id: 1,
-            title: "Заголовок заметки",
-            subtitle: "Подзаголовок заметки",
-            content: "Текст заметки",
-            createdAt: new Date().toLocaleString(),
-            updatedAt: new Date().toLocaleString(),
         },
 
     ]);
