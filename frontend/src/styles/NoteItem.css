@@ -15,6 +15,7 @@
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
     background-color: var(--card-hover);
     border-color: #2a2a2a;
+    cursor: pointer;
 }
 
 .note-item::before {
