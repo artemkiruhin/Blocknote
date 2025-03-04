@@ -2,6 +2,7 @@ using Blocknote.Api.Contracts;
 using Blocknote.Core.Services.Base;
 using Blocknote.Core.Services.Hasher;
 using Blocknote.Core.Services.Jwt;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
@@ -51,6 +52,21 @@ namespace Blocknote.Api.Controllers
                 var result = await _service.Register(request.Username, _hasher.Compute(request.Password));
                 if (!result) return Unauthorized();
                 return Created();
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
+        }
+        
+        [HttpPost("logout")]
+        [Authorize]
+        public IActionResult Logout()
+        {
+            try
+            {
+                Response.Cookies.Delete("jwt");
+                return Ok();
             }
             catch (Exception e)
             {
