@@ -35,7 +35,7 @@ namespace Blocknote.Api.Controllers
                     HttpOnly = true,
                     Secure = false
                 });
-                return Ok(result);
+                return Ok(new {token = result});
             }
             catch (Exception e)
             {

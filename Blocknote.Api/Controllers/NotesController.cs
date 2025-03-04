@@ -31,7 +31,7 @@ namespace Blocknote.Api.Controllers
                 var userId = User.FindFirst("UserId")?.Value;
                 if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var userGuid)) return Unauthorized();
                 var notes = await _service.GetAllAsync(userGuid);
-                return Ok(notes);
+                return Ok(new {notes});
             }
             catch (Exception e)
             {
@@ -47,7 +47,7 @@ namespace Blocknote.Api.Controllers
                 var userId = User.FindFirst("UserId")?.Value;
                 if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var userGuid)) return Unauthorized();
                 var note = await _service.GetInfoAsync(userGuid, id);
-                return Ok(note);
+                return Ok(new {note});
             }
             catch (Exception e)
             {
@@ -65,7 +65,6 @@ namespace Blocknote.Api.Controllers
 
                 var result = await _service.CreateAsync(request.Title, request.Subtitle, request.Content, userGuid);
                 return result ? Created() : BadRequest();
-                
             }
             catch (Exception e)
             {
