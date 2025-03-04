@@ -6,6 +6,7 @@ namespace Blocknote.Core.Models.Entities;
 public class SharingNoteEntity
 {
     public Guid Id { get; set; }
+    public required string Code { get; set; }
     public Guid NoteId { get; set; }
     public Guid UserId { get; set; }
     public required string Type { get; set; }
@@ -15,11 +16,12 @@ public class SharingNoteEntity
     public virtual UserEntity User { get; set; } = null!;
     public virtual NoteEntity Note { get; set; } = null!;
     
-    public static SharingNoteEntity Create(Guid noteId, Guid userId, DateTime closeAt, SharingType sharingType = SharingType.All)
+    public static SharingNoteEntity Create(Guid? id, Guid noteId, string code, Guid userId, DateTime closeAt, SharingType sharingType = SharingType.All)
     {
         return new()
         {
-            Id = Guid.NewGuid(),
+            Id = id ?? Guid.NewGuid(),
+            Code = code,
             NoteId = noteId,
             UserId = userId,
             CloseAt = closeAt,

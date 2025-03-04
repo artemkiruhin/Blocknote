@@ -110,6 +110,9 @@ public class AppDbContext : DbContext
             builder.Property(e => e.Id).HasColumnName("uuid");
             builder.HasIndex(e => e.Id).IsUnique();
 
+            builder.Property(s => s.Code).IsRequired();
+            builder.HasIndex(s => s.Code).IsUnique();
+            
             builder.Property(e => e.CreatedAt).IsRequired();
             builder.Property(e => e.Type).IsRequired();
             builder.Property(e => e.CloseAt).IsRequired();

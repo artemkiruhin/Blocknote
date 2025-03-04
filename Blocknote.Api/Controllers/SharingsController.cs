@@ -42,7 +42,7 @@ namespace Blocknote.Api.Controllers
                 var userId = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value);
                 var finishDate = request.HasFinishDate ? request.FinishDate : DateTime.MaxValue;
                 var type = request.AllowedAll ? SharingType.All : SharingType.Registered;
-                var result = await _service.CreateSharingCodeAsync(userId, request.NoteId, finishDate, type);
+                var result = await _service.CreateSharingAsync(userId, request.NoteId, finishDate, type);
                 return Ok(new {id = result});
             }
             catch (Exception e)

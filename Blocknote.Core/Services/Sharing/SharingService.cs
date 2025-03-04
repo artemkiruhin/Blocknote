@@ -134,99 +134,31 @@ public class SharingService : ISharingService
         return result;
     }
 
-    public async Task<string> CreateSharingCodeAsync(Guid userId, Guid noteId, DateTime closeTime, SharingType type = SharingType.All)
+    public async Task<SharingCreateResponse> CreateSharingAsync(Guid userId, Guid noteId, DateTime closeTime, SharingType type = SharingType.All)
     {
-        var openTime = DateTime.UtcNow;
-        if (closeTime < openTime) throw new ArgumentException("Close time must be greater than open time.");
-        
-        var noteEntity = await _noteRepository.GetByIdAsync(noteId) ?? throw new KeyNotFoundException();
-        if (noteEntity.UserId != userId) throw new UnauthorizedAccessException();
-        
-        var sharingNote = SharingNoteEntity.Create(noteId, userId, closeTime, type);
-        var result = await _sharingRepository.AddAsync(sharingNote);
-        
-        return result ? sharingNote.Id.ToString() : string.Empty;
-    }
-
-    public string FormatContent(string content, FormatType type = FormatType.HTML)
-    {
-        if (string.IsNullOrEmpty(content))
-            throw new ArgumentNullException(nameof(content));
-
-        return type switch
+        try
         {
-            FormatType.HTML => FormatToHTML(content),
-            FormatType.Markdown => FormatToMarkdown(content),
-            FormatType.Docx => FormatToDOCX(content),
-            _ => throw new ArgumentException("Unsupported format type", nameof(type))
-        };
-    }
+            var openTime = DateTime.UtcNow;
+            if (closeTime < openTime) throw new ArgumentException("Close time must be greater than open time.");
 
-    private string FormatToHTML(string content)
-    {
-        var lines = content.Split('\n');
-        var resultContent = new StringBuilder();
+            var noteEntity = await _noteRepository.GetByIdAsync(noteId) ?? throw new KeyNotFoundException();
+            if (noteEntity.UserId != userId) throw new UnauthorizedAccessException();
 
-        foreach (var line in lines)
-        {
-            var processedLine = line.Trim();
+            var id = Guid.NewGuid();
+            var code = $"share_{id}";
 
-            // Headers
-            if (processedLine.StartsWith("# "))
-                processedLine = $"<h1>{processedLine[2..]}</h1>";
-            else if (processedLine.StartsWith("## "))
-                processedLine = $"<h2>{processedLine[3..]}</h2>";
-            else if (processedLine.StartsWith("### "))
-                processedLine = $"<h3>{processedLine[4..]}</h3>";
+            var sharingNote = SharingNoteEntity.Create(id, noteId, code, userId, closeTime, type);
+            var result = await _sharingRepository.AddAsync(sharingNote);
 
-            // Bold
-            processedLine = Regex.Replace(processedLine, @"\*\*(.*?)\*\*", "<strong>$1</strong>");
-            processedLine = Regex.Replace(processedLine, @"__(.*?)__", "<strong>$1</strong>");
+            var noteResult = new SharingCreateResponse(id, code);
 
-            // Italic
-            processedLine = Regex.Replace(processedLine, @"\*(.*?)\*", "<em>$1</em>");
-            processedLine = Regex.Replace(processedLine, @"_(.*?)_", "<em>$1</em>");
+            if (!result) throw new ApplicationException("Something went wrong");
 
-            // Lists
-            if (processedLine.StartsWith("- "))
-                processedLine = $"<li>{processedLine[2..]}</li>";
-            else if (Regex.IsMatch(processedLine, @"^\d+\. "))
-                processedLine = $"<li>{Regex.Replace(processedLine, @"^\d+\. ", "")}</li>";
-
-            // Code blocks
-            if (processedLine.StartsWith("```"))
-            {
-                processedLine = "<pre><code>";
-            }
-            else if (processedLine.EndsWith("```"))
-            {
-                processedLine = "</code></pre>";
-            }
-
-            // Inline code
-            processedLine = Regex.Replace(processedLine, @"`(.*?)`", "<code>$1</code>");
-
-            // Links
-            processedLine = Regex.Replace(processedLine, @"\[(.*?)\]\((.*?)\)", "<a href=\"$2\">$1</a>");
-
-            resultContent.AppendLine(processedLine);
+            return noteResult;
         }
-
-        return resultContent.ToString();
-    }
-
-    private string FormatToMarkdown(string content)
-    {
-        return content;
-    }
-
-    private string FormatToDOCX(string content)
-    {
-        // First convert to HTML as intermediate format
-        var html = FormatToHTML(content);
-
-        // Here you would use a library like OpenXML to convert to DOCX
-        // For now, we'll just return the HTML as a placeholder
-        return html;
+        catch
+        {
+            throw;
+        }
     }
 }

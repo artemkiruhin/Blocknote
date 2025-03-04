@@ -14,4 +14,9 @@ public class SharingNoteRepository : BaseCrudRepository<SharingNoteEntity>, ISha
     {
         return await _dbSet.AsNoTracking().Where(x => x.UserId == userId).ToListAsync();
     }
+    
+    public async Task<SharingNoteEntity?> GetByCodeAsync(string code)
+    {
+        return await _dbSet.AsNoTracking().FirstOrDefaultAsync(x => x.Code == code);
+    }
 }
