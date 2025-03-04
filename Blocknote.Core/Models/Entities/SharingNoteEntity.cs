@@ -1,5 +1,4 @@
 ﻿using Blocknote.Core.Models.Enums;
-using Blocknote.Core.Services.Sharing;
 
 namespace Blocknote.Core.Models.Entities;
 

@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using Blocknote.Api.Contracts;
 using Blocknote.Core.Models.Enums;
-using Blocknote.Core.Services.Sharing;
+using Blocknote.Core.Services.Base;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

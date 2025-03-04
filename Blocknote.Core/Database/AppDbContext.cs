@@ -10,7 +10,6 @@ using Blocknote.Core.Services.Base;
 using Blocknote.Core.Services.Entity;
 using Blocknote.Core.Services.Hasher;
 using Blocknote.Core.Services.Jwt;
-using Blocknote.Core.Services.Sharing;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
 

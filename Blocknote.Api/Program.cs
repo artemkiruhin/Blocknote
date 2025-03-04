@@ -10,7 +10,6 @@ using Blocknote.Core.Services.Export;
 using Blocknote.Core.Services.Extensions.Format;
 using Blocknote.Core.Services.Hasher;
 using Blocknote.Core.Services.Jwt;
-using Blocknote.Core.Services.Sharing;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;

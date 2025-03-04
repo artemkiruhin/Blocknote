@@ -1,7 +1,7 @@
 ﻿using Blocknote.Core.Models.Dtos;
 using Blocknote.Core.Models.Enums;
 
-namespace Blocknote.Core.Services.Sharing;
+namespace Blocknote.Core.Services.Base;
 
 public interface ISharingService
 {

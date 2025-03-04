@@ -2,13 +2,10 @@
 using Blocknote.Core.Models.Dtos;
 using Blocknote.Core.Models.Entities;
 using Blocknote.Core.Models.Enums;
+using Blocknote.Core.Services.Base;
 using Blocknote.Core.Services.Hasher;
-using System.Text.RegularExpressions;
-using System.Text;
-using Npgsql.Internal;
-using System.Reflection.Metadata;
 
-namespace Blocknote.Core.Services.Sharing;
+namespace Blocknote.Core.Services.Entity;
 
 public class SharingService : ISharingService
 {
