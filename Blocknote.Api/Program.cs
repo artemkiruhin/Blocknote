@@ -6,8 +6,11 @@ using Blocknote.Core.Database.Repositories;
 using Blocknote.Core.Database.Repositories.Base;
 using Blocknote.Core.Services.Base;
 using Blocknote.Core.Services.Entity;
+using Blocknote.Core.Services.Export;
+using Blocknote.Core.Services.Extensions.Format;
 using Blocknote.Core.Services.Hasher;
 using Blocknote.Core.Services.Jwt;
+using Blocknote.Core.Services.Sharing;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -92,6 +95,9 @@ builder.Services.AddScoped<INoteRepository, NoteRepository>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<INoteService, NoteService>();
+builder.Services.AddScoped<ISharingService, SharingService>();
+builder.Services.AddScoped<ITextFormatter, TextFormatter>();
+builder.Services.AddScoped<IExportService, ExportService>();
 
 builder.Services.AddScoped<IHashService, Sha256HashService>();
 builder.Services.AddScoped<IJwtService>(provider =>
