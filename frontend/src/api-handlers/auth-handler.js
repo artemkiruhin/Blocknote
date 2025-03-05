@@ -41,16 +41,15 @@ const register = async (username, password) => {
             credentials: 'include'
         })
 
-        if (!response.ok) {
+        if (!response.ok || response.statusText !== '201') {
             console.error(`Ошибка: ${response.statusText} | ${response.status}`)
         }
 
-        const data = await response.json()
-
-        return data.token
+        return true
 
     } catch (e) {
         console.error("Ошибка регистрации: ", e)
+        return false
     }
 }
 const logout = async () => {
