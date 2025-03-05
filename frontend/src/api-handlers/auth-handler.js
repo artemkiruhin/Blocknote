@@ -70,9 +70,27 @@ const logout = async () => {
         return false
     }
 }
+const validate = async () => {
+    try {
+        const response = await fetch(`${API_URL}/auth/validate`, {
+            method: 'POST',
+            credentials: 'include'
+        })
+
+        if (!response.ok) {
+            console.error(`Ошибка: ${response.statusText} | ${response.status}`)
+        }
+        return true
+
+    } catch (e) {
+        console.error("Ошибка валидации: ", e)
+        return false
+    }
+}
 
 export {
     login,
     register,
     logout,
+    validate,
 }
