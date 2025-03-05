@@ -74,7 +74,7 @@ namespace Blocknote.Api.Controllers
             }
         }
         
-        [HttpPost("validate")]
+        [HttpGet("validate")]
         [Authorize]
         public async Task<IActionResult> Validate()
         {
