@@ -85,7 +85,7 @@ namespace Blocknote.Api.Controllers
             }
         }
         
-        [HttpPost("delete")]
+        [HttpPost("delete/{sharingId:guid}")]
         public async Task<IActionResult> Delete(Guid sharingId)
         {
             try
@@ -101,7 +101,7 @@ namespace Blocknote.Api.Controllers
             }
         }
         
-        [HttpPost("edit")]
+        [HttpPut("update")]
         public async Task<IActionResult> Edit([FromBody] SharingCreateRequestModel request)
         {
             try
