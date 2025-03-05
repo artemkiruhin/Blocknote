@@ -74,5 +74,25 @@ namespace Blocknote.Api.Controllers
             }
         }
         
+        [HttpPost("validate")]
+        [Authorize]
+        public async Task<IActionResult> Validate()
+        {
+            try
+            {
+                var userId = User.FindFirst("UserId")?.Value;
+                if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var userGuid)) return Unauthorized();
+                
+                var user = await _service.GetInfoAsync(userGuid);
+                if (user == null) return Unauthorized();
+                
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
+        }
+        
     }
 }
