@@ -110,8 +110,9 @@ public class NoteService : INoteService
             
             if (note.UserId != userId) return false;
             
-            if (subtitle != null) note.Subtitle = subtitle;
-            if (content != null) note.Content = content;
+            note.Title = title;
+            note.Subtitle = subtitle;
+            note.Content = content;
             note.UpdatedAt = DateTime.UtcNow;
             
             return await _repository.EditAsync(note);
