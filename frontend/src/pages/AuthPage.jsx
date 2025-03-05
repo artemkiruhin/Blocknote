@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import styles from '../styles/AuthPage.module.css';
+import {login, register} from "../api-handlers/auth-handler";
+import {useNavigate} from "react-router-dom";
 
 const AuthPage = () => {
+    const navigate = useNavigate();
+
     const [isLoginForm, setIsLoginForm] = useState(true);
     const [loginFormData, setLoginFormData] = useState({
         email: '',
@@ -79,19 +83,26 @@ const AuthPage = () => {
         return valid;
     };
 
-    const handleLoginSubmit = (e) => {
+    const handleLoginSubmit = async (e) => {
         e.preventDefault();
         if (validateLoginForm()) {
             console.log('Login form submitted', loginFormData);
-            // Здесь будет логика отправки данных на сервер
+            const jwt = await login(loginFormData.username, loginFormData.password);
+            if (jwt !== null) {
+                localStorage.setItem('jwt_token', jwt.token);
+                navigate('/');
+            }
         }
     };
 
-    const handleRegisterSubmit = (e) => {
+    const handleRegisterSubmit = async (e) => {
         e.preventDefault();
         if (validateRegisterForm()) {
             console.log('Register form submitted', registerFormData);
-            // Здесь будет логика отправки данных на сервер
+            const result = await register(registerFormData.username, registerFormData.password);
+            if (result && result === true) {
+                setIsLoginForm(false);
+            }
         }
     };
 
