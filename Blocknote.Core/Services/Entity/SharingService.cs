@@ -37,7 +37,8 @@ public class SharingService : ISharingService
             Id = sharingNote.Id,
             UserId = sharingNote.UserId,
             CreatedAt = sharingNote.CreatedAt,
-            NoteId = sharingNote.NoteId
+            NoteId = sharingNote.NoteId,
+            Code = sharingNote.Code
         };
     }
 
@@ -72,7 +73,8 @@ public class SharingService : ISharingService
             Subtitle = note.Subtitle,
             Content = note.Content,
             // Добавляем имя автора
-            AuthorUsername = author.Username
+            AuthorUsername = author.Username,
+            Code = sharingNote.Code
         };
     }
 
@@ -107,7 +109,8 @@ public class SharingService : ISharingService
             Subtitle = note.Subtitle,
             Content = note.Content,
             // Добавляем имя автора
-            AuthorUsername = author.Username
+            AuthorUsername = author.Username,
+            Code = sharingNote.Code
         };
     }
 
@@ -119,7 +122,14 @@ public class SharingService : ISharingService
             Id = x.Id,
             UserId = x.UserId,
             CreatedAt = x.CreatedAt,
-            NoteId = x.NoteId
+            NoteId = x.NoteId,
+            AuthorUsername = x.User.Username,
+            CloseAt = x.CloseAt,
+            Content = x.Note.Content,
+            Subtitle = x.Note.Subtitle,
+            Type = x.Type,
+            Title = x.Note.Title,
+            Code = x.Code
         });
     }
 

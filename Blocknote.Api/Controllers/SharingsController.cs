@@ -33,14 +33,47 @@ namespace Blocknote.Api.Controllers
                 return BadRequest();
             }
         }
+        
+        [HttpGet("{id:guid}")]
+        public async Task<IActionResult> GetAll(Guid id)
+        {
+            try
+            {
+                var userId = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value);
+                var sharing = await _service.GetSharingCodeAsync(id);
+                return Ok(new {sharing});
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return BadRequest();
+            }
+        }
 
+        [HttpGet("code/{code}")]
+        public async Task<IActionResult> GetAll(string code)
+        {
+            try
+            {
+                var userId = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value);
+                var sharing = await _service.GetSharingCodeAsync(code);
+                return Ok(new {sharing});
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return BadRequest();
+            }
+        }
+
+        
         [HttpPost("create")]
         public async Task<IActionResult> Add([FromBody] SharingCreateRequestModel request)
         {
             try
             {
                 var userId = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value);
-                var finishDate = request.HasFinishDate ? request.FinishDate : DateTime.MaxValue;
+                var finishDate = request.HasFinishDate ? request.FinishDate.Value : DateTime.MaxValue;
                 var type = request.AllowedAll ? SharingType.All : SharingType.Registered;
                 var result = await _service.CreateSharingAsync(userId, request.NoteId, finishDate, type);
                 return Ok(new {id = result});
