@@ -1,29 +1,32 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
+import { validate } from "../../api-handlers/auth-handler";
+import { useNavigate } from "react-router-dom";
 
-const AuthRoute = (children) => {
-
+const AuthRoute = ({ children }) => {
+    const navigate = useNavigate();
     const [isAuthenticated, setIsAuthenticated] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const checkAuth = async () => {
-            //stub
-            setIsAuthenticated(true);
-        }
+            const result = await validate();
+            setIsAuthenticated(result);
+            setIsLoading(false);
+        };
 
         checkAuth();
-        setIsLoading(false);
     }, []);
 
     if (isLoading) {
         return <div>Проверка аутентификации...</div>;
     }
 
-    return (
-        <>
-            {isAuthenticated ? children : <div>Вы не авторизованы!</div>}
-        </>
-    )
-}
+    if (isAuthenticated) {
+        return children;
+    } else {
+        navigate("/login");
+        return null;
+    }
+};
 
 export default AuthRoute;
