@@ -19,6 +19,13 @@ builder.Configuration.SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("
 var configuration = builder.Configuration;
 
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policyBuilder =>
+    {
+        policyBuilder.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader().AllowCredentials();
+    });
+});
 
 builder.Services.AddAuthentication(options =>
     {
@@ -115,6 +122,9 @@ builder.Services.AddScoped<IHashService, Sha256HashService>();
 builder.Services.AddControllers();
 
 var app = builder.Build();
+
+app.UseRouting();
+app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();
 

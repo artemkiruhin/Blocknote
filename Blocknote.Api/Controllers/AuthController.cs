@@ -33,8 +33,9 @@ namespace Blocknote.Api.Controllers
                 if (result == string.Empty) return Unauthorized();
                 Response.Cookies.Append("jwt", result, new CookieOptions
                 {
-                    HttpOnly = true,
-                    Secure = false
+                    HttpOnly = true, 
+                    Secure = false,   
+                    Expires = DateTime.UtcNow.AddDays(3) 
                 });
                 return Ok(new {token = result});
             }
@@ -75,7 +76,6 @@ namespace Blocknote.Api.Controllers
         }
         
         [HttpGet("validate")]
-        [Authorize]
         public async Task<IActionResult> Validate()
         {
             try
