@@ -46,11 +46,6 @@ const AuthPage = () => {
         let valid = true;
         const newErrors = { email: '', password: '' };
 
-        if (!loginFormData.email) {
-            newErrors.email = 'Пожалуйста, введите логин или email';
-            valid = false;
-        }
-
         if (!loginFormData.password) {
             newErrors.password = 'Пожалуйста, введите пароль';
             valid = false;
@@ -87,7 +82,7 @@ const AuthPage = () => {
         e.preventDefault();
         if (validateLoginForm()) {
             console.log('Login form submitted', loginFormData);
-            const jwt = await login(loginFormData.username, loginFormData.password);
+            const jwt = await login(loginFormData.email, loginFormData.password);
             if (jwt !== null) {
                 localStorage.setItem('jwt_token', jwt.token);
                 navigate('/');
