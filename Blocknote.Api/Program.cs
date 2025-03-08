@@ -21,9 +21,12 @@ var configuration = builder.Configuration;
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policyBuilder =>
+    options.AddPolicy("AllowAll", builder =>
     {
-        policyBuilder.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader().AllowCredentials();
+        builder.AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials()
+            .SetIsOriginAllowed(_ => true);
     });
 });
 
@@ -123,8 +126,8 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
-app.UseRouting();
 app.UseCors("AllowAll");
+app.UseRouting();
 
 app.UseHttpsRedirection();
 
