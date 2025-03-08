@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Container from '../components/layout/Container';
 import '../styles/NotePage.css';
-import {deleteNote, getNoteById, updateNote} from "../api-handlers/notes-handler";
+import {createNote, deleteNote, getNoteById, updateNote} from "../api-handlers/notes-handler";
 
 const NotePage = () => {
     const navigate = useNavigate();
@@ -16,7 +16,7 @@ const NotePage = () => {
 
 
     useEffect(() => {
-        if (id !== 'new') {
+        if (id && id !== 'new') {
             const fetchNote = async () => {
                 const result = await getNoteById(id)
                 setNote({
@@ -27,8 +27,14 @@ const NotePage = () => {
             }
 
             fetchNote();
+        } else {
+            setNote({
+                title: '',
+                subtitle: '',
+                content: '',
+            })
         }
-    }, []);
+    }, [id]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -36,7 +42,11 @@ const NotePage = () => {
     };
 
     const handleSave = async () => {
-        const result = await updateNote(id, note.title, note.subtitle, note.content)
+        if (id && id !== 'new') {
+            const result = await updateNote(id, note.title, note.subtitle, note.content)
+        } else {
+            const result = await createNote(note.title, note.subtitle, note.content)
+        }
         navigate('/');
     };
 
