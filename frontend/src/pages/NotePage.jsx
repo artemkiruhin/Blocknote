@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Container from '../components/layout/Container';
 import '../styles/NotePage.css';
+import {getNoteById} from "../api-handlers/notes-handler";
 
 const NotePage = () => {
     const navigate = useNavigate();
@@ -12,6 +13,13 @@ const NotePage = () => {
         subtitle: '',
         content: '',
     });
+
+    useEffect(() => {
+        const fetchNote = async () => {
+            const result = await getNoteById(id)
+            setNote(result);
+        }
+    }, []);
 
     useEffect(() => {
         if (id && id !== 'new') {

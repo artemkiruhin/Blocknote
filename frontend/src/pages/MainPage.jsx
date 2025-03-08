@@ -5,30 +5,7 @@ import {useNavigate} from "react-router-dom";
 import {getAllNotes} from "../api-handlers/notes-handler";
 
 const MainPage = () => {
-    const [notes, setNotes] = useState([
-        {
-            id: 1,
-            title: "Заголовок заметки",
-            subtitle: "Подзаголовок заметки",
-            content: "Текст заметки",
-            createdAt: new Date().toLocaleString(),
-            updatedAt: new Date().toLocaleString(),
-        },
-        {
-            id: 2,
-            title: "Заголовок заметки 2",
-            content: "Текст заметки 2",
-            createdAt: new Date().toLocaleString(),
-            updatedAt: new Date().toLocaleString(),
-        },
-        {
-            id: 3,
-            title: "Заголовок заметки 3",
-            subtitle: "Подзаголовок заметки 3",
-            content: "Текст заметки 3",
-            createdAt: new Date().toLocaleString(),
-        },
-    ]);
+    const [notes, setNotes] = useState([]);
 
     useEffect(() => {
         const fetchNotes = async () => {
@@ -37,7 +14,7 @@ const MainPage = () => {
         }
 
         fetchNotes();
-    })
+    }, []);
 
     const navigate = useNavigate();
 
