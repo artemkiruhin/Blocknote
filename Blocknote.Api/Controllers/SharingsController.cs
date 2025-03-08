@@ -102,12 +102,18 @@ namespace Blocknote.Api.Controllers
         }
         
         [HttpPut("update")]
-        public async Task<IActionResult> Edit([FromBody] SharingCreateRequestModel request)
+        public async Task<IActionResult> Edit([FromBody] UpdateSharingRequestModel request)
         {
             try
             {
-                // upd stub
-                return Ok();
+                var result = await _service.UpdateSharingAsync(
+                    request.Id,
+                    request.IsAllowedAll,
+                    request.HasExpires,
+                    request.ExpiresAt
+                );
+                     
+                return Ok(new {newSharing = result});
             }
             catch (Exception e)
             {

@@ -170,4 +170,49 @@ public class SharingService : ISharingService
             throw;
         }
     }
+
+    public async Task<SharingNoteDto> UpdateSharingAsync(Guid id, bool isAllowedAll, bool hasExpires, DateTime? expiresAt)
+    {
+        var sharing = await _sharingRepository.GetByIdAsync(id);
+        if (sharing == null) throw new KeyNotFoundException();
+
+        sharing.Type = isAllowedAll ? nameof(SharingType.All) : nameof(SharingType.Registered);
+
+        if (hasExpires)
+        {
+            if (!expiresAt.HasValue)
+            {
+                throw new ArgumentException("ExpiresAt must have a value when hasExpires is true.");
+            }
+
+            if (expiresAt.Value <= DateTime.UtcNow)
+            {
+                throw new ArgumentException("ExpiresAt must be greater than the current time.");
+            }
+
+            sharing.CloseAt = expiresAt.Value;
+        }
+
+        var result = await _sharingRepository.EditAsync(sharing);
+        var note = await _noteRepository.GetByIdAsync(sharing.NoteId);
+        var author = await _userRepository.GetByIdAsync(sharing.UserId);
+
+        var resultDto = new SharingNoteDto
+        {
+            Id = sharing.Id,
+            NoteId = sharing.NoteId,
+            UserId = sharing.UserId,
+            Code = sharing.Code,
+            Type = sharing.Type,
+            CreatedAt = sharing.CreatedAt,
+            CloseAt = sharing.CloseAt,
+            Title = note.Title,
+            Subtitle = note.Subtitle,
+            Content = note.Content,
+            AuthorUsername = author.Username,
+            AccessType = sharing.Type == nameof(SharingType.All) ? "public" : "registered"
+        };
+
+        return resultDto;
+    }
 }

@@ -11,4 +11,5 @@ public interface ISharingService
     Task<IEnumerable<SharingNoteDto>> GetSharingsAsync(Guid userId);
     Task<bool> DeleteSharingCodeAsync(string code, Guid userId);
     Task<SharingCreateResponse> CreateSharingAsync(Guid userId, Guid noteId, DateTime closeTime, SharingType type = SharingType.All);
+    Task<SharingNoteDto> UpdateSharingAsync(Guid id, bool isAllowedAll, bool hasExpires, DateTime? expiresAt);
 }
