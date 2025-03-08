@@ -8,21 +8,19 @@ const AuthPage = () => {
 
     const [isLoginForm, setIsLoginForm] = useState(true);
     const [loginFormData, setLoginFormData] = useState({
-        email: '',
+        username: '',
         password: '',
     });
     const [registerFormData, setRegisterFormData] = useState({
         username: '',
-        email: '',
         password: '',
     });
     const [loginErrors, setLoginErrors] = useState({
-        email: '',
+        username: '',
         password: '',
     });
     const [registerErrors, setRegisterErrors] = useState({
         username: '',
-        email: '',
         password: '',
     });
 
@@ -44,7 +42,7 @@ const AuthPage = () => {
 
     const validateLoginForm = () => {
         let valid = true;
-        const newErrors = { email: '', password: '' };
+        const newErrors = { username: '', password: '' };
 
         if (!loginFormData.password) {
             newErrors.password = 'Пожалуйста, введите пароль';
@@ -57,15 +55,10 @@ const AuthPage = () => {
 
     const validateRegisterForm = () => {
         let valid = true;
-        const newErrors = { username: '', email: '', password: '' };
+        const newErrors = { username: '', password: '' };
 
         if (!registerFormData.username) {
             newErrors.username = 'Пожалуйста, введите логин';
-            valid = false;
-        }
-
-        if (!registerFormData.email || !registerFormData.email.includes('@')) {
-            newErrors.email = 'Пожалуйста, введите корректный email';
             valid = false;
         }
 
@@ -82,7 +75,7 @@ const AuthPage = () => {
         e.preventDefault();
         if (validateLoginForm()) {
             console.log('Login form submitted', loginFormData);
-            const jwt = await login(loginFormData.email, loginFormData.password);
+            const jwt = await login(loginFormData.username, loginFormData.password);
             if (jwt !== null) {
                 localStorage.setItem('jwt_token', jwt.token);
                 navigate('/');
@@ -135,15 +128,16 @@ const AuthPage = () => {
                     >
                         <form onSubmit={handleLoginSubmit}>
                             <div className={styles.formGroup}>
-                                <label htmlFor="login-email">Логин или Email</label>
+                                <label htmlFor="login">Логин</label>
                                 <input
                                     type="text"
-                                    id="login-email"
-                                    placeholder="Введите логин или email"
-                                    value={loginFormData.email}
+                                    id="login-username"
+                                    placeholder="Введите логин"
+                                    value={loginFormData.username}
                                     onChange={handleLoginChange}
                                 />
-                                {loginErrors.email && <div className={styles.errorMessage}>{loginErrors.email}</div>}
+                                {loginErrors.username &&
+                                    <div className={styles.errorMessage}>{loginErrors.username}</div>}
                             </div>
                             <div className={styles.formGroup}>
                                 <label htmlFor="login-password">Пароль</label>
@@ -178,17 +172,6 @@ const AuthPage = () => {
                                     onChange={handleRegisterChange}
                                 />
                                 {registerErrors.username && <div className={styles.errorMessage}>{registerErrors.username}</div>}
-                            </div>
-                            <div className={styles.formGroup}>
-                                <label htmlFor="register-email">Email</label>
-                                <input
-                                    type="email"
-                                    id="register-email"
-                                    placeholder="Введите email"
-                                    value={registerFormData.email}
-                                    onChange={handleRegisterChange}
-                                />
-                                {registerErrors.email && <div className={styles.errorMessage}>{registerErrors.email}</div>}
                             </div>
                             <div className={styles.formGroup}>
                                 <label htmlFor="register-password">Пароль</label>
