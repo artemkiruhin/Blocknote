@@ -1,45 +1,37 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import '../styles/SharingsPage.css';
 import {useNavigate} from "react-router-dom";
+import {getAllSharings} from "../api-handlers/sharings-handler";
 
 const SharingsPage = () => {
 
     const navigate = useNavigate();
 
     const [searchId, setSearchId] = useState('');
-    const [sharings, setSharings] = useState([
-        {
-            id: '1',
-            title: 'Заметка о проекте X',
-            createdAt: '2025-02-28T14:30:00',
-            closedAt: null,
-            accessLevel: 'public' // 'public' для всех пользователей, 'registered' только для зарегистрированных
-        },
-        {
-            id: '2',
-            title: 'Исследование нового API',
-            createdAt: '2025-02-25T10:15:00',
-            closedAt: '2025-03-01T18:45:00',
-            accessLevel: 'registered'
-        },
-        {
-            id: '3',
-            title: 'Заметки по встрече',
-            createdAt: '2025-03-01T09:30:00',
-            closedAt: null,
-            accessLevel: 'public'
+    const [sharings, setSharings] = useState([]);
+
+    const fetchSharings = async () => {
+        const notes = await getAllSharings();
+        setSharings(notes);
+    }
+
+    useEffect(() => {
+        fetchSharings();
+    }, [])
+
+    const handleSearch = async () => {
+        if (searchId) {
+            const filteredSharings = sharings.filter(x => x.id === searchId);
+            setSharings(filteredSharings);
+        } else {
+            await fetchSharings();
         }
-    ]);
-
-    const handleSearch = () => {
-        // Функция поиска по ID (в будущей реализации)
-        console.log('Поиск шаринга с ID:', searchId);
     };
 
-    const handleAddSharing = () => {
-        // Функция добавления нового шаринга (в будущей реализации)
-        console.log('Добавление нового шаринга');
-    };
+    // const handleAddSharing = () => {
+    //     // Функция добавления нового шаринга (в будущей реализации)
+    //     console.log('Добавление нового шаринга');
+    // };
 
     // Форматирование даты и времени
     const formatDateTime = (dateTimeString) => {
@@ -69,9 +61,9 @@ const SharingsPage = () => {
                         Поиск
                     </button>
                 </div>
-                <button className="add-sharing-button" onClick={handleAddSharing}>
-                    Добавить шаринг
-                </button>
+                {/*<button className="add-sharing-button" onClick={handleAddSharing}>*/}
+                {/*    Добавить шаринг*/}
+                {/*</button>*/}
             </header>
             <div className="sharings-page-content">
                 <div className="sharings-list">
