@@ -2,7 +2,7 @@ import {API_URL} from "./base-handler";
 
 const login = async (username, password) => {
     try {
-        const response = await fetch(`${API_URL}/login`, {
+        const response = await fetch(`${API_URL}/auth/login`, {
             method: 'POST',
             body: JSON.stringify({
                 username: username,
@@ -72,14 +72,11 @@ const logout = async () => {
 const validate = async () => {
     try {
         const response = await fetch(`${API_URL}/auth/validate`, {
-            method: 'POST',
+            method: 'GET',
             credentials: 'include'
         })
 
-        if (!response.ok) {
-            console.error(`Ошибка: ${response.statusText} | ${response.status}`)
-        }
-        return true
+        return response.status === 200
 
     } catch (e) {
         console.error("Ошибка валидации: ", e)
