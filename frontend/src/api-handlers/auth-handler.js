@@ -29,7 +29,7 @@ const login = async (username, password) => {
 
 const register = async (username, password) => {
     try {
-        const response = await fetch(`${API_URL}/register`, {
+        const response = await fetch(`${API_URL}/auth/register`, {
             method: 'POST',
             body: JSON.stringify({
                 username: username,
