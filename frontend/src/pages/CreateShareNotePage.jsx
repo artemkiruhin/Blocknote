@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import Container from '../components/layout/Container';
 import '../styles/CreateShareNotePage.css';
+import {createSharing} from "../api-handlers/sharings-handler";
 
 const CreateShareNotePage = () => {
     const navigate = useNavigate();
+    const { id } = useParams();
     const [note, setNote] = useState({
+        noteId: id,
         createdAt: new Date().toLocaleString(),
         expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // Default: 30 days from now
-        accessType: 'public', // Default: public access (for all)
-        durationType: 'limited' // Default: limited (with expiration)
+        accessType: 'public',
+        durationType: 'limited'
     });
 
     const handleInputChange = (e) => {
@@ -29,13 +32,16 @@ const CreateShareNotePage = () => {
         }
     };
 
-    const handleCreateSharing = () => {
+    const handleCreateSharing = async () => {
         console.log('Creating shared note:', note);
-        // Here you would send the note to your backend
 
-        // For demo purposes, generate a random ID
-        const newShareId = Math.floor(1000 + Math.random() * 9000);
-        navigate(`/sharings/${newShareId}`);
+        const hasExpires = note.durationType === 'limited';
+        const expiresAt = note.expiresAt === "" ? null : `${note.expiresAt}T00:00:00Z`;
+        const allowedAll = note.accessType === 'public';
+
+        const result = await createSharing(id, expiresAt, allowedAll, hasExpires);
+
+        navigate(`/sharings/${result}`);
     };
 
     const handleCancel = () => {
