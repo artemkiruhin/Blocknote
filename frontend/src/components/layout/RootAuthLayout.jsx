@@ -1,8 +1,8 @@
 import Navbar from "./Navbar";
 import Container from "./Container";
-import {useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
-import {validate} from "../../api-handlers/auth-handler";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { validate } from "../../api-handlers/auth-handler";
 
 const RootAuthLayout = ({ children }) => {
     const navigate = useNavigate();
@@ -11,22 +11,22 @@ const RootAuthLayout = ({ children }) => {
 
     useEffect(() => {
         const validateAuth = async () => {
-            const result = await validate()
-            setIsAuthenticated(result)
-        }
+            const result = await validate();
+            setIsAuthenticated(result);
+            setIsLoading(false);
+
+            if (!result) {
+                navigate("/auth");
+            }
+        };
 
         validateAuth();
-        setIsLoading(false);
-    }, [])
-
-    if (!isAuthenticated) {
-        navigate("/auth")
-    }
+    }, [navigate]);
 
     if (isLoading) {
         return (
             <div>Загрузка</div>
-        )
+        );
     }
 
     return (
@@ -36,7 +36,7 @@ const RootAuthLayout = ({ children }) => {
                 {children}
             </Container>
         </>
-    )
-}
+    );
+};
 
 export default RootAuthLayout;
