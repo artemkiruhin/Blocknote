@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Container from '../components/layout/Container';
 import '../styles/ShareNotePage.css';
+import { getSharingById } from "../api-handlers/sharings-handler";
 
 const ShareNotePage = () => {
     const navigate = useNavigate();
@@ -20,21 +21,22 @@ const ShareNotePage = () => {
 
     useEffect(() => {
         if (id) {
-            // Generate a random share ID for demonstration
-            setShareId(`share_${Math.random().toString(36).substring(2, 10)}`);
-
-            // Stub: Fetch shared note data
-            const fetchedNote = {
-                id: parseInt(id),
-                title: `Заголовок заметки ${id}`,
-                subtitle: `Подзаголовок заметки ${id}`,
-                content: `# Это заголовок\n\nЭто **жирный** текст и *курсив*.\n\n- Пункт списка 1\n- Пункт списка 2\n\n## Подзаголовок\n\nЭто [ссылка](https://example.com)`,
-                createdAt: new Date().toLocaleString(),
-                expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-                accessType: 'public'
+            const fetchSharing = async () => {
+                const result = await getSharingById(id);
+                const note = {
+                    id: id,
+                    title: result.title,
+                    subtitle: result.subtitle,
+                    content: result.content,
+                    createdAt: result.createdAt.toLocaleString(),
+                    expiresAt: result.closeAt.toLocaleString(),
+                    accessType: result.accessType,
+                };
+                setShareId(result.noteId);
+                setNote(note);
             };
 
-            setNote(fetchedNote);
+            fetchSharing();
         }
     }, [id]);
 
@@ -44,25 +46,22 @@ const ShareNotePage = () => {
     };
 
     const handleStartEditing = () => {
-        // Save the original note state when starting to edit
-        setOriginalNote({...note});
+        setOriginalNote({ ...note });
         setIsEditing(true);
     };
 
     const handleSaveChanges = () => {
         console.log('Saving changes to shared note:', note);
         setIsEditing(false);
-        setOriginalNote(null); // Clear original state after saving
-        // Here you would update the note in your backend
+        setOriginalNote(null);
     };
 
     const handleCancelChanges = () => {
-        // Restore the original note state
         if (originalNote) {
-            setNote({...originalNote});
+            setNote({ ...originalNote });
         }
         setIsEditing(false);
-        setOriginalNote(null); // Clear original state after cancelling
+        setOriginalNote(null);
     };
 
     const handleDelete = () => {
@@ -72,43 +71,40 @@ const ShareNotePage = () => {
         }
     };
 
-    // Convert Markdown to HTML for display
     const renderMarkdown = (text) => {
         if (!text) return '';
 
         let html = text
-            // Headers
             .replace(/^# (.+)$/gm, '<h1>$1</h1>')
             .replace(/^## (.+)$/gm, '<h2>$1</h2>')
             .replace(/^### (.+)$/gm, '<h3>$1</h3>')
-            // Bold and Italic
             .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
             .replace(/\*(.+?)\*/g, '<em>$1</em>')
-            // Lists
             .replace(/^- (.+)$/gm, '<li>$1</li>')
-            // Links
             .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2">$1</a>')
-            // Paragraphs
             .replace(/\n\n/g, '</p><p>');
 
-        // Wrap in paragraphs
         html = '<p>' + html + '</p>';
-        // Fix lists
         html = html.replace(/<li>(.+?)<\/li>/g, '<ul><li>$1</li></ul>');
         html = html.replace(/<\/ul><ul>/g, '');
 
         return html;
     };
 
-    // Format date for display
     const formatDate = (dateString) => {
         try {
+            let maxDate = new Date(9999, 11, 31, 23, 59, 59, 999);
+            const currentDate = new Date(dateString);
+
+            if (currentDate.getTime() === maxDate.getTime()) {
+                return 'неограниченно';
+            }
+
             if (dateString.includes('T')) {
-                // If it's ISO format, convert to readable date
                 const date = new Date(dateString);
                 return date.toLocaleString();
             }
-            return dateString; // Return as is if it's already formatted
+            return dateString;
         } catch (e) {
             return dateString;
         }
