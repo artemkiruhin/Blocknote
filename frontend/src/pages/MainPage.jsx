@@ -1,7 +1,8 @@
 import NoteList from "../components/main/NotesList";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import Container from "../components/layout/Container";
 import {useNavigate} from "react-router-dom";
+import {getAllNotes} from "../api-handlers/notes-handler";
 
 const MainPage = () => {
     const [notes, setNotes] = useState([
@@ -28,6 +29,15 @@ const MainPage = () => {
             createdAt: new Date().toLocaleString(),
         },
     ]);
+
+    useEffect(() => {
+        const fetchNotes = async () => {
+            const result = await getAllNotes();
+            setNotes(result);
+        }
+
+        fetchNotes();
+    })
 
     const navigate = useNavigate();
 
