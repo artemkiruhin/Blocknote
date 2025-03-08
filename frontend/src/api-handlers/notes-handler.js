@@ -75,10 +75,10 @@ const updateNote = async (noteId, title, subtitle, content) => {
         if (!response.ok) {
             console.error(`Ошибка: ${response.statusText} | ${response.status}`)
         }
-        const data = await response.json()
-        return data.note
+        return response.ok
     } catch (e) {
         console.error("Ошибка создания заметки: ", e)
+        return false
     }
 }
 const deleteNote = async (noteId) => {
