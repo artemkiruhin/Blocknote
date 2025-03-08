@@ -4,7 +4,7 @@ namespace Blocknote.Core.Models.Enums;
 public enum SharingType
 {
     [Display(Name = "Все")]
-    All,
+    Public,
 
     [Display(Name = "Только зарегистрированные")]
     Registered

@@ -30,7 +30,7 @@ public class SharingService : ISharingService
             await _sharingRepository.DeleteAsync(sharingNote.Id);
             throw new KeyNotFoundException();
         }
-        if (sharingNote.Type == nameof(SharingType.Registered) && !userId.HasValue) throw new UnauthorizedAccessException();
+        if (sharingNote.Type.ToLower() == nameof(SharingType.Registered).ToLower() && !userId.HasValue) throw new UnauthorizedAccessException();
 
         return new SharingNoteDto()
         {
@@ -52,8 +52,8 @@ public class SharingService : ISharingService
             throw new KeyNotFoundException();
         }
 
-        if (sharingNote.Type == nameof(SharingType.Registered))
-            throw new UnauthorizedAccessException();
+        // if (sharingNote.Type.ToLower() == nameof(SharingType.Registered).ToLower())
+        //     throw new UnauthorizedAccessException();
 
         // Получаем связанную заметку
         var note = await _noteRepository.GetByIdAsync(sharingNote.NoteId);
@@ -88,8 +88,8 @@ public class SharingService : ISharingService
             throw new KeyNotFoundException();
         }
 
-        if (sharingNote.Type == nameof(SharingType.Registered))
-            throw new UnauthorizedAccessException();
+        // if (sharingNote.Type.ToLower() == nameof(SharingType.Registered).ToLower())
+        //     throw new UnauthorizedAccessException();
 
         // Получаем связанную заметку
         var note = await _noteRepository.GetByIdAsync(sharingNote.NoteId);
@@ -111,7 +111,7 @@ public class SharingService : ISharingService
             // Добавляем имя автора
             AuthorUsername = author.Username,
             Code = sharingNote.Code,
-            AccessType = sharingNote.Type == nameof(SharingType.All) ? "public" : "registered"
+            AccessType = sharingNote.Type == nameof(SharingType.Public) ? "public" : "registered"
         };
     }
 
@@ -131,7 +131,7 @@ public class SharingService : ISharingService
             Type = x.Type,
             Title = x.Note.Title,
             Code = x.Code,
-            AccessType = x.Type == nameof(SharingType.All) ? "public" : "registered"
+            AccessType = x.Type.ToLower() == nameof(SharingType.Public).ToLower() ? "public" : "registered"
         });
     }
 
@@ -143,7 +143,7 @@ public class SharingService : ISharingService
         return result;
     }
 
-    public async Task<SharingCreateResponse> CreateSharingAsync(Guid userId, Guid noteId, DateTime closeTime, SharingType type = SharingType.All)
+    public async Task<SharingCreateResponse> CreateSharingAsync(Guid userId, Guid noteId, DateTime closeTime, SharingType type = SharingType.Public)
     {
         try
         {
@@ -176,7 +176,7 @@ public class SharingService : ISharingService
         var sharing = await _sharingRepository.GetByIdAsync(id);
         if (sharing == null) throw new KeyNotFoundException();
 
-        sharing.Type = isAllowedAll ? nameof(SharingType.All) : nameof(SharingType.Registered);
+        sharing.Type = isAllowedAll ? nameof(SharingType.Public) : nameof(SharingType.Registered);
 
         if (hasExpires)
         {
@@ -210,7 +210,7 @@ public class SharingService : ISharingService
             Subtitle = note.Subtitle,
             Content = note.Content,
             AuthorUsername = author.Username,
-            AccessType = sharing.Type == nameof(SharingType.All) ? "public" : "registered"
+            AccessType = sharing.Type == nameof(SharingType.Public) ? "public" : "registered"
         };
 
         return resultDto;

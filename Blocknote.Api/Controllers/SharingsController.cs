@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Blocknote.Api.Contracts;
 using Blocknote.Core.Models.Enums;
 using Blocknote.Core.Services.Base;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +10,7 @@ namespace Blocknote.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class SharingsController : ControllerBase
     {
         private readonly ISharingService _service;
@@ -74,9 +76,9 @@ namespace Blocknote.Api.Controllers
             {
                 var userId = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value);
                 var finishDate = request.HasFinishDate ? request.FinishDate.Value : DateTime.MaxValue;
-                var type = request.AllowedAll ? SharingType.All : SharingType.Registered;
+                var type = request.AllowedAll ? SharingType.Public : SharingType.Registered;
                 var result = await _service.CreateSharingAsync(userId, request.NoteId, finishDate, type);
-                return Ok(new {id = result});
+                return Ok(new {id = result.Id});
             }
             catch (Exception e)
             {

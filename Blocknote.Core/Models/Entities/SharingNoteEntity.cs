@@ -15,7 +15,7 @@ public class SharingNoteEntity
     public virtual UserEntity User { get; set; } = null!;
     public virtual NoteEntity Note { get; set; } = null!;
     
-    public static SharingNoteEntity Create(Guid? id, Guid noteId, string code, Guid userId, DateTime closeAt, SharingType sharingType = SharingType.All)
+    public static SharingNoteEntity Create(Guid? id, Guid noteId, string code, Guid userId, DateTime closeAt, SharingType sharingType = SharingType.Public)
     {
         return new()
         {
@@ -27,8 +27,8 @@ public class SharingNoteEntity
             CreatedAt = DateTime.UtcNow,
             Type = sharingType switch
             {
-                SharingType.All => nameof(SharingType.All),
-                SharingType.Registered => nameof(SharingType.Registered),
+                SharingType.Public => nameof(SharingType.Public).ToLower(),
+                SharingType.Registered => nameof(SharingType.Registered).ToLower(),
                 _ => throw new ArgumentException()
             }
         };
