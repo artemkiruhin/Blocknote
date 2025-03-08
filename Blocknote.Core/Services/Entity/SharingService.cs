@@ -110,7 +110,8 @@ public class SharingService : ISharingService
             Content = note.Content,
             // Добавляем имя автора
             AuthorUsername = author.Username,
-            Code = sharingNote.Code
+            Code = sharingNote.Code,
+            AccessType = sharingNote.Type == nameof(SharingType.All) ? "public" : "registered"
         };
     }
 
@@ -129,7 +130,8 @@ public class SharingService : ISharingService
             Subtitle = x.Note.Subtitle,
             Type = x.Type,
             Title = x.Note.Title,
-            Code = x.Code
+            Code = x.Code,
+            AccessType = x.Type == nameof(SharingType.All) ? "public" : "registered"
         });
     }
 

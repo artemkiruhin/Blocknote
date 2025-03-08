@@ -13,4 +13,5 @@ public class SharingNoteDto
     public string Type { get; set; }
     public DateTime CloseAt { get; set; }
     public string AuthorUsername { get; set; }
+    public string AccessType { get; set; }
 }
