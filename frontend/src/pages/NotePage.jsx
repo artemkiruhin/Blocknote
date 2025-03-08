@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Container from '../components/layout/Container';
 import '../styles/NotePage.css';
-import {getNoteById} from "../api-handlers/notes-handler";
+import {deleteNote, getNoteById, updateNote} from "../api-handlers/notes-handler";
 
 const NotePage = () => {
     const navigate = useNavigate();
@@ -14,42 +14,35 @@ const NotePage = () => {
         content: '',
     });
 
+
     useEffect(() => {
-        const fetchNote = async () => {
-            const result = await getNoteById(id)
-            setNote(result);
+        if (id !== 'new') {
+            const fetchNote = async () => {
+                const result = await getNoteById(id)
+                setNote({
+                    title: result.title,
+                    subtitle: result.subtitle,
+                    content: result.content
+                });
+            }
+
+            fetchNote();
         }
     }, []);
-
-    useEffect(() => {
-        if (id && id !== 'new') {
-
-            //stub
-
-            setNote({
-                id: parseInt(id),
-                title: `Заголовок заметки ${id}`,
-                subtitle: `Подзаголовок заметки ${id}`,
-                content: `# Это заголовок\n\nЭто **жирный** текст и *курсив*.\n\n- Пункт списка 1\n- Пункт списка 2\n\n## Подзаголовок\n\nЭто [ссылка](https://example.com)`,
-                createdAt: new Date().toLocaleString(),
-                updatedAt: new Date().toLocaleString(),
-            });
-        }
-    }, [id]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setNote({ ...note, [name]: value });
     };
 
-    const handleSave = () => {
-        console.log('Saving note:', note);
+    const handleSave = async () => {
+        const result = await updateNote(id, note.title, note.subtitle, note.content)
         navigate('/');
     };
 
-    const handleDelete = () => {
+    const handleDelete = async () => {
         if (window.confirm('Вы уверены, что хотите удалить эту заметку?')) {
-            console.log('Deleting note:', note);
+            const result = await deleteNote(id);
             navigate('/');
         }
     };
