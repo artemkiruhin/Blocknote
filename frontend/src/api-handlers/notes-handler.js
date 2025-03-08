@@ -47,13 +47,13 @@ const createNote = async (title, subtitle, content) => {
             credentials: 'include'
         })
 
-        if (!response.ok) {
+        if (!response.status === 201) {
             console.error(`Ошибка: ${response.statusText} | ${response.status}`)
         }
-        const data = await response.json()
-        return data.note
+        return response.status === 201
     } catch (e) {
         console.error("Ошибка создания заметки: ", e)
+        return false
     }
 }
 const updateNote = async (noteId, title, subtitle, content) => {
@@ -91,10 +91,10 @@ const deleteNote = async (noteId) => {
         if (!response.ok) {
             console.error(`Ошибка: ${response.statusText} | ${response.status}`)
         }
-        const data = await response.json()
-        return data.note
+        return response.status === 200
     } catch (e) {
         console.error("Ошибка удаления заметки: ", e)
+        return false
     }
 }
 
