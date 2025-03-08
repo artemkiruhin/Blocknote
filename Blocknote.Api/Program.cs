@@ -50,12 +50,12 @@ builder.Services.AddAuthentication(options =>
             {
                 try
                 {
-                    Console.WriteLine("Token validated successfully");
+                    //Console.WriteLine("Token validated successfully");
                     var claims = context.Principal?.Claims;
                     var userIdClaim = claims?.FirstOrDefault(c => c.Type == "UserId");
                     if (Guid.TryParse(userIdClaim?.Value, out var userId))
                     {
-                        Console.WriteLine($"UserId from token: {userId}");
+                        //Console.WriteLine($"UserId from token: {userId}");
                         var identity = context.Principal.Identity as ClaimsIdentity;
                         if (identity != null)
                         {
