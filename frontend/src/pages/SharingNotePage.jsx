@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import Container from '../components/layout/Container';
-import '../styles/ShareNotePage.css';
-import { getSharingById } from "../api-handlers/sharings-handler";
+import Container from "../components/layout/Container";
+import {getSharingById, updateSharing} from "../api-handlers/sharings-handler";
+import {useNavigate, useParams} from "react-router-dom";
+import {useEffect, useState} from "react";
+import "../styles/ShareNotePage.css"
 
 const ShareNotePage = () => {
     const navigate = useNavigate();
@@ -13,16 +13,18 @@ const ShareNotePage = () => {
         content: '',
         createdAt: new Date().toLocaleString(),
         expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // Default: 30 days from now
-        accessType: 'public' // Default: public access (for all)
+        accessType: 'public'
     });
-    const [originalNote, setOriginalNote] = useState(null); // Store original note state
+    const [originalNote, setOriginalNote] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [shareId, setShareId] = useState('');
+    const [isUnlimited, setIsUnlimited] = useState(false);
 
     useEffect(() => {
         if (id) {
             const fetchSharing = async () => {
                 const result = await getSharingById(id);
+                console.log(result);
                 const note = {
                     id: id,
                     title: result.title,
@@ -34,6 +36,7 @@ const ShareNotePage = () => {
                 };
                 setShareId(result.noteId);
                 setNote(note);
+                setIsUnlimited(!result.hasExpires);
             };
 
             fetchSharing();
@@ -50,10 +53,35 @@ const ShareNotePage = () => {
         setIsEditing(true);
     };
 
-    const handleSaveChanges = () => {
+    const handleSaveChanges = async () => {
         console.log('Saving changes to shared note:', note);
-        setIsEditing(false);
-        setOriginalNote(null);
+
+        try {
+            const isPublic = note.accessType === 'public';
+            const expiresAt = isUnlimited ? null : (note.expiresAt ? new Date(note.expiresAt).toISOString() : null);
+            const hasExpires = !isUnlimited && !!expiresAt;
+
+            console.log(isPublic, expiresAt, hasExpires);
+
+            const result = await updateSharing(id, isPublic, hasExpires, expiresAt);
+
+            if (!result) {
+                throw new Error('Не удалось сохранить изменения. Сервер не вернул данные.');
+            }
+
+            setNote({
+                ...note,
+                accessType: isPublic ? 'public' : 'registered',
+                expiresAt: expiresAt ? new Date(expiresAt).toLocaleString() : null,
+            });
+
+            setIsEditing(false);
+            setOriginalNote(null);
+            alert('Изменения успешно сохранены!');
+        } catch (error) {
+            console.error('Ошибка при сохранении изменений:', error);
+            alert('Произошла ошибка при сохранении изменений. Попробуйте снова.');
+        }
     };
 
     const handleCancelChanges = () => {
@@ -152,15 +180,27 @@ const ShareNotePage = () => {
                         <div className="date-field">
                             <label>Срок действия до:</label>
                             {isEditing ? (
-                                <input
-                                    type="date"
-                                    name="expiresAt"
-                                    value={note.expiresAt}
-                                    onChange={handleInputChange}
-                                    className="date-input"
-                                />
+                                <div>
+                                    <label>
+                                        <input
+                                            type="checkbox"
+                                            checked={isUnlimited}
+                                            onChange={(e) => setIsUnlimited(e.target.checked)}
+                                        />
+                                        Без срока действия
+                                    </label>
+                                    {!isUnlimited && (
+                                        <input
+                                            type="date"
+                                            name="expiresAt"
+                                            value={note.expiresAt}
+                                            onChange={handleInputChange}
+                                            className="date-input"
+                                        />
+                                    )}
+                                </div>
                             ) : (
-                                <span>{formatDate(note.expiresAt)}</span>
+                                <span>{isUnlimited ? 'неограниченно' : formatDate(note.expiresAt)}</span>
                             )}
                         </div>
 

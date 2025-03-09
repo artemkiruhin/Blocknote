@@ -32,7 +32,6 @@ const getSharingById = async (sharingId) => {
         if (!data) {
             throw new Error('Данные не получены');
         }
-
         console.log(data.sharing)
         return data.sharing; // Возвращаем данные с сервера
     } catch (e) {
