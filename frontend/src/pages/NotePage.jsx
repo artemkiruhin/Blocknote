@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Container from '../components/layout/Container';
 import '../styles/NotePage.css';
 import {createNote, deleteNote, getNoteById, updateNote} from "../api-handlers/notes-handler";
+import {exportNotes} from "../api-handlers/export-handler";
 
 const NotePage = () => {
     const navigate = useNavigate();
@@ -61,8 +62,30 @@ const NotePage = () => {
         navigate(`/sharings/new/${id}`)
     };
 
-    const handleExport = (format) => {
-        alert(`Экспорт в ${format} формат будет доступен в ближайшее время`);
+    const handleExport = async (format) => {
+        let type = 0;
+        if (format === 'DOCX') type = 0;
+        else if (format === 'Markdown') type = 1;
+        else if (format === 'HTML') type = 2;
+
+        const result = await exportNotes(id, type);
+
+        if (result.success) {
+            alert(`Файл "${result.fileName}" успешно скачан!`);
+        } else {
+            alert(`Ошибка при скачивании файла: ${result.error}`);
+        }
+        // <span className="export-label">Экспорт:</span>
+        // <button className="btn-export" onClick={() => handleExport('HTML')}>
+        //     HTML
+        // </button>
+        // <button className="btn-export" onClick={() => handleExport('JSON')}>
+        //     JSON
+        // </button>
+        // <button className="btn-export" onClick={() => handleExport('DOCX')}>
+        //     DOCX
+        // </button>
+
     };
 
     // Simple Markdown to HTML converter for preview
@@ -294,6 +317,9 @@ const NotePage = () => {
                                 </button>
                                 <button className="btn-export" onClick={() => handleExport('DOCX')}>
                                     DOCX
+                                </button>
+                                <button className="btn-export" onClick={() => handleExport('Markdown')}>
+                                    Markdown
                                 </button>
                             </div>
                         </div>
