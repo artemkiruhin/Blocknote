@@ -1,5 +1,5 @@
 import Container from "../components/layout/Container";
-import {getSharingById, updateSharing} from "../api-handlers/sharings-handler";
+import {deleteSharing, getSharingById, updateSharing} from "../api-handlers/sharings-handler";
 import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import "../styles/ShareNotePage.css"
@@ -92,9 +92,10 @@ const ShareNotePage = () => {
         setOriginalNote(null);
     };
 
-    const handleDelete = () => {
+    const handleDelete = async () => {
         if (window.confirm('Вы уверены, что хотите удалить эту заметку?')) {
             console.log('Deleting shared note:', note);
+            const result = await deleteSharing(id)
             navigate('/sharings');
         }
     };
