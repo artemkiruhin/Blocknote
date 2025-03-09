@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import '../../styles/Navbar.css';
+import {logout} from "../../api-handlers/auth-handler";
 
 const Navbar = () => {
     const [menuOpen, setMenuOpen] = useState(false);
@@ -47,7 +48,10 @@ const Navbar = () => {
                             <div className="dropdown-item">Экспорт</div>
                             <div className="dropdown-item">Профиль</div>
                             <div className="dropdown-item" onClick={() => navigate("/sharings")}>Шаринги</div>
-                            <div className="dropdown-item">Выйти</div>
+                            <div className="dropdown-item" onClick={ async () => {
+                                await logout();
+                                navigate("/auth");
+                            }}>Выйти</div>
                         </div>
                     </li>
                 </ul>
