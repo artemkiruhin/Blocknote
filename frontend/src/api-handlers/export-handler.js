@@ -10,28 +10,25 @@ const exportNotes = async (noteId, type) => {
         if (!response.ok) {
             throw new Error(`Ошибка: ${response.statusText}`);
         }
-
-        // Получаем бинарные данные (файл)
+        
         const blob = await response.blob();
 
-        // Определяем имя файла из заголовка Content-Disposition
         const contentDisposition = response.headers.get('Content-Disposition');
-        let fileName = `note_${noteId}`; // Имя по умолчанию
+
+        let fileName = `note_${noteId}.md`;
         if (contentDisposition && contentDisposition.includes('filename=')) {
             fileName = contentDisposition
                 .split('filename=')[1]
-                .replace(/['"]/g, ''); // Убираем кавычки, если они есть
+                .replace(/['"]/g, '');
         }
 
-        // Создаем ссылку для скачивания
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = fileName; // Указываем имя файла
+        a.download = fileName;
         document.body.appendChild(a);
-        a.click(); // Инициируем скачивание
+        a.click();
 
-        // Очищаем ссылку
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
 
