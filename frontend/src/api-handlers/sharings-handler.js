@@ -131,8 +131,8 @@ const deleteSharing = async (sharingId) => {
         if (!response.ok) {
             console.error(`Ошибка: ${response.statusText} | ${response.status}`)
         }
-        const data = await response.json()
-        return data.note
+        const data = await response.json();
+        return data.result
     } catch (e) {
         console.error("Ошибка удаления шаринга: ", e)
     }

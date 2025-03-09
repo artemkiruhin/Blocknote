@@ -87,7 +87,7 @@ namespace Blocknote.Api.Controllers
             }
         }
         
-        [HttpPost("delete/{sharingId:guid}")]
+        [HttpDelete("delete/{sharingId:guid}")]
         public async Task<IActionResult> Delete(Guid sharingId)
         {
             try
