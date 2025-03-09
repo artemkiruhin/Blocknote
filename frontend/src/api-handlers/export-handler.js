@@ -10,7 +10,7 @@ const exportNotes = async (noteId, type) => {
         if (!response.ok) {
             throw new Error(`Ошибка: ${response.statusText}`);
         }
-        
+
         const blob = await response.blob();
 
         const contentDisposition = response.headers.get('Content-Disposition');
