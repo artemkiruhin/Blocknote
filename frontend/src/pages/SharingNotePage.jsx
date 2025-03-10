@@ -12,7 +12,7 @@ const ShareNotePage = () => {
         subtitle: '',
         content: '',
         createdAt: new Date().toLocaleString(),
-        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // Default: 30 days from now
+        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
         accessType: 'public'
     });
     const [originalNote, setOriginalNote] = useState(null);
