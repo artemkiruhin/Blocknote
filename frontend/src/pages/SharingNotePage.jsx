@@ -13,7 +13,8 @@ const ShareNotePage = () => {
         content: '',
         createdAt: new Date().toLocaleString(),
         expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        accessType: 'public'
+        accessType: 'public',
+        code: ''
     });
     const [originalNote, setOriginalNote] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
@@ -33,6 +34,7 @@ const ShareNotePage = () => {
                     createdAt: result.createdAt.toLocaleString(),
                     expiresAt: result.closeAt.toLocaleString(),
                     accessType: result.accessType,
+                    code: result.code
                 };
                 setShareId(result.noteId);
                 setNote(note);
@@ -170,6 +172,9 @@ const ShareNotePage = () => {
                 <div className="share-info">
                     <div className="share-id">
                         Идентификатор: <span className="highlight">{shareId}</span>
+                    </div>
+                    <div className="share-id">
+                        Код: <span className="highlight">{note.code}</span>
                     </div>
 
                     <div className="share-dates">
