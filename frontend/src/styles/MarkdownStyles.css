@@ -1,0 +1,84 @@
+/* markdown-styles.css */
+
+/* Общие стили для предпросмотра Markdown */
+.preview-content {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    padding: 16px;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    min-height: 300px;
+    overflow-y: auto;
+}
+
+/* Заголовки */
+.preview-content h1,
+.preview-content h2,
+.preview-content h3 {
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+}
+
+.preview-content h1 {
+    font-size: 1.8rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.3em;
+}
+
+.preview-content h2 {
+    font-size: 1.5rem;
+}
+
+.preview-content h3 {
+    font-size: 1.3rem;
+}
+
+/* Параграфы */
+.preview-content p {
+    margin-bottom: 1em;
+}
+
+/* Списки */
+.preview-content ul {
+    margin-bottom: 1em;
+    padding-left: 2em;
+}
+
+/* Ссылки */
+.preview-content a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.preview-content a:hover {
+    text-decoration: underline;
+}
+
+/* Код */
+.preview-content pre {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 12px;
+    overflow-x: auto;
+    margin-bottom: 1em;
+}
+
+.preview-content code {
+    font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    background-color: var(--bg-primary);
+    padding: 2px 4px;
+    border-radius: 4px;
+}
+
+/* Блоки кода */
+.preview-content pre code {
+    background-color: transparent;
+    padding: 0;
+    border-radius: 0;
+}
