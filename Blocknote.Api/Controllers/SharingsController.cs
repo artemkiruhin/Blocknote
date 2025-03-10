@@ -58,9 +58,9 @@ namespace Blocknote.Api.Controllers
         {
             try
             {
-                var userId = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value);
-                
-                var sharing = await _service.GetSharingCodeAsync(code);
+                //var userId = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value);
+
+                var sharing = await _service.GetSharingByCodeAsync(code, null);
                 return Ok(new {sharing});
             }
             catch (Exception e)
