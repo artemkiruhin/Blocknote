@@ -22,15 +22,21 @@ public class SharingService : ISharingService
         _hashService = hashService;
     }
     
-    public async Task<SharingNoteDto> GetSharingCodeAsync(string code, Guid? userId)
+    public async Task<SharingNoteDto> GetSharingByCodeAsync(string code, Guid? userId)
     {
-        var sharingNote = await _sharingRepository.GetByIdAsync(Guid.Parse(code)) ?? throw new KeyNotFoundException();
+        var sharingNote = await _sharingRepository.GetByCodeAsync(code);
+        if (sharingNote == null) throw new KeyNotFoundException();
+        
         if (DateTime.UtcNow > sharingNote.CloseAt)
         {
             await _sharingRepository.DeleteAsync(sharingNote.Id);
             throw new KeyNotFoundException();
         }
-        if (sharingNote.Type.ToLower() == nameof(SharingType.Registered).ToLower() && !userId.HasValue) throw new UnauthorizedAccessException();
+
+        if (sharingNote.Type == nameof(SharingType.Registered).ToLower() && !userId.HasValue) throw new UnauthorizedAccessException();
+        
+        var user  = await _userRepository.GetByIdAsync(userId.Value);
+        if (user is null) throw new UnauthorizedAccessException();
 
         return new SharingNoteDto()
         {
@@ -38,7 +44,10 @@ public class SharingService : ISharingService
             UserId = sharingNote.UserId,
             CreatedAt = sharingNote.CreatedAt,
             NoteId = sharingNote.NoteId,
-            Code = sharingNote.Code
+            Code = sharingNote.Code,
+            Content = sharingNote.Note.Content,
+            Title = sharingNote.Note.Title,
+            Subtitle = sharingNote.Note.Subtitle
         };
     }
 
@@ -51,13 +60,8 @@ public class SharingService : ISharingService
             await _sharingRepository.DeleteAsync(sharingNote.Id);
             throw new KeyNotFoundException();
         }
-
-        // if (sharingNote.Type.ToLower() == nameof(SharingType.Registered).ToLower())
-        //     throw new UnauthorizedAccessException();
-
-        // Получаем связанную заметку
+        
         var note = await _noteRepository.GetByIdAsync(sharingNote.NoteId);
-        // Получаем автора
         var author = await _userRepository.GetByIdAsync(sharingNote.UserId);
 
         return new SharingNoteDto()
@@ -68,50 +72,11 @@ public class SharingService : ISharingService
             CreatedAt = sharingNote.CreatedAt,
             CloseAt = sharingNote.CloseAt,
             Type = sharingNote.Type,
-            // Добавляем данные из связанной заметки
             Title = note.Title,
             Subtitle = note.Subtitle,
             Content = note.Content,
-            // Добавляем имя автора
             AuthorUsername = author.Username,
             Code = sharingNote.Code
-        };
-    }
-
-    public async Task<SharingNoteDto> GetSharingCodeAsync(string code)
-    {
-        var sharingNote = await _sharingRepository.GetByIdAsync(Guid.Parse(code)) ?? throw new KeyNotFoundException();
-
-        if (DateTime.UtcNow > sharingNote.CloseAt)
-        {
-            await _sharingRepository.DeleteAsync(sharingNote.Id);
-            throw new KeyNotFoundException();
-        }
-
-        // if (sharingNote.Type.ToLower() == nameof(SharingType.Registered).ToLower())
-        //     throw new UnauthorizedAccessException();
-
-        // Получаем связанную заметку
-        var note = await _noteRepository.GetByIdAsync(sharingNote.NoteId);
-        // Получаем автора
-        var author = await _userRepository.GetByIdAsync(sharingNote.UserId);
-
-        return new SharingNoteDto()
-        {
-            Id = sharingNote.Id,
-            UserId = sharingNote.UserId,
-            NoteId = sharingNote.NoteId,
-            CreatedAt = sharingNote.CreatedAt,
-            CloseAt = sharingNote.CloseAt,
-            Type = sharingNote.Type,
-            // Добавляем данные из связанной заметки
-            Title = note.Title,
-            Subtitle = note.Subtitle,
-            Content = note.Content,
-            // Добавляем имя автора
-            AuthorUsername = author.Username,
-            Code = sharingNote.Code,
-            AccessType = sharingNote.Type == nameof(SharingType.Public) ? "public" : "registered"
         };
     }
 
