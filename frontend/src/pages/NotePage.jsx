@@ -4,6 +4,7 @@ import Container from '../components/layout/Container';
 import '../styles/NotePage.css';
 import {createNote, deleteNote, getNoteById, updateNote} from "../api-handlers/notes-handler";
 import {exportNotes} from "../api-handlers/export-handler";
+import "../styles/MarkdownStyles.css"
 
 const NotePage = () => {
     const navigate = useNavigate();
@@ -88,30 +89,24 @@ const NotePage = () => {
 
     };
 
-    // Simple Markdown to HTML converter for preview
     const renderMarkdown = (text) => {
         if (!text) return '';
 
         let html = text
-            // Headers
-            .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+            .replace(/^# (.+)$/gm, '<h1>$1</h1>') // Заголовки
             .replace(/^## (.+)$/gm, '<h2>$1</h2>')
             .replace(/^### (.+)$/gm, '<h3>$1</h3>')
-            // Bold and Italic
-            .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-            .replace(/\*(.+?)\*/g, '<em>$1</em>')
-            // Lists
-            .replace(/^- (.+)$/gm, '<li>$1</li>')
-            // Links
-            .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2">$1</a>')
-            // Paragraphs
-            .replace(/\n\n/g, '</p><p>');
+            .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>') // Жирный текст
+            .replace(/\*(.+?)\*/g, '<em>$1</em>') // Курсив
+            .replace(/^- (.+)$/gm, '<li>$1</li>') // Списки
+            .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2">$1</a>') // Ссылки
+            .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>') // Блоки кода
+            .replace(/`(.+?)`/g, '<code>$1</code>') // Встроенный код
+            .replace(/\n\n/g, '</p><p>'); // Параграфы
 
-        // Wrap in paragraphs
         html = '<p>' + html + '</p>';
-        // Fix lists
-        html = html.replace(/<li>(.+?)<\/li>/g, '<ul><li>$1</li></ul>');
-        html = html.replace(/<\/ul><ul>/g, '');
+        html = html.replace(/<li>(.+?)<\/li>/g, '<ul><li>$1</li></ul>'); // Списки
+        html = html.replace(/<\/ul><ul>/g, ''); // Убираем лишние теги
 
         return html;
     };
