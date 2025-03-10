@@ -53,11 +53,13 @@ namespace Blocknote.Api.Controllers
         }
 
         [HttpGet("code/{code}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAll(string code)
         {
             try
             {
                 var userId = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value);
+                
                 var sharing = await _service.GetSharingCodeAsync(code);
                 return Ok(new {sharing});
             }
