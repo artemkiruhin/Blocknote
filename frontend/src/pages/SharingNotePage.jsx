@@ -4,7 +4,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import "../styles/ShareNotePage.css"
 import "../styles/MarkdownStyles.css"
-import {renderMarkdown} from "../helpers/extensions";
+import {formatSharingDate, renderMarkdown} from "../helpers/extensions";
 
 const ShareNotePage = () => {
     const navigate = useNavigate();
@@ -104,25 +104,6 @@ const ShareNotePage = () => {
         }
     };
 
-    const formatDate = (dateString) => {
-        try {
-            let maxDate = new Date(9999, 11, 31, 23, 59, 59, 999);
-            const currentDate = new Date(dateString);
-
-            if (currentDate.getTime() === maxDate.getTime()) {
-                return 'неограниченно';
-            }
-
-            if (dateString.includes('T')) {
-                const date = new Date(dateString);
-                return date.toLocaleString();
-            }
-            return dateString;
-        } catch (e) {
-            return dateString;
-        }
-    };
-
     return (
         <Container>
             <div className="share-note">
@@ -162,7 +143,7 @@ const ShareNotePage = () => {
                     <div className="share-dates">
                         <div className="date-field">
                             <label>Создано:</label>
-                            <span>{formatDate(note.createdAt)}</span>
+                            <span>{formatSharingDate(note.createdAt)}</span>
                         </div>
 
                         <div className="date-field">
@@ -188,7 +169,7 @@ const ShareNotePage = () => {
                                     )}
                                 </div>
                             ) : (
-                                <span>{isUnlimited ? 'неограниченно' : formatDate(note.expiresAt)}</span>
+                                <span>{isUnlimited ? 'неограниченно' : formatSharingDate(note.expiresAt)}</span>
                             )}
                         </div>
 

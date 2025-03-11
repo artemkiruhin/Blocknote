@@ -20,7 +20,40 @@ const renderMarkdown = (text) => {
     return html;
 };
 
+const formatDateTime = (dateTimeString) => {
+    if (!dateTimeString) return null;
+    const date = new Date(dateTimeString);
+    return date.toLocaleString('ru-RU', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+};
+
+const formatSharingDate = (dateString) => {
+    try {
+        let maxDate = new Date(9999, 11, 31, 23, 59, 59, 999);
+        const currentDate = new Date(dateString);
+
+        if (currentDate.getTime() === maxDate.getTime()) {
+            return 'неограниченно';
+        }
+
+        if (dateString.includes('T')) {
+            const date = new Date(dateString);
+            return date.toLocaleString();
+        }
+        return dateString;
+    } catch (e) {
+        return dateString;
+    }
+};
+
 
 export {
-    renderMarkdown
+    renderMarkdown,
+    formatDateTime,
+    formatSharingDate
 }

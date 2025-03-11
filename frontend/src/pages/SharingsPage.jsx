@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import '../styles/SharingsPage.css';
 import {useNavigate} from "react-router-dom";
 import {getAllSharings} from "../api-handlers/sharings-handler";
+import {formatDateTime} from "../helpers/extensions";
 
 const SharingsPage = () => {
 
@@ -26,24 +27,6 @@ const SharingsPage = () => {
         } else {
             await fetchSharings();
         }
-    };
-
-    // const handleAddSharing = () => {
-    //     // Функция добавления нового шаринга (в будущей реализации)
-    //     console.log('Добавление нового шаринга');
-    // };
-
-    // Форматирование даты и времени
-    const formatDateTime = (dateTimeString) => {
-        if (!dateTimeString) return null;
-        const date = new Date(dateTimeString);
-        return date.toLocaleString('ru-RU', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
     };
 
     return (
