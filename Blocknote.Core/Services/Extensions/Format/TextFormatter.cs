@@ -1,4 +1,5 @@
-﻿using Markdig;
+﻿using System.Text.Json;
+using Markdig;
 
 namespace Blocknote.Core.Services.Extensions.Format
 {
@@ -14,6 +15,16 @@ namespace Blocknote.Core.Services.Extensions.Format
         public string FormatMarkdown(string title, string? subtitle, string content)
         {
             return $"# {title}\n\n{(string.IsNullOrEmpty(subtitle) ? "" : $"## {subtitle}\n\n")}{content}";
+        }
+
+        public string FormatJSON(string title, string? subtitle, string content)
+        {
+            var dto = new { Title = title, Subtitle = subtitle, Content = content };
+            var data = JsonSerializer.Serialize(dto, new JsonSerializerOptions()
+            {
+                WriteIndented = true
+            });
+            return data;
         }
     }
 }
