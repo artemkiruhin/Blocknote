@@ -80,4 +80,9 @@ public class ExportService : IExportService
     {
         return _formatter.FormatMarkdown(exportDto.Title, exportDto.Subtitle, exportDto.Content);
     }
+
+    public string ExportJSON(ExportDto exportDto)
+    {
+        return _formatter.FormatJSON(exportDto.Title, exportDto.Subtitle, exportDto.Content);
+    }
 }

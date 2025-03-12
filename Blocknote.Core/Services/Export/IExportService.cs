@@ -8,4 +8,5 @@ public interface IExportService
     byte[] ExportDocx(ExportDto exportDto);
     string ExportHtml(ExportDto exportDto);
     string ExportMarkdown(ExportDto exportDto);
+    string ExportJSON(ExportDto exportDto);
 }
