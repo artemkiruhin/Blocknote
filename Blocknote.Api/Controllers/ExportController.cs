@@ -78,5 +78,31 @@ namespace Blocknote.Api.Contracts
                 return StatusCode(500, "An error occurred while processing your request.");
             }
         }
+
+        [HttpGet("full")]
+        public async Task<IActionResult> GetFullExport()
+        {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            if (userIdClaim == null || !Guid.TryParse(userIdClaim, out var userId))
+            {
+                return Unauthorized();
+            }
+            
+            var notes = await _noteService.GetAllAsync(userId);
+            if (notes == null || !notes.Any())
+            {
+                return NotFound();
+            }
+            
+            var exportNotes = notes.Select(note => 
+                _exportService.ExportJSON(new ExportDto(note.Title, note.Subtitle, note.Content))
+            ).ToList();
+            
+            var jsonArray = $"[{string.Join(",", exportNotes)}]";
+            
+            var contentType = "application/json";
+            var fileDownloadName = $"Экспорт.json";
+            return File(Encoding.UTF8.GetBytes(jsonArray), contentType, fileDownloadName);
+        }
     }
 }
